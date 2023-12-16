@@ -5,15 +5,11 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"start": "node ./build/",
-		"migrate": "prisma migrate deploy",
+		"build": "prisma generate && vite build",
+		"start": "prisma migrate deploy && node ./build/",
 		"generate": "prisma generate",
-		"sync": "tsx ./scripts/sync.ts",
+		"migrate": "prisma migrate deploy",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check .",
 		"format": "prettier --write ."
 	},
 	"dependencies": {

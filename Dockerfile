@@ -18,7 +18,7 @@ FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install -y build-essential pkg-config python-is-python3
+    apt-get install -y build-essential openssl pkg-config python-is-python3
 
 # Install node modules
 COPY --link .npmrc package-lock.json package.json ./
@@ -26,9 +26,6 @@ RUN npm ci --include=dev
 
 # Copy application code
 COPY --link . .
-
-# Build Prisma client
-RUN npm run generate
 
 # Build application
 RUN npm run build
