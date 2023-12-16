@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Blog {
+  id           String  @id @default(uuid()) @map("id") @db.Uuid
+  feedURL      String  @unique @map("feed_url")
+  siteURL      String  @map("site_url")
+  title        String  @map("title")
+  etag         String? @map("etag")
+  lastModified String? @map("last_modified")
+  posts        Post[]
+
+  @@map("blog")
+}
+
+model Post {
+  id        String   @id @default(uuid()) @map("id") @db.Uuid
+  url       String   @unique @map("url")
+  title     String   @map("title")
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz()
+
+  blog   Blog   @relation(fields: [blogID], references: [id], onDelete: Cascade)
+  blogID String @map("blog_id") @db.Uuid
+
+  @@map("post")
+}
+
+model Tag {
+  id   String @id @default(uuid()) @map("id") @db.Uuid
+  name String @unique @map("name")
+
+  @@map("tag")
+}
