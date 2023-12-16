@@ -9,6 +9,7 @@
 		"preview": "vite preview",
 		"start": "node ./build/",
 		"migrate": "prisma migrate deploy",
+		"generate": "prisma generate",
 		"sync": "tsx ./scripts/sync.ts",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

@@ -43,9 +43,10 @@ First, install all project depenencies:
 npm install
 ```
 
-Then, apply any pending database migrations:
+Then, generate the Prisma client and apply any pending database migrations:
 
 ```bash
+npm run generate
 npm run migrate
 ```
 
