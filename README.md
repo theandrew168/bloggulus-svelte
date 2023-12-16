@@ -1,20 +1,41 @@
-# create-svelte
+# bloggulus
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Bloggulus is a web application for aggregating and indexing your favorite blogs.
+I wrote it to serve as a less engaging and more personalized version of sites like Hacker News or Reddit.
 
-## Creating a project
+## Local Development
 
-If you're seeing this, you've probably already done this step. Congrats!
+While the primary [Bloggulus website](https://bloggulus.com) represents my own personal collection of blogs, it is designed to be easily self-hostable.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+### Setup
 
-# create a new project in my-app
-npm create svelte@latest my-app
+This project depends on [NodeJS](https://nodejs.org/en).
+
+On macOS, this dependency can be easily installed via [Homebrew](https://brew.sh/):
+
+```
+brew install node
 ```
 
-## Developing
+### Database
+
+This project uses [PostgreSQL](https://www.postgresql.org/) for persistent storage.
+To develop locally, you'll an instance of the database running somehow or another.
+I find [Docker](https://www.docker.com/) to be a nice tool for this but you can do whatever works best.
+
+The following command starts the necessary containers:
+
+```bash
+docker compose up -d
+```
+
+These containers can be stopped via:
+
+```bash
+docker compose down
+```
+
+### Running
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
@@ -24,15 +45,3 @@ npm run dev
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
 ```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
