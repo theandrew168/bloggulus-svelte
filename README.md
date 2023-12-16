@@ -37,7 +37,19 @@ docker compose down
 
 ### Running
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start the development server:
+First, install all project depenencies:
+
+```bash
+npm install
+```
+
+Then, apply any pending database migrations:
+
+```bash
+npm run migrate
+```
+
+Lastly, start the development server:
 
 ```bash
 npm run dev

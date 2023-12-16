@@ -8,11 +8,12 @@
 		"build": "vite build",
 		"preview": "vite preview",
 		"start": "node ./build/",
+		"migrate": "prisma migrate deploy",
+		"sync": "tsx ./scripts/sync.ts",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check .",
-		"format": "prettier --write .",
-		"sync": "tsx ./scripts/sync.ts"
+		"format": "prettier --write ."
 	},
 	"dependencies": {
 		"@prisma/client": "^5.7.0",
