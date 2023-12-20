@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
 import Parser from "rss-parser";
 
-const prisma = new PrismaClient();
+import prisma from "./prisma";
 
-async function main() {
-	console.log(`Starting sync...`);
+export async function sync(feedURL: string) {
+	console.log(`syncing ${feedURL}`);
 
-	const feedURL = "https://shallowbrooksoftware.com/posts/index.xml";
 	let blog = await prisma.blog.findUnique({
 		where: {
 			feedURL,
@@ -81,16 +79,4 @@ async function main() {
 			});
 		}
 	}
-
-	console.log(`Sync finished.`);
 }
-
-main()
-	.then(async () => {
-		await prisma.$disconnect();
-	})
-	.catch(async (e) => {
-		console.error(e);
-		await prisma.$disconnect();
-		process.exit(1);
-	});

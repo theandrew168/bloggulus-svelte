@@ -3,7 +3,7 @@
 </script>
 
 <div class="container">
-	<div class="recent">Recent Posts</div>
+	<h1>Recent Posts</h1>
 	<div class="posts">
 		{#each data.posts as post}
 			<div class="post shadow">
@@ -16,7 +16,7 @@
 </div>
 
 <style>
-	.recent {
+	h1 {
 		font-size: 24px;
 		font-weight: 500;
 		margin-top: 1.5rem;
