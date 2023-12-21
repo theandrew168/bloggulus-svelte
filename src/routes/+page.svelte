@@ -22,7 +22,6 @@
 		margin-top: 1.5rem;
 		margin-bottom: 1rem;
 	}
-
 	.post {
 		background-color: white;
 		text-align: left;

@@ -18,7 +18,7 @@ export const actions: Actions = {
 		const id = data.get("id");
 		if (!id) {
 			error(400, {
-				message: "Bad request",
+				message: "Bad Request",
 			});
 			return;
 		}
@@ -28,7 +28,7 @@ export const actions: Actions = {
 		});
 		if (!blog) {
 			error(404, {
-				message: "Not found",
+				message: "Not Found",
 			});
 			return;
 		}
@@ -46,7 +46,7 @@ export const actions: Actions = {
 		const url = data.get("url");
 		if (!url) {
 			error(400, {
-				message: "Bad request",
+				message: "Bad Request",
 			});
 			return;
 		}
