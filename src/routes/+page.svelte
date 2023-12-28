@@ -31,19 +31,19 @@
 		font-size: 24px;
 		font-weight: 500;
 		margin-top: 1.5rem;
-		margin-bottom: 1rem;
+		margin-bottom: 1.5rem;
 	}
 	.posts {
 		display: flex;
 		flex-direction: column;
-		gap: 1rem;
-		margin-bottom: 1rem;
+		gap: 1.5rem;
+		margin-bottom: 1.5rem;
 	}
 	.more {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-bottom: 1rem;
+		margin-bottom: 1.5rem;
 	}
 	.more a {
 		padding: 0.5rem 1.5rem;

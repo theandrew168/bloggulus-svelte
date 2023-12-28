@@ -15,8 +15,12 @@
 		<Tag name="Python" />
 		<Tag name="wow" />
 	</div>
-	<div><a class="title" href={url}>{title}</a></div>
-	<div><a class="blogTitle" href={blogURL}>{blogTitle}</a></div>
+	<div class="title">
+		<a href={url}>{title}</a>
+	</div>
+	<div class="blogTitle">
+		<a href={blogURL}>{blogTitle}</a>
+	</div>
 </div>
 
 <style>
@@ -30,22 +34,28 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
+		margin-bottom: 0.5rem;
 	}
 	.updated {
 		color: var(--mid-color);
 		font-size: 0.875rem;
+		font-weight: 300;
 		margin-right: auto;
 	}
 	.title {
+		margin-bottom: 0.5rem;
+	}
+	.title a {
 		color: var(--dark-color);
 		font-size: 1.5rem;
 		font-weight: bold;
+		line-height: 2rem;
 		text-decoration: none;
 	}
 	.title:hover {
 		text-decoration: underline;
 	}
-	.blogTitle {
+	.blogTitle a {
 		color: var(--dark-color);
 		font-weight: bold;
 		text-decoration: none;
