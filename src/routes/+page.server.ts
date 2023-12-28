@@ -16,6 +16,7 @@ export async function load({ url }: LoadEvent) {
 				? {
 						title: {
 							contains: q,
+							mode: 'insensitive',
 						},
 					}
 				: {}),
