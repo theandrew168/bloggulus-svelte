@@ -2,7 +2,9 @@
 	<div class="container">
 		<div class="items">
 			<a class="home" href="/">Bloggulus</a>
-			<input placeholder="Search" />
+			<form data-sveltekit-keepfocus>
+				<input name="q" type="text" placeholder="Search" />
+			</form>
 		</div>
 	</div>
 </header>

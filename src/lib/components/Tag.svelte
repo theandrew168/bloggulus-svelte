@@ -8,7 +8,7 @@
 	span {
 		color: var(--light-color);
 		background-color: var(--mid-color);
-		font-weight: bold;
+		font-weight: 600;
 		padding: 0.25rem 0.75rem;
 		border-radius: 0.25rem;
 	}

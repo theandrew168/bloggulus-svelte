@@ -48,7 +48,7 @@
 	.title a {
 		color: var(--dark-color);
 		font-size: 1.5rem;
-		font-weight: bold;
+		font-weight: 600;
 		line-height: 2rem;
 		text-decoration: none;
 	}
@@ -57,7 +57,7 @@
 	}
 	.blogTitle a {
 		color: var(--dark-color);
-		font-weight: bold;
+		font-weight: 600;
 		text-decoration: none;
 	}
 	.blogTitle:hover {
