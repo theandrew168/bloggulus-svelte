@@ -7,6 +7,7 @@ const postWithBlog = Prisma.validator<Prisma.PostDefaultArgs>()({
 });
 export type PostWithBlog = Prisma.PostGetPayload<typeof postWithBlog>;
 
+// const prisma = new PrismaClient({ log: ['query'] });
 const prisma = new PrismaClient();
 
 export default prisma;

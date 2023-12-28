@@ -28,7 +28,7 @@
 <style>
 	h1 {
 		font-size: 24px;
-		font-weight: 500;
+		font-weight: 600;
 		margin-top: 1.5rem;
 		margin-bottom: 1rem;
 	}

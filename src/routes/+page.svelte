@@ -4,7 +4,9 @@
 
 	export let data;
 
+	$: q = $page.url.searchParams.get("q") ?? "";
 	$: p = parseInt($page.url.searchParams.get("p") ?? "1") || 1;
+	$: moreLink = `/?p=${p + 1}` + (q ? `&q=${q}` : "");
 </script>
 
 <div class="container">
@@ -20,9 +22,11 @@
 			/>
 		{/each}
 	</div>
-	<div class="more">
-		<a class="shadow" href="/?p={p + 1}">See More</a>
-	</div>
+	{#if data.posts.length === 15}
+		<div class="more">
+			<a class="shadow" href={moreLink}>See More</a>
+		</div>
+	{/if}
 </div>
 
 <style>

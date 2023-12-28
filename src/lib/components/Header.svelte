@@ -1,9 +1,15 @@
+<script lang="ts">
+	import { page } from "$app/stores";
+
+	$: q = $page.url.searchParams.get("q") ?? "";
+</script>
+
 <header class="shadow">
 	<div class="container">
 		<div class="items">
 			<a class="home" href="/">Bloggulus</a>
 			<form data-sveltekit-keepfocus>
-				<input name="q" type="text" placeholder="Search" />
+				<input value={q} name="q" type="text" placeholder="Search" />
 			</form>
 		</div>
 	</div>
