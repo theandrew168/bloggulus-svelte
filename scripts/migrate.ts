@@ -1,6 +1,6 @@
 import { readdir } from "fs/promises";
 
-import sql from "../src/lib/server/db";
+import sql from "./db";
 
 const MIGRATIONS_DIR = "./migrations/";
 
