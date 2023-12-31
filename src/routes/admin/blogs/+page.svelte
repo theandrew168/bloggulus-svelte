@@ -15,7 +15,7 @@
 	<div class="blogs">
 		{#each data.blogs as blog}
 			<div class="blog">
-				<a href={blog.siteURL}>{blog.title}</a>
+				<a href={blog.siteUrl}>{blog.title}</a>
 				<form method="POST" action="?/sync" use:enhance>
 					<input type="hidden" name="id" value={blog.id} />
 					<button type="submit">Sync</button>

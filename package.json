@@ -5,15 +5,14 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "prisma generate && vite build",
-		"start": "prisma migrate deploy && node ./build/",
-		"generate": "prisma generate",
-		"migrate": "prisma migrate deploy",
+		"build": "vite build",
+		"start": "tsx ./scripts/migrate.ts && node ./build/",
+		"migrate": "tsx ./scripts/migrate.ts",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"format": "prettier --write ."
 	},
 	"dependencies": {
-		"@prisma/client": "^5.7.1",
+		"postgres": "^3.4.3",
 		"rss-parser": "^3.13.0"
 	},
 	"devDependencies": {
@@ -23,7 +22,6 @@
 		"@types/node": "^20.10.5",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
-		"prisma": "^5.7.1",
 		"svelte": "^4.2.8",
 		"svelte-check": "^3.6.2",
 		"tslib": "^2.6.2",

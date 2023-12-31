@@ -17,8 +17,8 @@
 				title={post.title}
 				url={post.url}
 				updatedAt={post.updatedAt}
-				blogTitle={post.blog.title}
-				blogURL={post.blog.siteURL}
+				blogTitle={post.blogTitle}
+				blogURL={post.blogUrl}
 			/>
 		{/each}
 	</div>

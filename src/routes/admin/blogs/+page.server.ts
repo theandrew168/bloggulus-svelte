@@ -1,12 +1,14 @@
 import { error, type Actions } from "@sveltejs/kit";
 
-import prisma from "$lib/server/prisma";
+import type { Blog } from "$lib/types";
 import { sync } from "$lib/server/sync";
+import sql from "$lib/server/db";
 
 export async function load() {
-	const blogs = await prisma.blog.findMany({
-		orderBy: [{ title: "asc" }],
-	});
+	const blogs = await sql<Blog[]>`
+		SELECT *
+		FROM blog
+	`;
 	return {
 		blogs,
 	};
@@ -23,17 +25,20 @@ export const actions: Actions = {
 			return;
 		}
 
-		const blog = await prisma.blog.findUnique({
-			where: { id: id.toString() },
-		});
-		if (!blog) {
+		const blogs = await sql<Blog[]>`
+			SELECT *
+			FROM blog
+			WHERE id = ${id.toString()}
+		`;
+		if (blogs.length === 0) {
 			error(404, {
 				message: "Not Found",
 			});
 			return;
 		}
+		const blog = blogs[0];
 
-		sync(blog.feedURL)
+		sync(blog.feedUrl)
 			.then(() => {
 				console.log("sync success");
 			})
@@ -55,7 +60,8 @@ export const actions: Actions = {
 			.then(() => {
 				console.log("sync success");
 			})
-			.catch(() => {
+			.catch((e) => {
+				console.error(e);
 				console.log("sync failure");
 			});
 	},
