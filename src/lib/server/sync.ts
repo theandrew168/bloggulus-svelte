@@ -1,16 +1,12 @@
 import Parser from "rss-parser";
-import sql from "./db";
-import type { Blog, Post } from "$lib/types";
 
-export async function sync(feedURL: string) {
-	console.log(`syncing ${feedURL}`);
+import { createBlog, readBlogByFeedUrl, updateBlog } from "./storage/blog";
+import { createPost, readPostByUrl } from "./storage/post";
 
-	const blogs = await sql<Blog[]>`
-		SELECT *
-		FROM blog
-		WHERE feed_url = ${feedURL}
-	`;
-	let blog = blogs[0];
+export async function sync(feedUrl: string) {
+	console.log(`syncing ${feedUrl}`);
+
+	let blog = await readBlogByFeedUrl(feedUrl);
 
 	const headers = new Headers();
 	if (blog?.etag) {
@@ -19,27 +15,14 @@ export async function sync(feedURL: string) {
 	if (blog?.lastModified) {
 		headers.set("If-Modified-Since", blog.lastModified);
 	}
-	const resp = await fetch(feedURL, { headers });
+	const resp = await fetch(feedUrl, { headers });
 	const text = await resp.text();
 
 	const etag = resp.headers.get("ETag");
 	const lastModified = resp.headers.get("Last-Modified");
 
 	if (blog) {
-		if (etag) {
-			await sql`
-				UPDATE blog
-				SET etag = ${etag}
-				WHERE feed_url = ${feedURL}
-			`;
-		}
-		if (lastModified) {
-			await sql`
-				UPDATE blog
-				SET last_modified = ${lastModified}
-				WHERE feed_url = ${feedURL}
-			`;
-		}
+		await updateBlog(blog.id, etag, lastModified);
 	}
 
 	if (resp.status >= 300) {
@@ -49,18 +32,11 @@ export async function sync(feedURL: string) {
 
 	const parser = new Parser();
 	const feed = await parser.parseString(text);
-	const siteURL = feed.link ?? feedURL;
-	const title = feed.title ?? siteURL;
+	const siteUrl = feed.link ?? feedUrl;
+	const title = feed.title ?? siteUrl;
 
 	if (!blog) {
-		const created = await sql<Blog[]>`
-			INSERT INTO blog
-				(feed_url, site_url, title, etag, last_modified)
-			VALUES
-				(${feedURL}, ${siteURL}, ${title}, ${etag}, ${lastModified})
-			RETURNING *
-		`;
-		blog = created[0];
+		blog = await createBlog({ feedUrl, siteUrl, title, etag, lastModified });
 	}
 
 	for (const item of feed.items) {
@@ -68,19 +44,9 @@ export async function sync(feedURL: string) {
 		const title = item.title ?? "";
 		const updatedAt = item.pubDate ? new Date(item.pubDate) : new Date();
 
-		const posts = await sql<Post[]>`
-			SELECT *
-			FROM post
-			WHERE url = ${url}
-		`;
-		let post = posts[0];
+		const post = await readPostByUrl(url);
 		if (!post) {
-			await sql`
-				INSERT INTO post
-					(url, title, updated_at, blog_id)
-				VALUES
-					(${url}, ${title}, ${updatedAt}, ${blog.id})
-			`;
+			await createPost({ url, title, updatedAt, blogId: blog.id });
 		}
 	}
 }

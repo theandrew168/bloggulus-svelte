@@ -19,3 +19,12 @@ export type Tag = {
 	id: string;
 	name: string;
 };
+
+/**
+ * Post enriched with blog metadata and linked tags
+ */
+export type PostWithBlogAndTags = Post & {
+	blogUrl: string;
+	blogTitle: string;
+	tags: Tag[];
+};

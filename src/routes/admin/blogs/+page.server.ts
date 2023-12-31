@@ -1,14 +1,10 @@
 import { error, type Actions } from "@sveltejs/kit";
 
-import type { Blog } from "$lib/types";
+import { listBlogs, readBlogById } from "$lib/server/storage/blog";
 import { sync } from "$lib/server/sync";
-import sql from "$lib/server/db";
 
 export async function load() {
-	const blogs = await sql<Blog[]>`
-		SELECT *
-		FROM blog
-	`;
+	const blogs = await listBlogs();
 	return {
 		blogs,
 	};
@@ -25,18 +21,13 @@ export const actions: Actions = {
 			return;
 		}
 
-		const blogs = await sql<Blog[]>`
-			SELECT *
-			FROM blog
-			WHERE id = ${id.toString()}
-		`;
-		if (blogs.length === 0) {
+		const blog = await readBlogById(id.toString());
+		if (!blog) {
 			error(404, {
 				message: "Not Found",
 			});
 			return;
 		}
-		const blog = blogs[0];
 
 		sync(blog.feedUrl)
 			.then(() => {
