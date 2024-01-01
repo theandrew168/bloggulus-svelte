@@ -58,11 +58,15 @@ export async function searchPosts({
 			post.title,
 			post.updated_at,
 			blog.site_url AS blog_url,
-			blog.title AS blog_title
+			blog.title AS blog_title,
+			array_remove(array_agg(tag.name ORDER BY ts_rank_cd(post.content_index, to_tsquery(tag.name)) DESC), NULL) AS tags
 		FROM post
 		INNER JOIN blog
 			ON blog.id = post.blog_id
+		LEFT JOIN tag
+			ON to_tsquery(tag.name) @@ post.content_index
 		${search ? sql`WHERE post.content_index @@ websearch_to_tsquery('english',  ${search})` : sql``}
+		GROUP BY 1,2,3,4,5,6
 		ORDER BY ${
 			search
 				? sql`ts_rank_cd(post.content_index, websearch_to_tsquery('english',  ${search})) DESC`

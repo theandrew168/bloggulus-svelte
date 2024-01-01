@@ -1,25 +1,22 @@
 <script lang="ts">
+	import type { PostWithBlogAndTags } from "$lib/types";
 	import Tag from "./Tag.svelte";
 
-	export let title: string;
-	export let url: string;
-	export let updatedAt: Date;
-	export let blogTitle: string;
-	export let blogURL: string;
+	export let post: PostWithBlogAndTags;
 </script>
 
 <div class="post shadow">
 	<div class="top">
-		<div class="updated">{updatedAt.toDateString()}</div>
-		<Tag name="Tag" />
-		<Tag name="Python" />
-		<Tag name="wow" />
+		<div class="updated">{post.updatedAt.toDateString()}</div>
+		{#each post.tags.slice(0, 3) as tag}
+			<Tag name={tag} />
+		{/each}
 	</div>
 	<div class="title">
-		<a href={url}>{title}</a>
+		<a href={post.url}>{post.title}</a>
 	</div>
 	<div class="blogTitle">
-		<a href={blogURL}>{blogTitle}</a>
+		<a href={post.blogUrl}>{post.blogTitle}</a>
 	</div>
 </div>
 

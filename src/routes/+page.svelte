@@ -13,13 +13,7 @@
 	<h1>Recent Posts</h1>
 	<div class="posts">
 		{#each data.posts as post}
-			<Post
-				title={post.title}
-				url={post.url}
-				updatedAt={post.updatedAt}
-				blogTitle={post.blogTitle}
-				blogURL={post.blogUrl}
-			/>
+			<Post {post} />
 		{/each}
 	</div>
 	{#if data.posts.length === 15}

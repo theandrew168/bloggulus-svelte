@@ -28,5 +28,5 @@ export type Tag = {
 export type PostWithBlogAndTags = Post & {
 	blogUrl: string;
 	blogTitle: string;
-	tags: Tag[];
+	tags: string[];
 };
