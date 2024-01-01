@@ -5,15 +5,16 @@ export type CreatePostParams = {
 	url: string;
 	title: string;
 	updatedAt: Date;
+	body: string | null;
 	blogId: string;
 };
 
-export async function createPost({ url, title, updatedAt, blogId }: CreatePostParams): Promise<Post> {
+export async function createPost({ url, title, updatedAt, body, blogId }: CreatePostParams): Promise<Post> {
 	const created = await sql<Post[]>`
 		INSERT INTO post
-			(url, title, updated_at, blog_id)
+			(url, title, updated_at, body, blog_id)
 		VALUES
-			(${url}, ${title}, ${updatedAt}, ${blogId})
+			(${url}, ${title}, ${updatedAt}, ${body}, ${blogId})
 		RETURNING *
 	`;
 	return created[0];
@@ -29,6 +30,14 @@ export async function readPostByUrl(url: string): Promise<Post | null> {
 		return null;
 	}
 	return posts[0];
+}
+
+export async function updatePost(id: string, body: string | null) {
+	await sql`
+		UPDATE post
+		SET body = ${body}
+		WHERE id = ${id}
+	`;
 }
 
 export type SearchPostsParams = {
@@ -56,7 +65,7 @@ export async function searchPosts({
 		${search ? sql`WHERE post.content_index @@ websearch_to_tsquery('english',  ${search})` : sql``}
 		ORDER BY ${
 			search
-				? sql`ts_rank_cd(post.content_index, websearch_to_tsquery('english',  ${search}))`
+				? sql`ts_rank_cd(post.content_index, websearch_to_tsquery('english',  ${search})) DESC`
 				: sql`post.updated_at DESC`
 		}
 		LIMIT ${limit}

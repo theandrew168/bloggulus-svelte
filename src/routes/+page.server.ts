@@ -12,7 +12,6 @@ export async function load({ url }: LoadEvent) {
 	const offset = (p - 1) * limit;
 
 	const posts = await searchPosts({ search: q, limit, offset });
-
 	return {
 		posts,
 	};

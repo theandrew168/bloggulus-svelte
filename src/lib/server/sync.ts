@@ -1,7 +1,32 @@
 import Parser from "rss-parser";
+import { decode } from "he";
 
 import { createBlog, readBlogByFeedUrl, updateBlog } from "./storage/blog";
-import { createPost, readPostByUrl } from "./storage/post";
+import { createPost, readPostByUrl, updatePost } from "./storage/post";
+
+function sanitize(html: string): string {
+	const exprs = [/<head>.*?<\/head>/gs, /<nav>.*?<\/nav>/gs, /<code>.*?<\/code>/gs, /<pre>.*?<\/pre>/gs, /<[^>]*>/gs];
+
+	let text = html;
+	exprs.forEach((expr) => (text = text.replace(expr, "")));
+
+	text = decode(text);
+	text = text.replace(/\s+/gs, " ");
+	text = text.trim();
+	return text;
+}
+
+async function fetchBody(url: string): Promise<string | null> {
+	try {
+		const resp = await fetch(url);
+		const html = await resp.text();
+		const body = sanitize(html);
+		return body;
+	} catch (e) {
+		console.log(e);
+		return null;
+	}
+}
 
 export async function sync(feedUrl: string) {
 	console.log(`syncing ${feedUrl}`);
@@ -32,6 +57,7 @@ export async function sync(feedUrl: string) {
 
 	const parser = new Parser();
 	const feed = await parser.parseString(text);
+
 	const siteUrl = feed.link ?? feedUrl;
 	const title = feed.title ?? siteUrl;
 
@@ -46,7 +72,11 @@ export async function sync(feedUrl: string) {
 
 		const post = await readPostByUrl(url);
 		if (!post) {
-			await createPost({ url, title, updatedAt, blogId: blog.id });
+			const body = await fetchBody(url);
+			await createPost({ url, title, updatedAt, body, blogId: blog.id });
+		} else if (post.body === null) {
+			const body = await fetchBody(url);
+			await updatePost(post.id, body);
 		}
 	}
 }

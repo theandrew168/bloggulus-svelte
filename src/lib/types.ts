@@ -12,6 +12,7 @@ export type Post = {
 	url: string;
 	title: string;
 	updatedAt: Date;
+	body: string | null;
 	blogId: string;
 };
 
