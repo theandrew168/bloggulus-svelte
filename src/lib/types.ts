@@ -3,6 +3,7 @@ export type Blog = {
 	feedUrl: string;
 	siteUrl: string;
 	title: string;
+	syncedAt: Date;
 	etag: string | null;
 	lastModified: string | null;
 };

@@ -1,7 +1,7 @@
 import Parser from "rss-parser";
 import { decode } from "he";
 
-import { createBlog, readBlogByFeedUrl, updateBlog } from "./storage/blog";
+import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog, updateBlogSyncedAt } from "./storage/blog";
 import { createPost, readPostByUrl, updatePost } from "./storage/post";
 
 function sanitize(html: string): string {
@@ -29,7 +29,7 @@ async function fetchBody(url: string): Promise<string | null> {
 }
 
 export async function sync(feedUrl: string) {
-	console.log(`syncing ${feedUrl}`);
+	console.log("syncing: ", feedUrl);
 
 	let blog = await readBlogByFeedUrl(feedUrl);
 
@@ -78,5 +78,20 @@ export async function sync(feedUrl: string) {
 			const body = await fetchBody(url);
 			await updatePost(post.id, body);
 		}
+	}
+}
+
+export async function syncAll() {
+	const blogs = await listBlogs();
+	for (const blog of blogs) {
+		const now = new Date();
+		const delta = (now.getTime() - blog.syncedAt.getTime()) / 1000;
+		if (delta < 3600) {
+			console.log("recently synced: ", blog.title);
+			continue;
+		}
+
+		await updateBlogSyncedAt(blog.id, now);
+		await sync(blog.feedUrl);
 	}
 }

@@ -71,3 +71,14 @@ export async function updateBlog(id: string, etag: string | null, lastModified: 
 		`;
 	}
 }
+
+/**
+ * TODO: Make this API better / more universal (update anything given an ID)
+ */
+export async function updateBlogSyncedAt(id: string, syncedAt: Date) {
+	await sql`
+		UPDATE blog
+		SET synced_at = ${syncedAt}
+		WHERE id = ${id}
+	`;
+}
