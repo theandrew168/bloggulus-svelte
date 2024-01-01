@@ -1,5 +1,5 @@
 import Parser from "rss-parser";
-import { decode } from "he";
+import he from "he";
 
 import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog, updateBlogSyncedAt } from "./storage/blog";
 import { createPost, readPostByUrl, updatePost } from "./storage/post";
@@ -10,7 +10,7 @@ function sanitize(html: string): string {
 	let text = html;
 	exprs.forEach((expr) => (text = text.replace(expr, "")));
 
-	text = decode(text);
+	text = he.decode(text);
 	text = text.replace(/\s+/gs, " ");
 	text = text.trim();
 	return text;
