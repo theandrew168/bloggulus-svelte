@@ -5,21 +5,21 @@
 </script>
 
 <div class="container">
-	<h1>Blogs</h1>
+	<h1>Tags</h1>
 	<div class="add">
 		<form method="POST" action="?/add" use:enhance>
-			<input name="url" />
+			<input name="name" />
 			<button type="submit">Add</button>
 		</form>
 	</div>
-	<div class="blogs">
-		{#each data.blogs as blog}
-			<div class="blog">
-				<a href={blog.siteUrl}>{blog.title}</a>
-				<form method="POST" action="?/sync" use:enhance>
-					<input type="hidden" name="id" value={blog.id} />
-					<button type="submit">Sync</button>
+	<div class="tags">
+		{#each data.tags as tag}
+			<div class="tag">
+				<form method="POST" action="?/delete" use:enhance>
+					<input type="hidden" name="id" value={tag.id} />
+					<button type="submit">Delete</button>
 				</form>
+				<p>{tag.name}</p>
 			</div>
 		{/each}
 	</div>
@@ -35,11 +35,11 @@
 	.add {
 		margin-bottom: 1rem;
 	}
-	.blogs {
+	.tags {
 		margin-bottom: 1rem;
 	}
-	.blog {
+	.tag {
 		display: flex;
-		justify-content: space-between;
+		gap: 1rem;
 	}
 </style>
