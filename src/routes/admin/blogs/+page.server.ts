@@ -1,14 +1,15 @@
 import { error, type Actions } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
 import { listBlogs, readBlogById } from "$lib/server/storage/blog";
 import { sync } from "$lib/server/sync";
 
-export async function load() {
+export const load: PageServerLoad = async () => {
 	const blogs = await listBlogs();
 	return {
 		blogs,
 	};
-}
+};
 
 export const actions: Actions = {
 	sync: async ({ request }) => {

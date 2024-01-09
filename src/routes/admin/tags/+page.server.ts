@@ -1,13 +1,14 @@
 import { error, type Actions } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
 import { createTag, deleteTag, listTags, readTagById } from "$lib/server/storage/tag";
 
-export async function load() {
+export const load: PageServerLoad = async () => {
 	const tags = await listTags();
 	return {
 		tags,
 	};
-}
+};
 
 export const actions: Actions = {
 	add: async ({ request }) => {

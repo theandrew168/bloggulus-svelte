@@ -8,14 +8,14 @@
 	<h1>Blogs</h1>
 	<div class="add">
 		<form method="POST" action="?/add" use:enhance>
-			<input name="url" />
+			<input name="url" placeholder="RSS / Atom Feed URL" />
 			<button type="submit">Add</button>
 		</form>
 	</div>
 	<div class="blogs">
 		{#each data.blogs as blog}
 			<div class="blog">
-				<a href={blog.siteUrl}>{blog.title}</a>
+				<a href="/admin/blogs/{blog.id}">{blog.title}</a>
 				<form method="POST" action="?/sync" use:enhance>
 					<input type="hidden" name="id" value={blog.id} />
 					<button type="submit">Sync</button>

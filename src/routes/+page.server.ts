@@ -1,11 +1,11 @@
-import type { LoadEvent } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
 
 import { searchPosts } from "$lib/server/storage/post";
 import { syncAll } from "$lib/server/sync";
 
 const PAGE_SIZE = 15;
 
-export async function load({ url }: LoadEvent) {
+export const load: PageServerLoad = async ({ url }) => {
 	syncAll();
 
 	const q = url.searchParams.get("q") ?? "";
@@ -18,4 +18,4 @@ export async function load({ url }: LoadEvent) {
 	return {
 		posts,
 	};
-}
+};

@@ -8,7 +8,7 @@
 	<h1>Tags</h1>
 	<div class="add">
 		<form method="POST" action="?/add" use:enhance>
-			<input name="name" />
+			<input name="name" placeholder="Name" />
 			<button type="submit">Add</button>
 		</form>
 	</div>

@@ -20,6 +20,16 @@ export async function createPost({ url, title, updatedAt, body, blogId }: Create
 	return created[0];
 }
 
+export async function listPostsByBlog(blogId: string): Promise<Post[]> {
+	const posts = await sql<Post[]>`
+		SELECT *
+		FROM post
+		WHERE blog_id = ${blogId}
+		ORDER BY updated_at DESC
+	`;
+	return posts;
+}
+
 export async function readPostByUrl(url: string): Promise<Post | null> {
 	const posts = await sql<Post[]>`
 		SELECT *
