@@ -1,7 +1,5 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
-
-	export let data: PageData;
+	export let data;
 </script>
 
 <div class="container">
@@ -19,7 +17,7 @@
 		<h2>{data.posts.length} Posts</h2>
 		{#each data.posts as post}
 			<div class="post">
-				<a href={post.url}>{post.title}</a>
+				<a href="/admin/posts/{post.id}">{post.title}</a>
 				<span>{post.updatedAt.toDateString()}</span>
 			</div>
 		{/each}

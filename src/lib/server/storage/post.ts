@@ -30,6 +30,31 @@ export async function listPostsByBlog(blogId: string): Promise<Post[]> {
 	return posts;
 }
 
+export async function readPostById(id: string): Promise<PostWithBlogAndTags | null> {
+	const posts = await sql<PostWithBlogAndTags[]>`
+		SELECT
+			post.id,
+			post.url,
+			post.title,
+			post.updated_at,
+			blog.id AS blog_id,
+			blog.site_url AS blog_url,
+			blog.title AS blog_title,
+			array_remove(array_agg(tag.name ORDER BY ts_rank_cd(post.content_index, to_tsquery(tag.name)) DESC), NULL) AS tags
+		FROM post
+		INNER JOIN blog
+			ON blog.id = post.blog_id
+		LEFT JOIN tag
+			ON to_tsquery(tag.name) @@ post.content_index
+		WHERE post.id = ${id}
+		GROUP BY 1,2,3,4,5,6,7
+	`;
+	if (posts.length !== 1) {
+		return null;
+	}
+	return posts[0];
+}
+
 export async function readPostByUrl(url: string): Promise<Post | null> {
 	const posts = await sql<Post[]>`
 		SELECT *
@@ -67,6 +92,7 @@ export async function searchPosts({
 			post.url,
 			post.title,
 			post.updated_at,
+			blog.id AS blog_id,
 			blog.site_url AS blog_url,
 			blog.title AS blog_title,
 			array_remove(array_agg(tag.name ORDER BY ts_rank_cd(post.content_index, to_tsquery(tag.name)) DESC), NULL) AS tags
@@ -76,7 +102,7 @@ export async function searchPosts({
 		LEFT JOIN tag
 			ON to_tsquery(tag.name) @@ post.content_index
 		${search ? sql`WHERE post.content_index @@ websearch_to_tsquery('english',  ${search})` : sql``}
-		GROUP BY 1,2,3,4,5,6
+		GROUP BY 1,2,3,4,5,6,7
 		ORDER BY ${
 			search
 				? sql`ts_rank_cd(post.content_index, websearch_to_tsquery('english',  ${search})) DESC`
