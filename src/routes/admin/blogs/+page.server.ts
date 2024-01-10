@@ -1,8 +1,9 @@
-import { error, type Actions } from "@sveltejs/kit";
+import type { Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 import { listBlogs, readBlogById } from "$lib/server/storage/blog";
 import { sync } from "$lib/server/sync";
+import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 
 export const load: PageServerLoad = async () => {
 	const blogs = await listBlogs();
@@ -16,18 +17,12 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const id = data.get("id");
 		if (!id) {
-			error(400, {
-				message: "Bad Request",
-			});
-			return;
+			throw errorBadRequest();
 		}
 
 		const blog = await readBlogById(id.toString());
 		if (!blog) {
-			error(404, {
-				message: "Not Found",
-			});
-			return;
+			throw errorNotFound();
 		}
 
 		sync(blog.feedUrl)
@@ -42,10 +37,7 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const url = data.get("url");
 		if (!url) {
-			error(400, {
-				message: "Bad Request",
-			});
-			return;
+			throw errorBadRequest();
 		}
 
 		sync(url.toString())

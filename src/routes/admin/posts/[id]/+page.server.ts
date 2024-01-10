@@ -1,15 +1,18 @@
-import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
+import { isValidUuid } from "$lib/utils";
 import { readPostById } from "$lib/server/storage/post";
+import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 
 export const load: PageServerLoad = async ({ params }) => {
-	const post = await readPostById(params.id);
+	const id = params.id;
+	if (!isValidUuid(id)) {
+		throw errorBadRequest();
+	}
+
+	const post = await readPostById(id);
 	if (!post) {
-		error(404, {
-			message: "Not Found",
-		});
-		return;
+		throw errorNotFound();
 	}
 	return {
 		post,

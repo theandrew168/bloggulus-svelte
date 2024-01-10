@@ -5,12 +5,12 @@
 <div class="container">
 	<h1>{data.blog?.title}</h1>
 	<div class="links">
-		<a href={data.blog?.siteUrl}>(Site URL)</a>
-		<a href={data.blog?.feedUrl}>(Feed URL)</a>
+		<a href={data.blog.siteUrl}>(Site URL)</a>
+		<a href={data.blog.feedUrl}>(Feed URL)</a>
 	</div>
 	<div class="times">
 		<h2>Synced at:</h2>
-		<div>{data.blog?.syncedAt.toLocaleString()}</div>
+		<div>{data.blog.syncedAt.toLocaleString()}</div>
 	</div>
 
 	<div class="posts">
