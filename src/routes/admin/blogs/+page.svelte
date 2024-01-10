@@ -14,12 +14,8 @@
 	</div>
 	<div class="blogs">
 		{#each data.blogs as blog}
-			<div class="blog">
+			<div>
 				<a href="/admin/blogs/{blog.id}">{blog.title}</a>
-				<form method="POST" action="?/sync" use:enhance>
-					<input type="hidden" name="id" value={blog.id} />
-					<button type="submit">Sync</button>
-				</form>
 			</div>
 		{/each}
 	</div>
@@ -37,9 +33,5 @@
 	}
 	.blogs {
 		margin-bottom: 1rem;
-	}
-	.blog {
-		display: flex;
-		justify-content: space-between;
 	}
 </style>

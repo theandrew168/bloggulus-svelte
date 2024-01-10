@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
+
 	export let data;
 </script>
 
@@ -22,6 +24,20 @@
 			</div>
 		{/each}
 	</div>
+
+	<div class="actions">
+		<h2>Actions</h2>
+		<div class="buttons">
+			<form method="POST" action="?/sync" use:enhance>
+				<input type="hidden" name="id" value={data.blog.id} />
+				<button type="submit">Sync</button>
+			</form>
+			<form method="POST" action="?/delete" use:enhance>
+				<input type="hidden" name="id" value={data.blog.id} />
+				<button type="submit">Delete</button>
+			</form>
+		</div>
+	</div>
 </div>
 
 <style>
@@ -44,5 +60,12 @@
 	.post {
 		display: flex;
 		justify-content: space-between;
+	}
+	.actions {
+		margin-bottom: 1rem;
+	}
+	.buttons {
+		display: flex;
+		gap: 0.5rem;
 	}
 </style>

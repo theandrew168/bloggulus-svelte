@@ -43,11 +43,14 @@ export async function sync(feedUrl: string) {
 	const resp = await fetch(feedUrl, { headers });
 	const text = await resp.text();
 
+	const syncedAt = new Date();
+
 	const etag = resp.headers.get("ETag");
 	const lastModified = resp.headers.get("Last-Modified");
 
 	if (blog) {
 		await updateBlog(blog.id, etag, lastModified);
+		await updateBlogSyncedAt(blog.id, syncedAt);
 	}
 
 	if (resp.status >= 300) {
@@ -62,20 +65,19 @@ export async function sync(feedUrl: string) {
 	const title = feed.title ?? siteUrl;
 
 	if (!blog) {
-		blog = await createBlog({ feedUrl, siteUrl, title, etag, lastModified });
+		blog = await createBlog({ feedUrl, siteUrl, title, syncedAt, etag, lastModified });
 	}
 
 	for (const item of feed.items) {
 		const url = item.link ?? "";
 		const title = item.title ?? "";
 		const updatedAt = item.pubDate ? new Date(item.pubDate) : new Date();
+		const body = item.contentSnippet ?? (await fetchBody(url));
 
 		const post = await readPostByUrl(url);
 		if (!post) {
-			const body = await fetchBody(url);
 			await createPost({ url, title, updatedAt, body, blogId: blog.id });
 		} else if (post.body === null) {
-			const body = await fetchBody(url);
 			await updatePost(post.id, body);
 		}
 	}
@@ -91,7 +93,6 @@ export async function syncAll() {
 			continue;
 		}
 
-		await updateBlogSyncedAt(blog.id, now);
 		await sync(blog.feedUrl);
 	}
 }

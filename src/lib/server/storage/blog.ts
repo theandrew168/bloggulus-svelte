@@ -5,16 +5,24 @@ export type CreateBlogParams = {
 	feedUrl: string;
 	siteUrl: string;
 	title: string;
+	syncedAt: Date;
 	etag: string | null;
 	lastModified: string | null;
 };
 
-export async function createBlog({ feedUrl, siteUrl, title, etag, lastModified }: CreateBlogParams): Promise<Blog> {
+export async function createBlog({
+	feedUrl,
+	siteUrl,
+	title,
+	syncedAt,
+	etag,
+	lastModified,
+}: CreateBlogParams): Promise<Blog> {
 	const created = await sql<Blog[]>`
 		INSERT INTO blog
-			(feed_url, site_url, title, etag, last_modified)
+			(feed_url, site_url, title, synced_at, etag, last_modified)
 		VALUES
-			(${feedUrl}, ${siteUrl}, ${title}, ${etag}, ${lastModified})
+			(${feedUrl}, ${siteUrl}, ${title}, ${syncedAt}, ${etag}, ${lastModified})
 		RETURNING *
 	`;
 	return created[0];
@@ -79,6 +87,14 @@ export async function updateBlogSyncedAt(id: string, syncedAt: Date) {
 	await sql`
 		UPDATE blog
 		SET synced_at = ${syncedAt}
+		WHERE id = ${id}
+	`;
+}
+
+export async function deleteBlogById(id: string) {
+	await sql<Blog[]>`
+		DELETE
+		FROM blog
 		WHERE id = ${id}
 	`;
 }
