@@ -37,6 +37,7 @@ export async function readPostById(id: string): Promise<PostWithBlogAndTags | nu
 			post.url,
 			post.title,
 			post.updated_at,
+			post.body,
 			blog.id AS blog_id,
 			blog.site_url AS blog_url,
 			blog.title AS blog_title,
@@ -47,7 +48,7 @@ export async function readPostById(id: string): Promise<PostWithBlogAndTags | nu
 		LEFT JOIN tag
 			ON to_tsquery(tag.name) @@ post.content_index
 		WHERE post.id = ${id}
-		GROUP BY 1,2,3,4,5,6,7
+		GROUP BY 1,2,3,4,5,6,7,8
 	`;
 	if (posts.length !== 1) {
 		return null;

@@ -9,7 +9,7 @@
 		<a href={data.blog.feedUrl}>(Feed URL)</a>
 	</div>
 	<div class="times">
-		<h2>Synced at:</h2>
+		<h2>Synced</h2>
 		<div>{data.blog.syncedAt.toLocaleString()}</div>
 	</div>
 
