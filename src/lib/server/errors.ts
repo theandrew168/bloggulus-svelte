@@ -1,19 +1,19 @@
 import { error } from "@sveltejs/kit";
 
-export function errorBadRequest() {
-	return error(400, {
+export function errorBadRequest(): never {
+	error(400, {
 		message: "Bad Request",
 	});
 }
 
-export function errorUnauthorized() {
-	return error(401, {
+export function errorUnauthorized(): never {
+	error(401, {
 		message: "Unauthorized",
 	});
 }
 
-export function errorNotFound() {
-	return error(404, {
+export function errorNotFound(): never {
+	error(404, {
 		message: "Not Found",
 	});
 }

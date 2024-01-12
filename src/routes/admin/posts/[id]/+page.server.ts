@@ -7,12 +7,12 @@ import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 export const load: PageServerLoad = async ({ params }) => {
 	const id = params.id;
 	if (!isValidUuid(id)) {
-		throw errorBadRequest();
+		errorBadRequest();
 	}
 
 	const post = await readPostById(id);
 	if (!post) {
-		throw errorNotFound();
+		errorNotFound();
 	}
 	return {
 		post,

@@ -2,7 +2,7 @@ import type { Actions, PageServerLoad } from "./$types";
 
 import { listBlogs } from "$lib/server/storage/blog";
 import { sync } from "$lib/server/sync";
-import { errorBadRequest, errorNotFound } from "$lib/server/errors";
+import { errorBadRequest } from "$lib/server/errors";
 
 export const load: PageServerLoad = async () => {
 	const blogs = await listBlogs();
@@ -16,7 +16,7 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const url = data.get("url");
 		if (!url) {
-			throw errorBadRequest();
+			errorBadRequest();
 		}
 
 		sync(url.toString())

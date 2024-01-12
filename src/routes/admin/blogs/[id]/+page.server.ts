@@ -10,12 +10,12 @@ import { redirect } from "@sveltejs/kit";
 export const load: PageServerLoad = async ({ params }) => {
 	const id = params.id;
 	if (!isValidUuid(id)) {
-		throw errorBadRequest();
+		errorBadRequest();
 	}
 
 	const blog = await readBlogById(id);
 	if (!blog) {
-		throw errorNotFound();
+		errorNotFound();
 	}
 	const posts = await listPostsByBlog(blog.id);
 	return {
@@ -29,12 +29,12 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const id = data.get("id");
 		if (!id) {
-			throw errorBadRequest();
+			errorBadRequest();
 		}
 
 		const blog = await readBlogById(id.toString());
 		if (!blog) {
-			throw errorNotFound();
+			errorNotFound();
 		}
 
 		sync(blog.feedUrl)
@@ -49,15 +49,15 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const id = data.get("id");
 		if (!id) {
-			throw errorBadRequest();
+			errorBadRequest();
 		}
 
 		const blog = await readBlogById(id.toString());
 		if (!blog) {
-			throw errorNotFound();
+			errorNotFound();
 		}
 
 		await deleteBlogById(blog.id);
-		throw redirect(303, "/admin/blogs");
+		redirect(303, "/admin/blogs");
 	},
 };
