@@ -18,8 +18,8 @@
 		"tsx": "^4.7.0"
 	},
 	"devDependencies": {
-		"@flydotio/dockerfile": "^0.4.11",
-		"@sveltejs/adapter-node": "^2.1.1",
+		"@flydotio/dockerfile": "^0.5.0",
+		"@sveltejs/adapter-node": "^3.0.0",
 		"@sveltejs/kit": "^2.3.2",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@types/he": "^1.2.3",
