@@ -26,7 +26,7 @@
 		font-size: 24px;
 		font-weight: 600;
 		margin-top: 1.5rem;
-		margin-bottom: 1rem;
+		margin-bottom: 0.5rem;
 	}
 	.add {
 		margin-bottom: 1rem;

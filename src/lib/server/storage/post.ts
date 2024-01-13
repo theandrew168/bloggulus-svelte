@@ -114,3 +114,11 @@ export async function searchPosts({
 	`;
 	return posts;
 }
+
+export async function deletePostById(id: string) {
+	await sql`
+		DELETE
+		FROM post
+		WHERE id = ${id}
+	`;
+}

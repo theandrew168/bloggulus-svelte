@@ -15,16 +15,6 @@
 		<div>{data.blog.syncedAt.toLocaleString()}</div>
 	</div>
 
-	<div class="posts">
-		<h2>{data.posts.length} Posts</h2>
-		{#each data.posts as post}
-			<div class="post">
-				<a href="/admin/posts/{post.id}">{post.title}</a>
-				<span>{post.updatedAt.toDateString()}</span>
-			</div>
-		{/each}
-	</div>
-
 	<div class="actions">
 		<h2>Actions</h2>
 		<div class="buttons">
@@ -37,6 +27,23 @@
 				<button type="submit">Delete</button>
 			</form>
 		</div>
+	</div>
+
+	<div class="posts">
+		<h2>{data.posts.length} Posts</h2>
+		<div class="add-post">
+			<form method="POST" action="?/addPost" use:enhance>
+				<input type="hidden" name="id" value={data.blog.id} />
+				<input name="url" placeholder="Blog Post URL" />
+				<button type="submit">Add</button>
+			</form>
+		</div>
+		{#each data.posts as post}
+			<div class="post">
+				<a href="/admin/posts/{post.id}">{post.title}</a>
+				<span>{post.updatedAt.toDateString()}</span>
+			</div>
+		{/each}
 	</div>
 </div>
 
@@ -54,18 +61,21 @@
 	.times {
 		margin-bottom: 1rem;
 	}
-	.posts {
-		margin-bottom: 1rem;
-	}
-	.post {
-		display: flex;
-		justify-content: space-between;
-	}
 	.actions {
 		margin-bottom: 1rem;
 	}
 	.buttons {
 		display: flex;
 		gap: 0.5rem;
+	}
+	.posts {
+		margin-bottom: 1rem;
+	}
+	.add-post {
+		margin-bottom: 0.5rem;
+	}
+	.post {
+		display: flex;
+		justify-content: space-between;
 	}
 </style>

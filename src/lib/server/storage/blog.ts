@@ -92,7 +92,7 @@ export async function updateBlogSyncedAt(id: string, syncedAt: Date) {
 }
 
 export async function deleteBlogById(id: string) {
-	await sql<Blog[]>`
+	await sql`
 		DELETE
 		FROM blog
 		WHERE id = ${id}

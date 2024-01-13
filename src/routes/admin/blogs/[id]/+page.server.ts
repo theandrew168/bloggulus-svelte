@@ -2,7 +2,7 @@ import type { Actions, PageServerLoad } from "./$types";
 
 import { isValidUuid } from "$lib/utils";
 import { deleteBlogById, readBlogById } from "$lib/server/storage/blog";
-import { listPostsByBlog } from "$lib/server/storage/post";
+import { createPost, listPostsByBlog } from "$lib/server/storage/post";
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 import { sync } from "$lib/server/sync";
 import { redirect } from "@sveltejs/kit";
@@ -25,6 +25,26 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions: Actions = {
+	addPost: async ({ request }) => {
+		const data = await request.formData();
+
+		const url = data.get("url");
+		if (!url) {
+			errorBadRequest();
+		}
+
+		const id = data.get("id");
+		if (!id) {
+			errorBadRequest();
+		}
+
+		const blog = await readBlogById(id.toString());
+		if (!blog) {
+			errorNotFound();
+		}
+
+		console.log(id, url);
+	},
 	sync: async ({ request }) => {
 		const data = await request.formData();
 		const id = data.get("id");

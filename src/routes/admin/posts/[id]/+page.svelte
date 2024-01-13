@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
+
 	export let data;
 
 	const body = data.post.body ?? "<empty>";
@@ -13,6 +15,15 @@
 	<div class="times">
 		<h2>Updated</h2>
 		<div>{data.post.updatedAt.toLocaleString()}</div>
+	</div>
+	<div class="actions">
+		<h2>Actions</h2>
+		<div class="buttons">
+			<form method="POST" action="?/delete" use:enhance>
+				<input type="hidden" name="id" value={data.post.id} />
+				<button type="submit">Delete</button>
+			</form>
+		</div>
 	</div>
 	<div class="tags">
 		<h2>{data.post.tags.length} Tag(s)</h2>
@@ -39,6 +50,13 @@
 	}
 	.times {
 		margin-bottom: 1rem;
+	}
+	.actions {
+		margin-bottom: 1rem;
+	}
+	.buttons {
+		display: flex;
+		gap: 0.5rem;
 	}
 	.tags {
 		margin-bottom: 1rem;
