@@ -1,4 +1,4 @@
-import * as _ from "lodash";
+import _ from "lodash";
 
 import type { Blog } from "$lib/types";
 import sql from "./db";
