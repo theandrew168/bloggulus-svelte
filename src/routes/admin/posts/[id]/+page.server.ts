@@ -2,7 +2,7 @@ import { redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 
 import { isValidUuid } from "$lib/utils";
-import { deletePostById, readPostById } from "$lib/server/storage/post";
+import { deletePost, readPostById } from "$lib/server/storage/post";
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -33,7 +33,7 @@ export const actions: Actions = {
 			errorNotFound();
 		}
 
-		await deletePostById(post.id);
+		await deletePost(post);
 		redirect(303, `/admin/blogs/${post.blogId}`);
 	},
 };

@@ -33,6 +33,6 @@ export const actions: Actions = {
 			throw errorNotFound();
 		}
 
-		await deleteTag(tag.id);
+		await deleteTag(tag);
 	},
 };

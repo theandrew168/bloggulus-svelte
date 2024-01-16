@@ -1,8 +1,8 @@
 import type { Actions, PageServerLoad } from "./$types";
 
 import { isValidUuid } from "$lib/utils";
-import { deleteBlogById, readBlogById } from "$lib/server/storage/blog";
-import { createPost, listPostsByBlog } from "$lib/server/storage/post";
+import { deleteBlog, readBlogById } from "$lib/server/storage/blog";
+import { listPostsByBlog } from "$lib/server/storage/post";
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 import { sync } from "$lib/server/sync";
 import { redirect } from "@sveltejs/kit";
@@ -77,7 +77,7 @@ export const actions: Actions = {
 			errorNotFound();
 		}
 
-		await deleteBlogById(blog.id);
+		await deleteBlog(blog);
 		redirect(303, "/admin/blogs");
 	},
 };

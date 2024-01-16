@@ -37,10 +37,10 @@ export async function readTagById(id: string): Promise<Tag | null> {
 	return tags[0];
 }
 
-export async function deleteTag(id: string) {
+export async function deleteTag(tag: Tag) {
 	await sql`
 		DELETE
 		FROM tag
-		WHERE id = ${id}
+		WHERE id = ${tag.id}
 	`;
 }

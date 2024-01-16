@@ -1,3 +1,4 @@
+import * as _ from "lodash";
 import { expect, test } from "vitest";
 import { faker } from "@faker-js/faker";
 
@@ -7,9 +8,8 @@ import {
 	type CreateBlogParams,
 	readBlogById,
 	readBlogByFeedUrl,
-	deleteBlogById,
+	deleteBlog,
 	updateBlog,
-	updateBlogSyncedAt,
 } from "./blog";
 import { isValidUuid } from "$lib/utils";
 
@@ -29,7 +29,7 @@ test("createBlog", async () => {
 	const params = generateFakeBlog();
 	const blog = await createBlog(params);
 	expect(isValidUuid(blog.id)).toEqual(true);
-	expect(blog.feedUrl).toEqual(params.feedUrl);
+	expect(_.omit(blog, "id")).toEqual(params);
 });
 
 test("listBlogs", async () => {
@@ -63,27 +63,19 @@ test("readBlogByFeedUrl", async () => {
 test("updateBlog", async () => {
 	const params = generateFakeBlog();
 	const blog = await createBlog(params);
-	await updateBlog(blog.id, "foo", "bar");
+
+	const updates = generateFakeBlog();
+	await updateBlog(blog, updates);
+
 	const got = await readBlogById(blog.id);
 	expect(got?.id).toEqual(blog.id);
-	expect(got?.etag).toEqual("foo");
-	expect(got?.lastModified).toEqual("bar");
+	expect(_.omit(got, "id")).toEqual(updates);
 });
 
-test("updateBlogSyncedAt", async () => {
+test("deleteBlog", async () => {
 	const params = generateFakeBlog();
 	const blog = await createBlog(params);
-	const syncedAt = faker.date.past();
-	await updateBlogSyncedAt(blog.id, syncedAt);
-	const got = await readBlogById(blog.id);
-	expect(got?.id).toEqual(blog.id);
-	expect(got?.syncedAt).toEqual(syncedAt);
-});
-
-test("deleteBlogById", async () => {
-	const params = generateFakeBlog();
-	const blog = await createBlog(params);
-	await deleteBlogById(blog.id);
+	await deleteBlog(blog);
 	const got = await readBlogById(blog.id);
 	expect(got).toBeNull;
 });

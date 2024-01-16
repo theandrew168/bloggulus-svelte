@@ -1,7 +1,7 @@
 import Parser from "rss-parser";
 import he from "he";
 
-import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog, updateBlogSyncedAt } from "./storage/blog";
+import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog } from "./storage/blog";
 import { createPost, readPostByUrl, updatePost } from "./storage/post";
 
 function sanitize(html: string): string {
@@ -49,8 +49,7 @@ export async function sync(feedUrl: string) {
 	const lastModified = resp.headers.get("Last-Modified");
 
 	if (blog) {
-		await updateBlog(blog.id, etag, lastModified);
-		await updateBlogSyncedAt(blog.id, syncedAt);
+		await updateBlog(blog, { syncedAt, etag, lastModified });
 	}
 
 	if (resp.status >= 300) {

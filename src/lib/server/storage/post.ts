@@ -9,6 +9,12 @@ export type CreatePostParams = {
 	blogId: string;
 };
 
+export type SearchPostsParams = {
+	search?: string;
+	limit?: number;
+	offset?: number;
+};
+
 export async function createPost({ url, title, updatedAt, body, blogId }: CreatePostParams): Promise<Post> {
 	const created = await sql<Post[]>`
 		INSERT INTO post
@@ -76,12 +82,6 @@ export async function updatePost(id: string, body: string | null) {
 	`;
 }
 
-export type SearchPostsParams = {
-	search?: string;
-	limit?: number;
-	offset?: number;
-};
-
 export async function searchPosts({
 	search,
 	limit = 15,
@@ -115,10 +115,10 @@ export async function searchPosts({
 	return posts;
 }
 
-export async function deletePostById(id: string) {
+export async function deletePost(post: Post) {
 	await sql`
 		DELETE
 		FROM post
-		WHERE id = ${id}
+		WHERE id = ${post.id}
 	`;
 }

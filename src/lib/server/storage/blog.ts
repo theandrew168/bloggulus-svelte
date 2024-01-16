@@ -1,3 +1,5 @@
+import * as _ from "lodash";
+
 import type { Blog } from "$lib/types";
 import sql from "./db";
 
@@ -9,6 +11,8 @@ export type CreateBlogParams = {
 	etag: string | null;
 	lastModified: string | null;
 };
+
+export type UpdateBlogParams = Partial<CreateBlogParams>;
 
 export async function createBlog({
 	feedUrl,
@@ -60,41 +64,26 @@ export async function readBlogByFeedUrl(feedUrl: string): Promise<Blog | null> {
 	return blogs[0];
 }
 
-/**
- * TODO: Make this API better / more universal (update anything given an ID)
- */
-export async function updateBlog(id: string, etag: string | null, lastModified: string | null) {
-	if (etag) {
-		await sql`
-			UPDATE blog
-			SET etag = ${etag}
-			WHERE id = ${id}
-		`;
-	}
-	if (lastModified) {
-		await sql`
-			UPDATE blog
-			SET last_modified = ${lastModified}
-			WHERE id = ${id}
-		`;
-	}
-}
-
-/**
- * TODO: Make this API better / more universal (update anything given an ID)
- */
-export async function updateBlogSyncedAt(id: string, syncedAt: Date) {
+export async function updateBlog(blog: Blog, params: UpdateBlogParams) {
+	// clone params here because defaults mutates the dest object
+	const resolved = _.defaults(_.clone(params), blog);
 	await sql`
 		UPDATE blog
-		SET synced_at = ${syncedAt}
-		WHERE id = ${id}
+		SET
+			feed_url = ${resolved.feedUrl},
+			site_url = ${resolved.siteUrl},
+			title = ${resolved.title},
+			synced_at = ${resolved.syncedAt},
+			etag = ${resolved.etag},
+			last_modified = ${resolved.lastModified}
+		WHERE id = ${blog.id}
 	`;
 }
 
-export async function deleteBlogById(id: string) {
+export async function deleteBlog(blog: Blog) {
 	await sql`
 		DELETE
 		FROM blog
-		WHERE id = ${id}
+		WHERE id = ${blog.id}
 	`;
 }
