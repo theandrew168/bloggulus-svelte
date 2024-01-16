@@ -6,9 +6,9 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"start": "tsx ./scripts/migrate.ts && node ./build/",
 		"migrate": "tsx ./scripts/migrate.ts",
-		"test": "vitest run",
+		"start": "tsx ./scripts/migrate.ts && node ./build/",
+		"test": "tsx ./scripts/migrate.ts && vitest run",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"format": "prettier --write ."
 	},
@@ -19,6 +19,7 @@
 		"tsx": "^4.7.0"
 	},
 	"devDependencies": {
+		"@faker-js/faker": "^8.3.1",
 		"@flydotio/dockerfile": "^0.5.0",
 		"@sveltejs/adapter-node": "^3.0.0",
 		"@sveltejs/kit": "^2.3.2",
