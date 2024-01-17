@@ -61,13 +61,7 @@ export async function updateBlog(blog: Blog, params: UpdateBlogParams) {
 	const resolved = _.defaults(_.clone(params), blog);
 	await sql`
 		UPDATE blog
-		SET
-			feed_url = ${resolved.feedUrl},
-			site_url = ${resolved.siteUrl},
-			title = ${resolved.title},
-			synced_at = ${resolved.syncedAt},
-			etag = ${resolved.etag},
-			last_modified = ${resolved.lastModified}
+		SET ${sql(resolved, "feedUrl", "siteUrl", "title", "syncedAt", "etag", "lastModified")}
 		WHERE id = ${blog.id}
 	`;
 }

@@ -82,11 +82,7 @@ export async function updatePost(post: Post, params: UpdatePostParams) {
 	const resolved = _.defaults(_.clone(params), post);
 	await sql`
 		UPDATE post
-		SET
-			url = ${resolved.url},
-			title = ${resolved.title},
-			updated_at = ${resolved.updatedAt},
-			body = ${resolved.body}
+		SET ${sql(resolved, "url", "title", "updatedAt", "body")}
 		WHERE id = ${post.id}
 	`;
 }
@@ -102,6 +98,7 @@ export async function searchPosts({
 			post.url,
 			post.title,
 			post.updated_at,
+			post.body,
 			blog.id AS blog_id,
 			blog.site_url AS blog_url,
 			blog.title AS blog_title,
@@ -112,7 +109,7 @@ export async function searchPosts({
 		LEFT JOIN tag
 			ON to_tsquery(tag.name) @@ post.content_index
 		${search ? sql`WHERE post.content_index @@ websearch_to_tsquery('english',  ${search})` : sql``}
-		GROUP BY 1,2,3,4,5,6,7
+		GROUP BY 1,2,3,4,5,6,7,8
 		ORDER BY ${
 			search
 				? sql`ts_rank_cd(post.content_index, websearch_to_tsquery('english',  ${search})) DESC`

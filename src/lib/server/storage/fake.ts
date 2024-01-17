@@ -29,7 +29,7 @@ export function generateFakePost(blogId: string): CreatePostParams {
 
 export function generateFakeTag(): CreateTagParams {
 	const params: CreateTagParams = {
-		name: faker.lorem.word(),
+		name: faker.string.alphanumeric(10),
 	};
 	return params;
 }
