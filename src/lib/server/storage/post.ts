@@ -19,32 +19,19 @@ export type SearchPostsParams = {
 	offset?: number;
 };
 
-export async function createPost({ url, title, updatedAt, body, blogId }: CreatePostParams): Promise<Post> {
+const columns = ["id", "url", "title", "updated_at", "body", "blog_id"];
+
+export async function createPost(params: CreatePostParams): Promise<Post> {
 	const created = await sql<Post[]>`
-		INSERT INTO post
-			(url, title, updated_at, body, blog_id)
-		VALUES
-			(${url}, ${title}, ${updatedAt}, ${body}, ${blogId})
-		RETURNING
-			id,
-			url,
-			title,
-			updated_at,
-			body,
-			blog_id
+		INSERT INTO post ${sql(params)}
+		RETURNING ${sql(columns)}
 	`;
 	return created[0];
 }
 
 export async function listPostsByBlog(blogId: string): Promise<Post[]> {
 	const posts = await sql<Post[]>`
-		SELECT
-			id,
-			url,
-			title,
-			updated_at,
-			body,
-			blog_id
+		SELECT ${sql(columns)}
 		FROM post
 		WHERE blog_id = ${blogId}
 		ORDER BY updated_at DESC
@@ -80,13 +67,7 @@ export async function readPostById(id: string): Promise<PostWithBlogAndTags | nu
 
 export async function readPostByUrl(url: string): Promise<Post | null> {
 	const posts = await sql<Post[]>`
-		SELECT
-			id,
-			url,
-			title,
-			updated_at,
-			body,
-			blog_id
+		SELECT ${sql(columns)}
 		FROM post
 		WHERE url = ${url}
 	`;

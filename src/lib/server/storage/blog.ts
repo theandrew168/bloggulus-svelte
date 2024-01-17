@@ -14,41 +14,19 @@ export type CreateBlogParams = {
 
 export type UpdateBlogParams = Partial<CreateBlogParams>;
 
-export async function createBlog({
-	feedUrl,
-	siteUrl,
-	title,
-	syncedAt,
-	etag,
-	lastModified,
-}: CreateBlogParams): Promise<Blog> {
+const columns = ["id", "feed_url", "site_url", "title", "synced_at", "etag", "last_modified"];
+
+export async function createBlog(params: CreateBlogParams): Promise<Blog> {
 	const created = await sql<Blog[]>`
-		INSERT INTO blog
-			(feed_url, site_url, title, synced_at, etag, last_modified)
-		VALUES
-			(${feedUrl}, ${siteUrl}, ${title}, ${syncedAt}, ${etag}, ${lastModified})
-		RETURNING
-			id,
-			feed_url,
-			site_url,
-			title,
-			synced_at,
-			etag,
-			last_modified
+		INSERT INTO blog ${sql(params)}
+		RETURNING ${sql(columns)}
 	`;
 	return created[0];
 }
 
 export async function listBlogs(): Promise<Blog[]> {
 	const blogs = await sql<Blog[]>`
-		SELECT
-			id,
-			feed_url,
-			site_url,
-			title,
-			synced_at,
-			etag,
-			last_modified
+		SELECT ${sql(columns)}
 		FROM blog
 	`;
 	return blogs;
@@ -56,14 +34,7 @@ export async function listBlogs(): Promise<Blog[]> {
 
 export async function readBlogById(id: string): Promise<Blog | null> {
 	const blogs = await sql<Blog[]>`
-		SELECT
-			id,
-			feed_url,
-			site_url,
-			title,
-			synced_at,
-			etag,
-			last_modified
+		SELECT ${sql(columns)}
 		FROM blog
 		WHERE id = ${id}
 	`;
@@ -75,14 +46,7 @@ export async function readBlogById(id: string): Promise<Blog | null> {
 
 export async function readBlogByFeedUrl(feedUrl: string): Promise<Blog | null> {
 	const blogs = await sql<Blog[]>`
-		SELECT
-			id,
-			feed_url,
-			site_url,
-			title,
-			synced_at,
-			etag,
-			last_modified
+		SELECT ${sql(columns)}
 		FROM blog
 		WHERE feed_url = ${feedUrl}
 	`;

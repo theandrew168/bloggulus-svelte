@@ -5,24 +5,19 @@ export type CreateTagParams = {
 	name: string;
 };
 
-export async function createTag({ name }: CreateTagParams): Promise<Tag> {
+const columns = ["id", "name"];
+
+export async function createTag(params: CreateTagParams): Promise<Tag> {
 	const created = await sql<Tag[]>`
-		INSERT INTO tag
-			(name)
-		VALUES
-			(${name})
-		RETURNING
-			id,
-			name
+		INSERT INTO tag ${sql(params)}
+		RETURNING ${sql(columns)}
 	`;
 	return created[0];
 }
 
 export async function listTags(): Promise<Tag[]> {
 	const tags = await sql<Tag[]>`
-		SELECT
-			id,
-			name
+		SELECT ${sql(columns)}
 		FROM tag
 		ORDER BY name ASC
 	`;
@@ -31,9 +26,7 @@ export async function listTags(): Promise<Tag[]> {
 
 export async function readTagById(id: string): Promise<Tag | null> {
 	const tags = await sql<Tag[]>`
-		SELECT
-			id,
-			name
+		SELECT ${sql(columns)}
 		FROM tag
 		WHERE id = ${id}
 	`;
