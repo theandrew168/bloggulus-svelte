@@ -1,29 +1,9 @@
 import _ from "lodash";
 import { expect, test } from "vitest";
-import { faker } from "@faker-js/faker";
 
-import {
-	createBlog,
-	listBlogs,
-	type CreateBlogParams,
-	readBlogById,
-	readBlogByFeedUrl,
-	deleteBlog,
-	updateBlog,
-} from "./blog";
 import { isValidUuid } from "$lib/utils";
-
-function generateFakeBlog(): CreateBlogParams {
-	const params: CreateBlogParams = {
-		feedUrl: faker.internet.url(),
-		siteUrl: faker.internet.url(),
-		title: faker.lorem.words(),
-		syncedAt: faker.date.past(),
-		etag: faker.lorem.words(),
-		lastModified: faker.lorem.words(),
-	};
-	return params;
-}
+import { createBlog, listBlogs, readBlogById, readBlogByFeedUrl, deleteBlog, updateBlog } from "./blog";
+import { generateFakeBlog } from "./fake";
 
 test("createBlog", async () => {
 	const params = generateFakeBlog();

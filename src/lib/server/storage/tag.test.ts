@@ -1,16 +1,9 @@
 import _ from "lodash";
 import { expect, test } from "vitest";
-import { faker } from "@faker-js/faker";
 
-import { createTag, listTags, type CreateTagParams, readTagById, deleteTag } from "./tag";
 import { isValidUuid } from "$lib/utils";
-
-function generateFakeTag(): CreateTagParams {
-	const params: CreateTagParams = {
-		name: faker.lorem.word(),
-	};
-	return params;
-}
+import { createTag, listTags, readTagById, deleteTag } from "./tag";
+import { generateFakeTag } from "./fake";
 
 test("createTag", async () => {
 	const params = generateFakeTag();

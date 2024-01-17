@@ -1,3 +1,5 @@
+import _ from "lodash";
+
 import type { Post, PostWithBlogAndTags } from "$lib/types";
 import sql from "./db";
 
@@ -8,6 +10,8 @@ export type CreatePostParams = {
 	body: string | null;
 	blogId: string;
 };
+
+export type UpdatePostParams = Partial<CreatePostParams>;
 
 export type SearchPostsParams = {
 	search?: string;
@@ -21,14 +25,26 @@ export async function createPost({ url, title, updatedAt, body, blogId }: Create
 			(url, title, updated_at, body, blog_id)
 		VALUES
 			(${url}, ${title}, ${updatedAt}, ${body}, ${blogId})
-		RETURNING *
+		RETURNING
+			id,
+			url,
+			title,
+			updated_at,
+			body,
+			blog_id
 	`;
 	return created[0];
 }
 
 export async function listPostsByBlog(blogId: string): Promise<Post[]> {
 	const posts = await sql<Post[]>`
-		SELECT *
+		SELECT
+			id,
+			url,
+			title,
+			updated_at,
+			body,
+			blog_id
 		FROM post
 		WHERE blog_id = ${blogId}
 		ORDER BY updated_at DESC
@@ -64,7 +80,13 @@ export async function readPostById(id: string): Promise<PostWithBlogAndTags | nu
 
 export async function readPostByUrl(url: string): Promise<Post | null> {
 	const posts = await sql<Post[]>`
-		SELECT *
+		SELECT
+			id,
+			url,
+			title,
+			updated_at,
+			body,
+			blog_id
 		FROM post
 		WHERE url = ${url}
 	`;
@@ -74,11 +96,17 @@ export async function readPostByUrl(url: string): Promise<Post | null> {
 	return posts[0];
 }
 
-export async function updatePost(id: string, body: string | null) {
+export async function updatePost(post: Post, params: UpdatePostParams) {
+	// clone params here because defaults mutates the dest object
+	const resolved = _.defaults(_.clone(params), post);
 	await sql`
 		UPDATE post
-		SET body = ${body}
-		WHERE id = ${id}
+		SET
+			url = ${resolved.url},
+			title = ${resolved.title},
+			updated_at = ${resolved.updatedAt},
+			body = ${resolved.body}
+		WHERE id = ${post.id}
 	`;
 }
 

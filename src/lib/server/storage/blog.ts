@@ -27,14 +27,28 @@ export async function createBlog({
 			(feed_url, site_url, title, synced_at, etag, last_modified)
 		VALUES
 			(${feedUrl}, ${siteUrl}, ${title}, ${syncedAt}, ${etag}, ${lastModified})
-		RETURNING *
+		RETURNING
+			id,
+			feed_url,
+			site_url,
+			title,
+			synced_at,
+			etag,
+			last_modified
 	`;
 	return created[0];
 }
 
 export async function listBlogs(): Promise<Blog[]> {
 	const blogs = await sql<Blog[]>`
-		SELECT *
+		SELECT
+			id,
+			feed_url,
+			site_url,
+			title,
+			synced_at,
+			etag,
+			last_modified
 		FROM blog
 	`;
 	return blogs;
@@ -42,7 +56,14 @@ export async function listBlogs(): Promise<Blog[]> {
 
 export async function readBlogById(id: string): Promise<Blog | null> {
 	const blogs = await sql<Blog[]>`
-		SELECT *
+		SELECT
+			id,
+			feed_url,
+			site_url,
+			title,
+			synced_at,
+			etag,
+			last_modified
 		FROM blog
 		WHERE id = ${id}
 	`;
@@ -54,7 +75,14 @@ export async function readBlogById(id: string): Promise<Blog | null> {
 
 export async function readBlogByFeedUrl(feedUrl: string): Promise<Blog | null> {
 	const blogs = await sql<Blog[]>`
-		SELECT *
+		SELECT
+			id,
+			feed_url,
+			site_url,
+			title,
+			synced_at,
+			etag,
+			last_modified
 		FROM blog
 		WHERE feed_url = ${feedUrl}
 	`;

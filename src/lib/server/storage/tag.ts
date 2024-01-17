@@ -11,14 +11,18 @@ export async function createTag({ name }: CreateTagParams): Promise<Tag> {
 			(name)
 		VALUES
 			(${name})
-		RETURNING *
+		RETURNING
+			id,
+			name
 	`;
 	return created[0];
 }
 
 export async function listTags(): Promise<Tag[]> {
 	const tags = await sql<Tag[]>`
-		SELECT *
+		SELECT
+			id,
+			name
 		FROM tag
 		ORDER BY name ASC
 	`;
@@ -27,7 +31,9 @@ export async function listTags(): Promise<Tag[]> {
 
 export async function readTagById(id: string): Promise<Tag | null> {
 	const tags = await sql<Tag[]>`
-		SELECT *
+		SELECT
+			id,
+			name
 		FROM tag
 		WHERE id = ${id}
 	`;

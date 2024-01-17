@@ -77,7 +77,7 @@ export async function sync(feedUrl: string) {
 		if (!post) {
 			await createPost({ url, title, updatedAt, body, blogId: blog.id });
 		} else if (post.body === null) {
-			await updatePost(post.id, body);
+			await updatePost(post, { body });
 		}
 	}
 }
