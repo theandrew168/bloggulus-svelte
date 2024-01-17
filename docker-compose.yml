@@ -1,7 +1,7 @@
 version: "3.1"
 
 services:
-  postgres:
+  db:
     image: postgres
     ports:
       - "5432:5432"
@@ -9,6 +9,16 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
+  testdb:
+    image: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
   adminer:
     image: adminer
     ports:
