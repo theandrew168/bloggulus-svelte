@@ -1,8 +1,8 @@
-import { beforeAll, expect, test } from "vitest";
+import { afterAll, expect, test } from "vitest";
 
 import sql from "./db";
 
-beforeAll(async () => {
+afterAll(async () => {
 	await sql`DELETE FROM tag`;
 	await sql`DELETE FROM post`;
 	await sql`DELETE FROM blog`;
