@@ -3,6 +3,7 @@ import he from "he";
 
 import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog } from "./storage/blog";
 import { createPost, readPostByUrl, updatePost } from "./storage/post";
+import type { Blog } from "$lib/types";
 
 export function sanitize(html: string): string {
 	const exprs = [/<head>.*?<\/head>/gs, /<nav>.*?<\/nav>/gs, /<code>.*?<\/code>/gs, /<pre>.*?<\/pre>/gs, /<[^>]*>/gs];
@@ -29,6 +30,26 @@ export async function fetchBody(url: string): Promise<string | null> {
 }
 
 /**
+ * Start with the current time and a list of all known blogs. For each blog,
+ * compare its syncedAt time to the current time. If the difference is an hour
+ * or larger, sync the blog. Otherwise, skip syncing it.
+ */
+export async function syncAllBlogs() {
+	const now = new Date();
+
+	const blogs = await listBlogs();
+	for (const blog of blogs) {
+		const delta = (now.getTime() - blog.syncedAt.getTime()) / 1000;
+		if (delta < 3600) {
+			console.log("recently synced: ", blog.title);
+			continue;
+		}
+
+		await syncBlog(blog.feedUrl);
+	}
+}
+
+/**
  * Start with the URL for a given RSS/Atom feed (this URL uniquely identifies
  * a blog). Check the database to see if we already know about this blog.
  * If we do AND we have an existing etag / lastModified, add them to a headers
@@ -49,9 +70,39 @@ export async function fetchBody(url: string): Promise<string | null> {
  * update the post to include the body. Otherwise, create a new post.
  */
 export async function syncBlog(feedUrl: string) {
-	console.log("syncing: ", feedUrl);
+	console.log("syncing:", feedUrl);
 
 	let blog = await readBlogByFeedUrl(feedUrl);
+	if (!blog) {
+		await syncNewBlog(feedUrl);
+	} else {
+		await syncExistingBlog(blog);
+	}
+}
+
+async function syncNewBlog(feedUrl: string) {
+	const resp = await fetch(feedUrl);
+	const text = await resp.text();
+
+	const syncedAt = new Date();
+	const etag = resp.headers.get("ETag");
+	const lastModified = resp.headers.get("Last-Modified");
+
+	const parser = new Parser();
+	const feed = await parser.parseString(text);
+
+	const siteUrl = feed.link ?? feedUrl;
+	const title = feed.title ?? siteUrl;
+
+	const blog = await createBlog({ feedUrl, siteUrl, title, syncedAt, etag, lastModified });
+
+	for (const item of feed.items) {
+		await syncPost(blog, item);
+	}
+}
+
+async function syncExistingBlog(blog: Blog) {
+	const feedUrl = blog.feedUrl;
 
 	const headers = new Headers();
 	if (blog?.etag) {
@@ -60,17 +111,15 @@ export async function syncBlog(feedUrl: string) {
 	if (blog?.lastModified) {
 		headers.set("If-Modified-Since", blog.lastModified);
 	}
+
 	const resp = await fetch(feedUrl, { headers });
 	const text = await resp.text();
 
 	const syncedAt = new Date();
-
 	const etag = resp.headers.get("ETag");
 	const lastModified = resp.headers.get("Last-Modified");
 
-	if (blog) {
-		await updateBlog(blog, { syncedAt, etag, lastModified });
-	}
+	await updateBlog(blog, { syncedAt, etag, lastModified });
 
 	if (resp.status >= 300) {
 		console.log("No changes!");
@@ -80,44 +129,21 @@ export async function syncBlog(feedUrl: string) {
 	const parser = new Parser();
 	const feed = await parser.parseString(text);
 
-	const siteUrl = feed.link ?? feedUrl;
-	const title = feed.title ?? siteUrl;
-
-	if (!blog) {
-		blog = await createBlog({ feedUrl, siteUrl, title, syncedAt, etag, lastModified });
-	}
-
 	for (const item of feed.items) {
-		const url = item.link ?? "";
-		const title = item.title ?? "";
-		const updatedAt = item.pubDate ? new Date(item.pubDate) : new Date();
-		const body = item.contentSnippet ?? (await fetchBody(url));
-
-		const post = await readPostByUrl(url);
-		if (!post) {
-			await createPost({ url, title, updatedAt, body, blogId: blog.id });
-		} else if (post.body === null) {
-			await updatePost(post, { body });
-		}
+		await syncPost(blog, item);
 	}
 }
 
-/**
- * Start with the current time and a list of all known blogs. For each blog,
- * compare its syncedAt time to the current time. If the difference is an hour
- * or larger, sync the blog. Otherwise, skip syncing it.
- */
-export async function syncAllBlogs() {
-	const now = new Date();
+async function syncPost(blog: Blog, item: Parser.Item) {
+	const url = item.link ?? "";
+	const title = item.title ?? "";
+	const updatedAt = item.pubDate ? new Date(item.pubDate) : new Date();
+	const body = item.contentSnippet ?? (await fetchBody(url));
 
-	const blogs = await listBlogs();
-	for (const blog of blogs) {
-		const delta = (now.getTime() - blog.syncedAt.getTime()) / 1000;
-		if (delta < 3600) {
-			console.log("recently synced: ", blog.title);
-			continue;
-		}
-
-		await syncBlog(blog.feedUrl);
+	const post = await readPostByUrl(url);
+	if (!post) {
+		await createPost({ url, title, updatedAt, body, blogId: blog.id });
+	} else if (post.body === null) {
+		await updatePost(post, { body });
 	}
 }

@@ -1,4 +1,5 @@
 import { expect, test, vi } from "vitest";
+
 import { fetchBody, sanitize } from "./sync";
 
 const fetch = vi.fn();

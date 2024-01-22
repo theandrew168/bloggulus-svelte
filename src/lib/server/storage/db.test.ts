@@ -1,12 +1,6 @@
-import { afterAll, expect, test } from "vitest";
+import { expect, test } from "vitest";
 
 import sql from "./db";
-
-afterAll(async () => {
-	await sql`DELETE FROM tag`;
-	await sql`DELETE FROM post`;
-	await sql`DELETE FROM blog`;
-});
 
 test("sql", async () => {
 	const result = await sql`SELECT 1`;
