@@ -4,7 +4,7 @@ import { isValidUuid } from "$lib/utils";
 import { deleteBlog, readBlogById } from "$lib/server/storage/blog";
 import { listPostsByBlog } from "$lib/server/storage/post";
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
-import { sync } from "$lib/server/sync";
+import { syncBlog } from "$lib/server/sync";
 import { redirect } from "@sveltejs/kit";
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -57,7 +57,7 @@ export const actions: Actions = {
 			errorNotFound();
 		}
 
-		sync(blog.feedUrl)
+		syncBlog(blog.feedUrl)
 			.then(() => {
 				console.log("sync success");
 			})

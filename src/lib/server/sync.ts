@@ -48,7 +48,7 @@ export async function fetchBody(url: string): Promise<string | null> {
  * know about this post (via its URL). If we do but don't have a body stored,
  * update the post to include the body. Otherwise, create a new post.
  */
-export async function sync(feedUrl: string) {
+export async function syncBlog(feedUrl: string) {
 	console.log("syncing: ", feedUrl);
 
 	let blog = await readBlogByFeedUrl(feedUrl);
@@ -107,7 +107,7 @@ export async function sync(feedUrl: string) {
  * compare its syncedAt time to the current time. If the difference is an hour
  * or larger, sync the blog. Otherwise, skip syncing it.
  */
-export async function syncAll() {
+export async function syncAllBlogs() {
 	const now = new Date();
 
 	const blogs = await listBlogs();
@@ -118,6 +118,6 @@ export async function syncAll() {
 			continue;
 		}
 
-		await sync(blog.feedUrl);
+		await syncBlog(blog.feedUrl);
 	}
 }

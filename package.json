@@ -9,7 +9,7 @@
 		"migrate": "tsx ./scripts/migrate.ts",
 		"start": "tsx ./scripts/migrate.ts && node ./build/",
 		"test": "tsx ./scripts/migrate.ts && vitest run",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check": "tsc && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"format": "prettier --write ."
 	},
 	"dependencies": {
