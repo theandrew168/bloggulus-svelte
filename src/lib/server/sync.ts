@@ -4,7 +4,7 @@ import he from "he";
 import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog } from "./storage/blog";
 import { createPost, readPostByUrl, updatePost } from "./storage/post";
 
-function sanitize(html: string): string {
+export function sanitize(html: string): string {
 	const exprs = [/<head>.*?<\/head>/gs, /<nav>.*?<\/nav>/gs, /<code>.*?<\/code>/gs, /<pre>.*?<\/pre>/gs, /<[^>]*>/gs];
 
 	let text = html;
@@ -16,7 +16,7 @@ function sanitize(html: string): string {
 	return text;
 }
 
-async function fetchBody(url: string): Promise<string | null> {
+export async function fetchBody(url: string): Promise<string | null> {
 	try {
 		const resp = await fetch(url);
 		const html = await resp.text();
@@ -28,6 +28,26 @@ async function fetchBody(url: string): Promise<string | null> {
 	}
 }
 
+/**
+ * Start with the URL for a given RSS/Atom feed (this URL uniquely identifies
+ * a blog). Check the database to see if we already know about this blog.
+ * If we do AND we have an existing etag / lastModified, add them to a headers
+ * object. Make a fetch request using the URL and headers to get a test response
+ * from the feed's server. Check for ETag/Last-Modified headers and update the DB
+ * if the blog does already exist.
+ *
+ * If the server response with a 3xx status, then there are no new changes since
+ * we last checked. The flow stops here.
+ *
+ * Otherwise, parse the response as an RSS/Atom feed. Grab the blog's base URL
+ * and title from the feed. Create the blog if it doesn't already exist.
+ *
+ * For each post, grab its metadata from the feed. If the content is provided
+ * via the feed, use that for body indexing. Otherwise, fetch the page directly
+ * and strip the HTML tags out (via the sanitize helper). Check if we already
+ * know about this post (via its URL). If we do but don't have a body stored,
+ * update the post to include the body. Otherwise, create a new post.
+ */
 export async function sync(feedUrl: string) {
 	console.log("syncing: ", feedUrl);
 
@@ -82,10 +102,16 @@ export async function sync(feedUrl: string) {
 	}
 }
 
+/**
+ * Start with the current time and a list of all known blogs. For each blog,
+ * compare its syncedAt time to the current time. If the difference is an hour
+ * or larger, sync the blog. Otherwise, skip syncing it.
+ */
 export async function syncAll() {
+	const now = new Date();
+
 	const blogs = await listBlogs();
 	for (const blog of blogs) {
-		const now = new Date();
 		const delta = (now.getTime() - blog.syncedAt.getTime()) / 1000;
 		if (delta < 3600) {
 			console.log("recently synced: ", blog.title);
