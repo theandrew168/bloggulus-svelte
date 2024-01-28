@@ -1,11 +1,11 @@
+import { redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 
 import { isValidUuid } from "$lib/utils";
 import { deleteBlog, readBlogById } from "$lib/server/storage/blog";
 import { listPostsByBlog } from "$lib/server/storage/post";
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
-import { syncBlog } from "$lib/server/sync";
-import { redirect } from "@sveltejs/kit";
+import { SyncService } from "$lib/server/sync";
 
 export const load: PageServerLoad = async ({ params }) => {
 	const id = params.id;
@@ -57,7 +57,9 @@ export const actions: Actions = {
 			errorNotFound();
 		}
 
-		syncBlog(blog.feedUrl)
+		const syncService = new SyncService();
+		syncService
+			.syncBlog(blog.feedUrl)
 			.then(() => {
 				console.log("sync success");
 			})

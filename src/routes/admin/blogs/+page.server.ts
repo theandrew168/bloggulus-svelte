@@ -1,7 +1,7 @@
 import type { Actions, PageServerLoad } from "./$types";
 
 import { listBlogs } from "$lib/server/storage/blog";
-import { syncBlog } from "$lib/server/sync";
+import { SyncService } from "$lib/server/sync";
 import { errorBadRequest } from "$lib/server/errors";
 
 export const load: PageServerLoad = async () => {
@@ -19,7 +19,9 @@ export const actions: Actions = {
 			errorBadRequest();
 		}
 
-		syncBlog(url.toString())
+		const syncService = new SyncService();
+		syncService
+			.syncBlog(url.toString())
 			.then(() => {
 				console.log("sync success");
 			})
