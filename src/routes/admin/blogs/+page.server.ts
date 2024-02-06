@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from "./$types";
 import { listBlogs } from "$lib/server/storage/blog";
 import { SyncService } from "$lib/server/sync";
 import { errorBadRequest } from "$lib/server/errors";
+import { fetchFeed, fetchPage } from "$lib/server/fetch";
 
 export const load: PageServerLoad = async () => {
 	const blogs = await listBlogs();
@@ -19,7 +20,7 @@ export const actions: Actions = {
 			errorBadRequest();
 		}
 
-		const syncService = new SyncService();
+		const syncService = new SyncService(fetchFeed, fetchPage);
 		syncService
 			.syncBlog(url.toString())
 			.then(() => {

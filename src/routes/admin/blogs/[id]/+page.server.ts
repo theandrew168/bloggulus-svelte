@@ -6,6 +6,7 @@ import { deleteBlog, readBlogById } from "$lib/server/storage/blog";
 import { listPostsByBlog } from "$lib/server/storage/post";
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 import { SyncService } from "$lib/server/sync";
+import { fetchFeed, fetchPage } from "$lib/server/fetch";
 
 export const load: PageServerLoad = async ({ params }) => {
 	const id = params.id;
@@ -57,7 +58,7 @@ export const actions: Actions = {
 			errorNotFound();
 		}
 
-		const syncService = new SyncService();
+		const syncService = new SyncService(fetchFeed, fetchPage);
 		syncService
 			.syncBlog(blog.feedUrl)
 			.then(() => {

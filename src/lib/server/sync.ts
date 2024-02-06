@@ -1,59 +1,20 @@
-import Parser from "rss-parser";
-import he from "he";
-
+import type { Blog } from "$lib/types";
 import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog } from "./storage/blog";
 import { createPost, readPostByUrl, updatePost } from "./storage/post";
-import type { Blog } from "$lib/types";
+import type { FetchFeedFn, FetchPageFn } from "./fetch";
+import { parseFeed, type FeedPost } from "./feed";
 
 /**
- * Fetch the plain-text contents of a web page (by its URL).
- */
-type FetchBodyFunction = (url: string) => Promise<string | null>;
-
-/**
- * TODO: Is this necessary? What about etag / last-modified headers?
- */
-type FetchFeedFunction = (url: string) => Promise<string | null>;
-
-/**
- * Sanitize and strip HTML from a piece of text.
- */
-export function sanitize(html: string): string {
-	const exprs = [/<head>.*?<\/head>/gs, /<nav>.*?<\/nav>/gs, /<code>.*?<\/code>/gs, /<pre>.*?<\/pre>/gs, /<[^>]*>/gs];
-
-	let text = html;
-	exprs.forEach((expr) => (text = text.replace(expr, "")));
-
-	text = he.decode(text);
-	text = text.replace(/\s+/gs, " ");
-	text = text.trim();
-	return text;
-}
-
-/**
- * Fetch a page's contents and sanitize / strip the resulting HTML.
- */
-export async function fetchAndSanitize(url: string): Promise<string | null> {
-	try {
-		const resp = await fetch(url);
-		const html = await resp.text();
-		const body = sanitize(html);
-		return body;
-	} catch (e) {
-		console.log(e);
-		return null;
-	}
-}
-
-/**
- * Service for syncing blogs and posts. Depends on a FetchBodyFunction to
- * get post data from the outside world.
+ * Service for syncing blogs and posts. Depends on a FetchFeedFunction to
+ * get blog data from the outside world.
  */
 export class SyncService {
-	private fetchBody: FetchBodyFunction;
+	private fetchFeed: FetchFeedFn;
+	private fetchPage: FetchPageFn;
 
-	constructor(fetchBody: FetchBodyFunction = fetchAndSanitize) {
-		this.fetchBody = fetchBody;
+	constructor(fetchFeed: FetchFeedFn, fetchPage: FetchPageFn) {
+		this.fetchFeed = fetchFeed;
+		this.fetchPage = fetchPage;
 	}
 
 	/**
@@ -107,71 +68,66 @@ export class SyncService {
 		}
 	}
 
-	private async syncNewBlog(feedUrl: string) {
-		const resp = await fetch(feedUrl);
-		const text = await resp.text();
+	private async syncNewBlog(url: string) {
+		const { feed, etag, lastModified } = await this.fetchFeed(url);
+		if (!feed) {
+			console.log("no content: ", url);
+			return;
+		}
 
-		const syncedAt = new Date();
-		const etag = resp.headers.get("ETag");
-		const lastModified = resp.headers.get("Last-Modified");
+		const feedBlog = await parseFeed(url, feed, this.fetchPage);
+		const blog = await createBlog({
+			feedUrl: feedBlog.feedUrl,
+			siteUrl: feedBlog.siteUrl,
+			title: feedBlog.title,
+			syncedAt: new Date(),
+			etag: etag ?? null,
+			lastModified: lastModified ?? null,
+		});
 
-		const parser = new Parser();
-		const feed = await parser.parseString(text);
-
-		const siteUrl = feed.link ?? feedUrl;
-		const title = feed.title ?? siteUrl;
-
-		const blog = await createBlog({ feedUrl, siteUrl, title, syncedAt, etag, lastModified });
-
-		for (const item of feed.items) {
-			await this.syncPost(blog, item);
+		for (const feedPost of feedBlog.posts) {
+			await this.syncPost(blog, feedPost);
 		}
 	}
 
 	private async syncExistingBlog(blog: Blog) {
-		const feedUrl = blog.feedUrl;
+		const { feed, etag, lastModified } = await this.fetchFeed(
+			blog.feedUrl,
+			blog.etag ?? undefined,
+			blog.lastModified ?? undefined,
+		);
 
-		const headers = new Headers();
-		if (blog?.etag) {
-			headers.set("If-None-Match", blog.etag);
-		}
-		if (blog?.lastModified) {
-			headers.set("If-Modified-Since", blog.lastModified);
-		}
+		await updateBlog(blog, {
+			syncedAt: new Date(),
+			etag: etag ?? null,
+			lastModified: lastModified ?? null,
+		});
 
-		const resp = await fetch(feedUrl, { headers });
-		const text = await resp.text();
-
-		const syncedAt = new Date();
-		const etag = resp.headers.get("ETag");
-		const lastModified = resp.headers.get("Last-Modified");
-
-		await updateBlog(blog, { syncedAt, etag, lastModified });
-
-		if (resp.status >= 300) {
-			console.log("No changes!");
+		if (!feed) {
+			console.log("no content: ", blog.feedUrl);
 			return;
 		}
 
-		const parser = new Parser();
-		const feed = await parser.parseString(text);
-
-		for (const item of feed.items) {
-			await this.syncPost(blog, item);
+		const feedBlog = await parseFeed(blog.feedUrl, feed, this.fetchPage);
+		for (const feedPost of feedBlog.posts) {
+			await this.syncPost(blog, feedPost);
 		}
 	}
 
-	private async syncPost(blog: Blog, item: Parser.Item) {
-		const url = item.link ?? "";
-		const title = item.title ?? "";
-		const updatedAt = item.pubDate ? new Date(item.pubDate) : new Date();
-		const body = item.contentSnippet ?? (await this.fetchBody(url));
-
-		const post = await readPostByUrl(url);
+	private async syncPost(blog: Blog, feedPost: FeedPost) {
+		const post = await readPostByUrl(feedPost.url);
 		if (!post) {
-			await createPost({ url, title, updatedAt, body, blogId: blog.id });
-		} else if (post.body === null) {
-			await updatePost(post, { body });
+			await createPost({
+				url: feedPost.url,
+				title: feedPost.title,
+				updatedAt: feedPost.updatedAt,
+				body: feedPost.body ?? null,
+				blogId: blog.id,
+			});
+		} else if (post.body === null && feedPost.body) {
+			await updatePost(post, {
+				body: feedPost.body,
+			});
 		}
 	}
 }
