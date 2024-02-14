@@ -1,20 +1,20 @@
 import type { Blog } from "$lib/types";
 import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog } from "./storage/blog";
 import { createPost, readPostByUrl, updatePost } from "./storage/post";
-import type { FetchFeedFn, FetchPageFn } from "./fetch";
-import { parseFeed, type FeedPost } from "./feed";
+import { defaultFeedFetcher, defaultPageFetcher, type FeedFetcher, type PageFetcher } from "./fetch";
+import { parseFeed, type FeedPost, hydrateFeed } from "./feed";
 
 /**
  * Service for syncing blogs and posts. Depends on a FetchFeedFunction to
  * get blog data from the outside world.
  */
 export class SyncService {
-	private fetchFeed: FetchFeedFn;
-	private fetchPage: FetchPageFn;
+	private feedFetcher: FeedFetcher;
+	private pageFetcher: PageFetcher;
 
-	constructor(fetchFeed: FetchFeedFn, fetchPage: FetchPageFn) {
-		this.fetchFeed = fetchFeed;
-		this.fetchPage = fetchPage;
+	constructor(feedFetcher: FeedFetcher = defaultFeedFetcher, pageFetcher: PageFetcher = defaultPageFetcher) {
+		this.feedFetcher = feedFetcher;
+		this.pageFetcher = pageFetcher;
 	}
 
 	/**
@@ -69,13 +69,14 @@ export class SyncService {
 	}
 
 	private async syncNewBlog(url: string) {
-		const { feed, etag, lastModified } = await this.fetchFeed(url);
+		const { feed, etag, lastModified } = await this.feedFetcher.fetchFeed(url);
 		if (!feed) {
 			console.log("no content: ", url);
 			return;
 		}
 
-		const feedBlog = await parseFeed(url, feed, this.fetchPage);
+		const rawFeedBlog = await parseFeed(url, feed);
+		const feedBlog = await hydrateFeed(rawFeedBlog, this.pageFetcher);
 		const blog = await createBlog({
 			feedUrl: feedBlog.feedUrl,
 			siteUrl: feedBlog.siteUrl,
@@ -91,7 +92,7 @@ export class SyncService {
 	}
 
 	private async syncExistingBlog(blog: Blog) {
-		const { feed, etag, lastModified } = await this.fetchFeed(
+		const { feed, etag, lastModified } = await this.feedFetcher.fetchFeed(
 			blog.feedUrl,
 			blog.etag ?? undefined,
 			blog.lastModified ?? undefined,
@@ -108,7 +109,8 @@ export class SyncService {
 			return;
 		}
 
-		const feedBlog = await parseFeed(blog.feedUrl, feed, this.fetchPage);
+		const rawFeedBlog = await parseFeed(blog.feedUrl, feed);
+		const feedBlog = await hydrateFeed(rawFeedBlog, this.pageFetcher);
 		for (const feedPost of feedBlog.posts) {
 			await this.syncPost(blog, feedPost);
 		}

@@ -3,7 +3,9 @@ import he from "he";
 /**
  * Fetch the plain-text contents of a web page (by its URL).
  */
-export type FetchPageFn = (url: string) => Promise<string | undefined>;
+export type PageFetcher = {
+	fetchPage: (url: string) => Promise<string | undefined>;
+};
 
 /**
  * Response from fetching an RSS feed. Each field is independently optional.
@@ -17,7 +19,9 @@ export type FetchFeedResponse = {
 /**
  * Fetch an RSS feed (by its URL) while respecting modification headers.
  */
-export type FetchFeedFn = (url: string, etag?: string, lastModified?: string) => Promise<FetchFeedResponse>;
+export type FeedFetcher = {
+	fetchFeed: (url: string, etag?: string, lastModified?: string) => Promise<FetchFeedResponse>;
+};
 
 /**
  * Sanitize and strip HTML from a piece of text.
@@ -49,15 +53,14 @@ export async function fetchPage(url: string, fetchFn: typeof fetch = fetch): Pro
 	}
 }
 
+export const defaultPageFetcher: PageFetcher = {
+	fetchPage,
+};
+
 /**
  * Fetch an RSS feed (by its URL) while respecting modification headers.
  */
-export async function fetchFeed(
-	url: string,
-	etag?: string,
-	lastModified?: string,
-	fetchFn: typeof fetch = fetch,
-): Promise<FetchFeedResponse> {
+export async function fetchFeed(url: string, etag?: string, lastModified?: string): Promise<FetchFeedResponse> {
 	const headers = new Headers();
 	if (etag) {
 		headers.set("If-None-Match", etag);
@@ -69,7 +72,7 @@ export async function fetchFeed(
 	const fetchFeedResponse: FetchFeedResponse = {};
 
 	try {
-		const resp = await fetchFn(url, { headers });
+		const resp = await fetch(url, { headers });
 
 		// check for an "ETag" header on the response
 		const etag = resp.headers.get("ETag");
@@ -96,3 +99,7 @@ export async function fetchFeed(
 		return {};
 	}
 }
+
+export const defaultFeedFetcher: FeedFetcher = {
+	fetchFeed,
+};

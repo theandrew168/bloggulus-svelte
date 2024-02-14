@@ -2,12 +2,11 @@ import type { PageServerLoad } from "./$types";
 
 import { searchPosts } from "$lib/server/storage/post";
 import { SyncService } from "$lib/server/sync";
-import { fetchFeed, fetchPage } from "$lib/server/fetch";
 
 const PAGE_SIZE = 15;
 
 export const load: PageServerLoad = async ({ url }) => {
-	const syncService = new SyncService(fetchFeed, fetchPage);
+	const syncService = new SyncService();
 	syncService.syncAllBlogs();
 
 	const q = url.searchParams.get("q") ?? "";
