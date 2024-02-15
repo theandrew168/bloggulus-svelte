@@ -1,5 +1,6 @@
 import type { Tag } from "$lib/types";
-import sql from "./db";
+import type postgres from "postgres";
+import db from "./db";
 
 export type CreateTagParams = {
 	name: string;
@@ -7,7 +8,7 @@ export type CreateTagParams = {
 
 const columns = ["id", "name"];
 
-export async function createTag(params: CreateTagParams): Promise<Tag> {
+export async function createTag(params: CreateTagParams, sql: postgres.Sql = db): Promise<Tag> {
 	const created = await sql<Tag[]>`
 		INSERT INTO tag ${sql(params)}
 		RETURNING ${sql(columns)}
@@ -15,7 +16,7 @@ export async function createTag(params: CreateTagParams): Promise<Tag> {
 	return created[0];
 }
 
-export async function listTags(): Promise<Tag[]> {
+export async function listTags(sql: postgres.Sql = db): Promise<Tag[]> {
 	const tags = await sql<Tag[]>`
 		SELECT ${sql(columns)}
 		FROM tag
@@ -24,7 +25,7 @@ export async function listTags(): Promise<Tag[]> {
 	return tags;
 }
 
-export async function readTagById(id: string): Promise<Tag | null> {
+export async function readTagById(id: string, sql: postgres.Sql = db): Promise<Tag | null> {
 	const tags = await sql<Tag[]>`
 		SELECT ${sql(columns)}
 		FROM tag
@@ -36,7 +37,7 @@ export async function readTagById(id: string): Promise<Tag | null> {
 	return tags[0];
 }
 
-export async function deleteTag(tag: Tag) {
+export async function deleteTag(tag: Tag, sql: postgres.Sql = db) {
 	await sql`
 		DELETE
 		FROM tag

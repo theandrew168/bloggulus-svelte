@@ -4,10 +4,16 @@ import { expect, test } from "vitest";
 import { isValidUuid } from "$lib/utils";
 import { createTag, listTags, readTagById, deleteTag } from "./tag";
 import { generateFakeTag } from "./fake";
+import db from "./db";
 
 test("createTag", async () => {
 	const params = generateFakeTag();
-	const tag = await createTag(params);
+
+	const tag = await db.begin(async (tx) => {
+		const tag = createTag(params, tx);
+		await tx`rollback and chain`;
+		return tag;
+	});
 	expect(isValidUuid(tag.id)).toEqual(true);
 	expect(_.omit(tag, "id")).toEqual(params);
 });
