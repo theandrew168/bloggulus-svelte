@@ -1,5 +1,7 @@
 import type { Handle } from "@sveltejs/kit";
 
+import { connect } from "$lib/server/storage/storage";
+
 export const handle: Handle = async ({ event, resolve }) => {
 	// enforce authorization on any /admin route
 	if (event.url.pathname.startsWith("/admin")) {
@@ -15,5 +17,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
+	event.locals.storage = connect();
 	return resolve(event);
 };

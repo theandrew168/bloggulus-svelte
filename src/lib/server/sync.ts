@@ -1,18 +1,23 @@
 import type { Blog } from "$lib/types";
-import { createBlog, listBlogs, readBlogByFeedUrl, updateBlog } from "./storage/blog";
-import { createPost, readPostByUrl, updatePost } from "./storage/post";
 import { defaultFeedFetcher, defaultPageFetcher, type FeedFetcher, type PageFetcher } from "./fetch";
 import { parseFeed, type FeedPost, hydrateFeed } from "./feed";
+import { connect, type Storage } from "./storage/storage";
 
 /**
  * Service for syncing blogs and posts. Depends on a FetchFeedFunction to
  * get blog data from the outside world.
  */
 export class SyncService {
+	private storage: Storage;
 	private feedFetcher: FeedFetcher;
 	private pageFetcher: PageFetcher;
 
-	constructor(feedFetcher: FeedFetcher = defaultFeedFetcher, pageFetcher: PageFetcher = defaultPageFetcher) {
+	constructor(
+		storage: Storage,
+		feedFetcher: FeedFetcher = defaultFeedFetcher,
+		pageFetcher: PageFetcher = defaultPageFetcher,
+	) {
+		this.storage = storage;
 		this.feedFetcher = feedFetcher;
 		this.pageFetcher = pageFetcher;
 	}
@@ -25,7 +30,7 @@ export class SyncService {
 	async syncAllBlogs() {
 		const now = new Date();
 
-		const blogs = await listBlogs();
+		const blogs = await this.storage.blog.list();
 		for (const blog of blogs) {
 			const delta = (now.getTime() - blog.syncedAt.getTime()) / 1000;
 			if (delta < 3600) {
@@ -60,7 +65,7 @@ export class SyncService {
 	async syncBlog(feedUrl: string) {
 		console.log("syncing:", feedUrl);
 
-		let blog = await readBlogByFeedUrl(feedUrl);
+		let blog = await this.storage.blog.readByFeedUrl(feedUrl);
 		if (!blog) {
 			await this.syncNewBlog(feedUrl);
 		} else {
@@ -77,7 +82,7 @@ export class SyncService {
 
 		const rawFeedBlog = await parseFeed(url, feed);
 		const feedBlog = await hydrateFeed(rawFeedBlog, this.pageFetcher);
-		const blog = await createBlog({
+		const blog = await this.storage.blog.create({
 			feedUrl: feedBlog.feedUrl,
 			siteUrl: feedBlog.siteUrl,
 			title: feedBlog.title,
@@ -98,7 +103,7 @@ export class SyncService {
 			blog.lastModified ?? undefined,
 		);
 
-		await updateBlog(blog, {
+		await this.storage.blog.update(blog, {
 			syncedAt: new Date(),
 			etag: etag ?? null,
 			lastModified: lastModified ?? null,
@@ -117,9 +122,9 @@ export class SyncService {
 	}
 
 	private async syncPost(blog: Blog, feedPost: FeedPost) {
-		const post = await readPostByUrl(feedPost.url);
+		const post = await this.storage.post.readByUrl(feedPost.url);
 		if (!post) {
-			await createPost({
+			await this.storage.post.create({
 				url: feedPost.url,
 				title: feedPost.title,
 				updatedAt: feedPost.updatedAt,
@@ -127,7 +132,7 @@ export class SyncService {
 				blogId: blog.id,
 			});
 		} else if (post.body === null && feedPost.body) {
-			await updatePost(post, {
+			await this.storage.post.update(post, {
 				body: feedPost.body,
 			});
 		}

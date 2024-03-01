@@ -1,61 +1,65 @@
 import _ from "lodash";
-import { expect, test } from "vitest";
+import { describe, expect, test } from "vitest";
 
 import { isValidUuid } from "$lib/utils";
-import { createBlog, listBlogs, readBlogById, readBlogByFeedUrl, deleteBlog, updateBlog } from "./blog";
 import { generateFakeBlog } from "./fake";
+import { connect } from "./storage";
 
-test("createBlog", async () => {
-	const params = generateFakeBlog();
-	const blog = await createBlog(params);
-	expect(isValidUuid(blog.id)).toEqual(true);
-	expect(_.omit(blog, "id")).toEqual(params);
-});
+describe("BlogStorage", () => {
+	const storage = connect();
 
-test("listBlogs", async () => {
-	const blogs = await Promise.all([
-		createBlog(generateFakeBlog()),
-		createBlog(generateFakeBlog()),
-		createBlog(generateFakeBlog()),
-	]);
+	test("create", async () => {
+		const params = generateFakeBlog();
+		const blog = await storage.blog.create(params);
+		expect(isValidUuid(blog.id)).toEqual(true);
+		expect(_.omit(blog, "id")).toEqual(params);
+	});
 
-	const got = await listBlogs();
-	const ids = got.map((blog) => blog.id);
-	for (const blog of blogs) {
-		expect(ids.includes(blog.id)).toEqual(true);
-	}
-});
+	test("list", async () => {
+		const blogs = await Promise.all([
+			storage.blog.create(generateFakeBlog()),
+			storage.blog.create(generateFakeBlog()),
+			storage.blog.create(generateFakeBlog()),
+		]);
 
-test("readBlogById", async () => {
-	const params = generateFakeBlog();
-	const blog = await createBlog(params);
-	const got = await readBlogById(blog.id);
-	expect(got?.id).toEqual(blog.id);
-});
+		const got = await storage.blog.list();
+		const ids = got.map((blog) => blog.id);
+		for (const blog of blogs) {
+			expect(ids.includes(blog.id)).toEqual(true);
+		}
+	});
 
-test("readBlogByFeedUrl", async () => {
-	const params = generateFakeBlog();
-	const blog = await createBlog(params);
-	const got = await readBlogByFeedUrl(blog.feedUrl);
-	expect(got?.id).toEqual(blog.id);
-});
+	test("readById", async () => {
+		const params = generateFakeBlog();
+		const blog = await storage.blog.create(params);
+		const got = await storage.blog.readById(blog.id);
+		expect(got?.id).toEqual(blog.id);
+	});
 
-test("updateBlog", async () => {
-	const params = generateFakeBlog();
-	const blog = await createBlog(params);
+	test("readByFeedUrl", async () => {
+		const params = generateFakeBlog();
+		const blog = await storage.blog.create(params);
+		const got = await storage.blog.readByFeedUrl(blog.feedUrl);
+		expect(got?.id).toEqual(blog.id);
+	});
 
-	const updates = generateFakeBlog();
-	await updateBlog(blog, updates);
+	test("update", async () => {
+		const params = generateFakeBlog();
+		const blog = await storage.blog.create(params);
 
-	const got = await readBlogById(blog.id);
-	expect(got?.id).toEqual(blog.id);
-	expect(_.omit(got, "id")).toEqual(updates);
-});
+		const updates = generateFakeBlog();
+		await storage.blog.update(blog, updates);
 
-test("deleteBlog", async () => {
-	const params = generateFakeBlog();
-	const blog = await createBlog(params);
-	await deleteBlog(blog);
-	const got = await readBlogById(blog.id);
-	expect(got).toBeNull;
+		const got = await storage.blog.readById(blog.id);
+		expect(got?.id).toEqual(blog.id);
+		expect(_.omit(got, "id")).toEqual(updates);
+	});
+
+	test("delete", async () => {
+		const params = generateFakeBlog();
+		const blog = await storage.blog.create(params);
+		await storage.blog.delete(blog);
+		const got = await storage.blog.readById(blog.id);
+		expect(got).toBeNull;
+	});
 });

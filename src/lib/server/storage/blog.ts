@@ -1,7 +1,7 @@
 import _ from "lodash";
+import type postgres from "postgres";
 
 import type { Blog } from "$lib/types";
-import sql from "./db";
 
 export type CreateBlogParams = {
 	feedUrl: string;
@@ -16,60 +16,78 @@ export type UpdateBlogParams = Partial<CreateBlogParams>;
 
 const columns = ["id", "feed_url", "site_url", "title", "synced_at", "etag", "last_modified"];
 
-export async function createBlog(params: CreateBlogParams): Promise<Blog> {
-	const created = await sql<Blog[]>`
-		INSERT INTO blog ${sql(params)}
-		RETURNING ${sql(columns)}
-	`;
-	return created[0];
-}
+export type BlogStorage = {
+	create: (params: CreateBlogParams) => Promise<Blog>;
+	list: () => Promise<Blog[]>;
+	// TODO: Return Blog | undefined
+	readById: (id: string) => Promise<Blog | null>;
+	readByFeedUrl: (feedUrl: string) => Promise<Blog | null>;
+	update: (blog: Blog, params: UpdateBlogParams) => Promise<void>;
+	delete: (blog: Blog) => Promise<void>;
+};
 
-export async function listBlogs(): Promise<Blog[]> {
-	const blogs = await sql<Blog[]>`
-		SELECT ${sql(columns)}
-		FROM blog
-	`;
-	return blogs;
-}
+export class PostgresBlogStorage {
+	private sql: postgres.Sql;
 
-export async function readBlogById(id: string): Promise<Blog | null> {
-	const blogs = await sql<Blog[]>`
-		SELECT ${sql(columns)}
-		FROM blog
-		WHERE id = ${id}
-	`;
-	if (blogs.length !== 1) {
-		return null;
+	constructor(sql: postgres.Sql) {
+		this.sql = sql;
 	}
-	return blogs[0];
-}
 
-export async function readBlogByFeedUrl(feedUrl: string): Promise<Blog | null> {
-	const blogs = await sql<Blog[]>`
-		SELECT ${sql(columns)}
-		FROM blog
-		WHERE feed_url = ${feedUrl}
-	`;
-	if (blogs.length !== 1) {
-		return null;
+	async create(params: CreateBlogParams): Promise<Blog> {
+		const created = await this.sql<Blog[]>`
+			INSERT INTO blog ${this.sql(params)}
+			RETURNING ${this.sql(columns)}
+		`;
+		return created[0];
 	}
-	return blogs[0];
-}
 
-export async function updateBlog(blog: Blog, params: UpdateBlogParams) {
-	// clone params here because defaults mutates the dest object
-	const resolved = _.defaults(_.clone(params), blog);
-	await sql`
-		UPDATE blog
-		SET ${sql(resolved, "feedUrl", "siteUrl", "title", "syncedAt", "etag", "lastModified")}
-		WHERE id = ${blog.id}
-	`;
-}
+	async list(): Promise<Blog[]> {
+		const blogs = await this.sql<Blog[]>`
+			SELECT ${this.sql(columns)}
+			FROM blog
+		`;
+		return blogs;
+	}
 
-export async function deleteBlog(blog: Blog) {
-	await sql`
-		DELETE
-		FROM blog
-		WHERE id = ${blog.id}
-	`;
+	async readById(id: string): Promise<Blog | null> {
+		const blogs = await this.sql<Blog[]>`
+			SELECT ${this.sql(columns)}
+			FROM blog
+			WHERE id = ${id}
+		`;
+		if (blogs.length !== 1) {
+			return null;
+		}
+		return blogs[0];
+	}
+
+	async readByFeedUrl(feedUrl: string): Promise<Blog | null> {
+		const blogs = await this.sql<Blog[]>`
+			SELECT ${this.sql(columns)}
+			FROM blog
+			WHERE feed_url = ${feedUrl}
+		`;
+		if (blogs.length !== 1) {
+			return null;
+		}
+		return blogs[0];
+	}
+
+	async update(blog: Blog, params: UpdateBlogParams) {
+		// clone params here because _.defaults() mutates the dest object
+		const resolved = _.defaults(_.clone(params), blog);
+		await this.sql`
+			UPDATE blog
+			SET ${this.sql(resolved, "feedUrl", "siteUrl", "title", "syncedAt", "etag", "lastModified")}
+			WHERE id = ${blog.id}
+		`;
+	}
+
+	async delete(blog: Blog) {
+		await this.sql`
+			DELETE
+			FROM blog
+			WHERE id = ${blog.id}
+		`;
+	}
 }

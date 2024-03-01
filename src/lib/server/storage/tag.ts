@@ -1,6 +1,6 @@
-import type { Tag } from "$lib/types";
 import type postgres from "postgres";
-import db from "./db";
+
+import type { Tag } from "$lib/types";
 
 export type CreateTagParams = {
 	name: string;
@@ -8,39 +8,55 @@ export type CreateTagParams = {
 
 const columns = ["id", "name"];
 
-export async function createTag(params: CreateTagParams, sql: postgres.Sql = db): Promise<Tag> {
-	const created = await sql<Tag[]>`
-		INSERT INTO tag ${sql(params)}
-		RETURNING ${sql(columns)}
-	`;
-	return created[0];
-}
+export type TagStorage = {
+	create: (params: CreateTagParams) => Promise<Tag>;
+	list: () => Promise<Tag[]>;
+	// TODO: Return Tag | undefined
+	readById: (id: string) => Promise<Tag | null>;
+	delete: (tag: Tag) => Promise<void>;
+};
 
-export async function listTags(sql: postgres.Sql = db): Promise<Tag[]> {
-	const tags = await sql<Tag[]>`
-		SELECT ${sql(columns)}
-		FROM tag
-		ORDER BY name ASC
-	`;
-	return tags;
-}
+export class PostgresTagStorage {
+	private sql: postgres.Sql;
 
-export async function readTagById(id: string, sql: postgres.Sql = db): Promise<Tag | null> {
-	const tags = await sql<Tag[]>`
-		SELECT ${sql(columns)}
-		FROM tag
-		WHERE id = ${id}
-	`;
-	if (tags.length !== 1) {
-		return null;
+	constructor(sql: postgres.Sql) {
+		this.sql = sql;
 	}
-	return tags[0];
-}
 
-export async function deleteTag(tag: Tag, sql: postgres.Sql = db) {
-	await sql`
-		DELETE
-		FROM tag
-		WHERE id = ${tag.id}
-	`;
+	async create(params: CreateTagParams): Promise<Tag> {
+		const created = await this.sql<Tag[]>`
+			INSERT INTO tag ${this.sql(params)}
+			RETURNING ${this.sql(columns)}
+		`;
+		return created[0];
+	}
+
+	async list(): Promise<Tag[]> {
+		const tags = await this.sql<Tag[]>`
+			SELECT ${this.sql(columns)}
+			FROM tag
+			ORDER BY name ASC
+		`;
+		return tags;
+	}
+
+	async readById(id: string): Promise<Tag | null> {
+		const tags = await this.sql<Tag[]>`
+			SELECT ${this.sql(columns)}
+			FROM tag
+			WHERE id = ${id}
+		`;
+		if (tags.length !== 1) {
+			return null;
+		}
+		return tags[0];
+	}
+
+	async delete(tag: Tag) {
+		await this.sql`
+			DELETE
+			FROM tag
+			WHERE id = ${tag.id}
+		`;
+	}
 }
