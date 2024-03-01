@@ -41,9 +41,9 @@ export function sanitize(html: string): string {
 /**
  * Fetch a page's contents and sanitize / strip the resulting HTML.
  */
-export async function fetchPage(url: string, fetchFn: typeof fetch = fetch): Promise<string | undefined> {
+export async function fetchPage(url: string): Promise<string | undefined> {
 	try {
-		const resp = await fetchFn(url);
+		const resp = await fetch(url);
 		const text = await resp.text();
 		const page = sanitize(text);
 		return page;
