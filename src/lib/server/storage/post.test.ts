@@ -9,60 +9,85 @@ describe("PostStorage", () => {
 	const storage = connect();
 
 	test("create", async () => {
-		const blog = await storage.blog.create(generateFakeBlog());
+		await storage.transaction(
+			async (storage) => {
+				const blog = await storage.blog.create(generateFakeBlog());
 
-		const params = generateFakePost(blog.id);
-		const post = await storage.post.create(params);
-		expect(isValidUuid(post.id)).toEqual(true);
-		expect(_.omit(post, "id")).toEqual(params);
+				const params = generateFakePost(blog.id);
+				const post = await storage.post.create(params);
+				expect(isValidUuid(post.id)).toEqual(true);
+				expect(_.omit(post, "id")).toEqual(params);
+			},
+			{ commit: false },
+		);
 	});
 
 	test("listByBlog", async () => {
-		const blog = await storage.blog.create(generateFakeBlog());
+		await storage.transaction(
+			async (storage) => {
+				const blog = await storage.blog.create(generateFakeBlog());
 
-		const posts = await Promise.all([
-			storage.post.create(generateFakePost(blog.id)),
-			storage.post.create(generateFakePost(blog.id)),
-			storage.post.create(generateFakePost(blog.id)),
-		]);
+				const posts = await Promise.all([
+					storage.post.create(generateFakePost(blog.id)),
+					storage.post.create(generateFakePost(blog.id)),
+					storage.post.create(generateFakePost(blog.id)),
+				]);
 
-		const got = await storage.post.listByBlog(blog.id);
-		const ids = got.map((post) => post.id);
-		for (const post of posts) {
-			expect(ids.includes(post.id)).toEqual(true);
-		}
+				const got = await storage.post.listByBlog(blog.id);
+				const ids = got.map((post) => post.id);
+				for (const post of posts) {
+					expect(ids.includes(post.id)).toEqual(true);
+				}
+			},
+			{ commit: false },
+		);
 	});
 
 	test("readById", async () => {
-		const blog = await storage.blog.create(generateFakeBlog());
+		await storage.transaction(
+			async (storage) => {
+				const blog = await storage.blog.create(generateFakeBlog());
 
-		const params = generateFakePost(blog.id);
-		const post = await storage.post.create(params);
-		const got = await storage.post.readById(post.id);
-		expect(got?.id).toEqual(post.id);
+				const params = generateFakePost(blog.id);
+				const post = await storage.post.create(params);
+				const got = await storage.post.readById(post.id);
+				expect(got?.id).toEqual(post.id);
+			},
+			{ commit: false },
+		);
 	});
 
 	test("update", async () => {
-		const blog = await storage.blog.create(generateFakeBlog());
+		await storage.transaction(
+			async (storage) => {
+				const blog = await storage.blog.create(generateFakeBlog());
 
-		const params = generateFakePost(blog.id);
-		const post = await storage.post.create(params);
+				const params = generateFakePost(blog.id);
+				const post = await storage.post.create(params);
 
-		const updates = generateFakePost(blog.id);
-		await storage.post.update(post, updates);
+				const updates = generateFakePost(blog.id);
+				await storage.post.update(post, updates);
 
-		const got = await storage.post.readById(post.id);
-		expect(got?.id).toEqual(post.id);
-		expect(_.omit(got, "id", "blogTitle", "blogUrl", "tags")).toEqual(updates);
+				const got = await storage.post.readById(post.id);
+				expect(got?.id).toEqual(post.id);
+				expect(_.omit(got, "id", "blogTitle", "blogUrl", "tags")).toEqual(updates);
+			},
+			{ commit: false },
+		);
 	});
 
 	test("delete", async () => {
-		const blog = await storage.blog.create(generateFakeBlog());
+		await storage.transaction(
+			async (storage) => {
+				const blog = await storage.blog.create(generateFakeBlog());
 
-		const params = generateFakePost(blog.id);
-		const post = await storage.post.create(params);
-		await storage.post.delete(post);
-		const got = await storage.post.readById(post.id);
-		expect(got).toBeNull;
+				const params = generateFakePost(blog.id);
+				const post = await storage.post.create(params);
+				await storage.post.delete(post);
+				const got = await storage.post.readById(post.id);
+				expect(got).toBeNull;
+			},
+			{ commit: false },
+		);
 	});
 });
