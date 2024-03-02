@@ -1,3 +1,10 @@
+// In an ideal world, these types would use optional fields instead of nullable.
+// However, since I'm returning these types directly from the storage layer,
+// empty values will actually be null. The "right" thing to do would probably be
+// to create FooRow types that are typed with "| null" and then convert to optionals
+// before returning. Or if I was rolling with a more DDD approach, I'd convert those
+// FooRow types to rich domain objects.
+
 export type Blog = {
 	id: string;
 	feedUrl: string;
