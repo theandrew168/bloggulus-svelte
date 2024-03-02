@@ -19,9 +19,8 @@ const columns = ["id", "feed_url", "site_url", "title", "synced_at", "etag", "la
 export type BlogStorage = {
 	create: (params: CreateBlogParams) => Promise<Blog>;
 	list: () => Promise<Blog[]>;
-	// TODO: Return Blog | undefined
-	readById: (id: string) => Promise<Blog | null>;
-	readByFeedUrl: (feedUrl: string) => Promise<Blog | null>;
+	readById: (id: string) => Promise<Blog | undefined>;
+	readByFeedUrl: (feedUrl: string) => Promise<Blog | undefined>;
 	update: (blog: Blog, params: UpdateBlogParams) => Promise<void>;
 	delete: (blog: Blog) => Promise<void>;
 };
@@ -49,26 +48,26 @@ export class PostgresBlogStorage {
 		return blogs;
 	}
 
-	async readById(id: string): Promise<Blog | null> {
+	async readById(id: string): Promise<Blog | undefined> {
 		const blogs = await this.sql<Blog[]>`
 			SELECT ${this.sql(columns)}
 			FROM blog
 			WHERE id = ${id}
 		`;
 		if (blogs.length !== 1) {
-			return null;
+			return undefined;
 		}
 		return blogs[0];
 	}
 
-	async readByFeedUrl(feedUrl: string): Promise<Blog | null> {
+	async readByFeedUrl(feedUrl: string): Promise<Blog | undefined> {
 		const blogs = await this.sql<Blog[]>`
 			SELECT ${this.sql(columns)}
 			FROM blog
 			WHERE feed_url = ${feedUrl}
 		`;
 		if (blogs.length !== 1) {
-			return null;
+			return undefined;
 		}
 		return blogs[0];
 	}

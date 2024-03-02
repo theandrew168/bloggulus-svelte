@@ -25,9 +25,8 @@ export type PostStorage = {
 	create: (params: CreatePostParams) => Promise<Post>;
 	listByBlog: (blogId: string) => Promise<Post[]>;
 	search: (params: SearchPostsParams) => Promise<PostWithBlogAndTags[]>;
-	// TODO: Return Post | undefined
-	readById: (id: string) => Promise<PostWithBlogAndTags | null>;
-	readByUrl: (url: string) => Promise<Post | null>;
+	readById: (id: string) => Promise<PostWithBlogAndTags | undefined>;
+	readByUrl: (url: string) => Promise<Post | undefined>;
 	update: (post: Post, params: UpdatePostParams) => Promise<void>;
 	delete: (post: Post) => Promise<void>;
 };
@@ -87,7 +86,7 @@ export class PostgresPostStorage {
 		return posts;
 	}
 
-	async readById(id: string): Promise<PostWithBlogAndTags | null> {
+	async readById(id: string): Promise<PostWithBlogAndTags | undefined> {
 		const posts = await this.sql<PostWithBlogAndTags[]>`
 			SELECT
 				post.id,
@@ -108,19 +107,19 @@ export class PostgresPostStorage {
 			GROUP BY 1,2,3,4,5,6,7,8
 		`;
 		if (posts.length !== 1) {
-			return null;
+			return undefined;
 		}
 		return posts[0];
 	}
 
-	async readByUrl(url: string): Promise<Post | null> {
+	async readByUrl(url: string): Promise<Post | undefined> {
 		const posts = await this.sql<Post[]>`
 			SELECT ${this.sql(columns)}
 			FROM post
 			WHERE url = ${url}
 		`;
 		if (posts.length !== 1) {
-			return null;
+			return undefined;
 		}
 		return posts[0];
 	}

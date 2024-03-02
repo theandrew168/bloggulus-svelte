@@ -11,8 +11,7 @@ const columns = ["id", "name"];
 export type TagStorage = {
 	create: (params: CreateTagParams) => Promise<Tag>;
 	list: () => Promise<Tag[]>;
-	// TODO: Return Tag | undefined
-	readById: (id: string) => Promise<Tag | null>;
+	readById: (id: string) => Promise<Tag | undefined>;
 	delete: (tag: Tag) => Promise<void>;
 };
 
@@ -40,14 +39,14 @@ export class PostgresTagStorage {
 		return tags;
 	}
 
-	async readById(id: string): Promise<Tag | null> {
+	async readById(id: string): Promise<Tag | undefined> {
 		const tags = await this.sql<Tag[]>`
 			SELECT ${this.sql(columns)}
 			FROM tag
 			WHERE id = ${id}
 		`;
 		if (tags.length !== 1) {
-			return null;
+			return undefined;
 		}
 		return tags[0];
 	}

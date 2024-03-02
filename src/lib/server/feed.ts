@@ -33,13 +33,14 @@ export async function parseFeed(url: string, feed: string): Promise<FeedBlog> {
 		const url = item.link;
 		const title = item.title;
 		const updatedAt = item.pubDate ? new Date(item.pubDate) : new Date();
-		const body = item.contentSnippet;
 		const post: FeedPost = {
 			url,
 			title,
 			updatedAt,
-			body,
 		};
+		if (item.contentSnippet) {
+			post.body = item.contentSnippet;
+		}
 		posts.push(post);
 	}
 
@@ -50,7 +51,7 @@ export async function parseFeed(url: string, feed: string): Promise<FeedBlog> {
 		feedUrl: url,
 		siteUrl,
 		title,
-		posts: posts,
+		posts,
 	};
 	return blog;
 }

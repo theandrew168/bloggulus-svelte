@@ -49,7 +49,7 @@ export async function fetchPage(url: string): Promise<string | undefined> {
 		return page;
 	} catch (e) {
 		console.log(e);
-		return;
+		return undefined;
 	}
 }
 
