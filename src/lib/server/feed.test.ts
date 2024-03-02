@@ -1,37 +1,19 @@
 import { expect, test } from "vitest";
 
-import { parseFeed, type FeedBlog, type FeedPost, hydrateFeed } from "./feed";
-import { MockPageFetcher, mockAtomFeed } from "./mock";
-
-const foo: FeedPost = {
-	title: "Foo",
-	url: "https://example.com/foo",
-	updatedAt: new Date(),
-	body: "content about foo",
-};
-const bar: FeedPost = {
-	title: "Bar",
-	url: "https://example.com/bar",
-	updatedAt: new Date(),
-};
-const fooBar: FeedBlog = {
-	title: "FooBar",
-	siteUrl: "https://example.com",
-	feedUrl: "https://example.com/atom.xml",
-	posts: [foo, bar],
-};
+import { parseFeed, hydrateFeed } from "./feed";
+import { BLOG_FOOBAR, MockPageFetcher, mockAtomFeed } from "./mock";
 
 test("parseFeed", async () => {
-	const url = fooBar.feedUrl;
-	const atom = mockAtomFeed(fooBar);
+	const url = BLOG_FOOBAR.feedUrl;
+	const atom = mockAtomFeed(BLOG_FOOBAR);
 
 	const gotBlog = await parseFeed(url, atom);
-	expect(gotBlog.title).to.equal(fooBar.title);
-	expect(gotBlog.siteUrl).to.equal(fooBar.siteUrl);
-	expect(gotBlog.feedUrl).to.equal(fooBar.feedUrl);
+	expect(gotBlog.title).to.equal(BLOG_FOOBAR.title);
+	expect(gotBlog.siteUrl).to.equal(BLOG_FOOBAR.siteUrl);
+	expect(gotBlog.feedUrl).to.equal(BLOG_FOOBAR.feedUrl);
 	for (let i = 0; i < gotBlog.posts.length; i++) {
 		const gotPost = gotBlog.posts[i];
-		const wantPost = fooBar.posts[i];
+		const wantPost = BLOG_FOOBAR.posts[i];
 		expect(gotPost.url).to.equal(wantPost.url);
 		expect(gotPost.title).to.equal(wantPost.title);
 		expect(gotPost.updatedAt.toISOString()).to.equal(wantPost.updatedAt.toISOString());
@@ -40,8 +22,8 @@ test("parseFeed", async () => {
 });
 
 test("hydrateFeed (no content)", async () => {
-	const url = fooBar.feedUrl;
-	const atom = mockAtomFeed(fooBar);
+	const url = BLOG_FOOBAR.feedUrl;
+	const atom = mockAtomFeed(BLOG_FOOBAR);
 	const blog = await parseFeed(url, atom);
 
 	const pageFetcher = new MockPageFetcher({});
@@ -52,8 +34,8 @@ test("hydrateFeed (no content)", async () => {
 });
 
 test("hydrateFeed (has content)", async () => {
-	const url = fooBar.feedUrl;
-	const atom = mockAtomFeed(fooBar);
+	const url = BLOG_FOOBAR.feedUrl;
+	const atom = mockAtomFeed(BLOG_FOOBAR);
 	const blog = await parseFeed(url, atom);
 
 	const page = "content about bar";

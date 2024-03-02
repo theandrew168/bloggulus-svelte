@@ -1,7 +1,7 @@
 import type { Blog } from "$lib/types";
 import { defaultFeedFetcher, defaultPageFetcher, type FeedFetcher, type PageFetcher } from "./fetch";
 import { parseFeed, type FeedPost, hydrateFeed } from "./feed";
-import { connect, type Storage } from "./storage/storage";
+import type { Storage } from "./storage/storage";
 
 /**
  * Service for syncing blogs and posts. Depends on a FetchFeedFunction to
@@ -105,8 +105,8 @@ export class SyncService {
 
 		await this.storage.blog.update(blog, {
 			syncedAt: new Date(),
-			etag: etag ?? null,
-			lastModified: lastModified ?? null,
+			etag: etag ?? blog.etag,
+			lastModified: lastModified ?? blog.lastModified,
 		});
 
 		if (!feed) {
