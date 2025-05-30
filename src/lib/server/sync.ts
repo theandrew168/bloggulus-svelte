@@ -127,13 +127,13 @@ export class SyncService {
 			await this.storage.post.create({
 				url: feedPost.url,
 				title: feedPost.title,
-				updatedAt: feedPost.updatedAt,
-				body: feedPost.body ?? null,
+				publishedAt: feedPost.updatedAt,
+				content: feedPost.body ?? null,
 				blogId: blog.id,
 			});
-		} else if (post.body === null && feedPost.body) {
+		} else if (post.content === null && feedPost.body) {
 			await this.storage.post.update(post, {
-				body: feedPost.body,
+				content: feedPost.body,
 			});
 		}
 	}

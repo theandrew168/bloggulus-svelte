@@ -4,11 +4,11 @@ import type postgres from "postgres";
 import type { Post, PostWithBlogAndTags } from "$lib/types";
 
 export type CreatePostParams = {
+	blogId: string;
 	url: string;
 	title: string;
-	updatedAt: Date;
-	body: string | null;
-	blogId: string;
+	publishedAt: Date;
+	content: string | null;
 };
 
 export type UpdatePostParams = Partial<CreatePostParams>;
@@ -19,7 +19,7 @@ export type SearchPostsParams = {
 	offset?: number;
 };
 
-const columns = ["id", "url", "title", "updated_at", "body", "blog_id"];
+const columns = ["id", "blog_id", "url", "title", "published_at", "content"];
 
 export type PostStorage = {
 	create: (params: CreatePostParams) => Promise<Post>;
@@ -51,7 +51,7 @@ export class PostgresPostStorage {
 			SELECT ${this.sql(columns)}
 			FROM post
 			WHERE blog_id = ${blogId}
-			ORDER BY updated_at DESC
+			ORDER BY published_at DESC
 		`;
 		return posts;
 	}
@@ -62,22 +62,22 @@ export class PostgresPostStorage {
 				post.id,
 				post.url,
 				post.title,
-				post.updated_at,
-				post.body,
+				post.published_at,
+				post.content,
 				blog.id AS blog_id,
 				blog.site_url AS blog_url,
 				blog.title AS blog_title,
-				array_remove(array_agg(tag.name ORDER BY ts_rank_cd(post.content_index, to_tsquery(tag.name)) DESC), NULL) AS tags
+				array_remove(array_agg(tag.name ORDER BY ts_rank_cd(post.fts_data, to_tsquery(tag.name)) DESC), NULL) AS tags
 			FROM post
 			INNER JOIN blog
 				ON blog.id = post.blog_id
 			LEFT JOIN tag
-				ON to_tsquery(tag.name) @@ post.content_index
-			${search ? this.sql`WHERE post.content_index @@ websearch_to_tsquery('english',  ${search})` : this.sql``}
+				ON to_tsquery(tag.name) @@ post.fts_data
+			${search ? this.sql`WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search})` : this.sql``}
 			GROUP BY 1,2,3,4,5,6,7,8
 			ORDER BY ${
 				search
-					? this.sql`ts_rank_cd(post.content_index, websearch_to_tsquery('english',  ${search})) DESC`
+					? this.sql`ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC`
 					: this.sql`post.updated_at DESC`
 			}
 			LIMIT ${limit}
@@ -92,17 +92,17 @@ export class PostgresPostStorage {
 				post.id,
 				post.url,
 				post.title,
-				post.updated_at,
-				post.body,
+				post.published_at,
+				post.content,
 				blog.id AS blog_id,
 				blog.site_url AS blog_url,
 				blog.title AS blog_title,
-				array_remove(array_agg(tag.name ORDER BY ts_rank_cd(post.content_index, to_tsquery(tag.name)) DESC), NULL) AS tags
+				array_remove(array_agg(tag.name ORDER BY ts_rank_cd(post.fts_data, to_tsquery(tag.name)) DESC), NULL) AS tags
 			FROM post
 			INNER JOIN blog
 				ON blog.id = post.blog_id
 			LEFT JOIN tag
-				ON to_tsquery(tag.name) @@ post.content_index
+				ON to_tsquery(tag.name) @@ post.fts_data
 			WHERE post.id = ${id}
 			GROUP BY 1,2,3,4,5,6,7,8
 		`;
@@ -129,7 +129,7 @@ export class PostgresPostStorage {
 		const resolved = _.defaults(_.clone(params), post);
 		await this.sql`
 			UPDATE post
-			SET ${this.sql(resolved, "url", "title", "updatedAt", "body")}
+			SET ${this.sql(resolved, "url", "title", "publishedAt", "content")}
 			WHERE id = ${post.id}
 		`;
 	}

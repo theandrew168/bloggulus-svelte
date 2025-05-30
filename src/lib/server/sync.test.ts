@@ -114,7 +114,7 @@ describe("SyncService", () => {
 
 			const postBefore = await storage.post.readByUrl(POST_BAR.url);
 			expect(postBefore).to.not.be.undefined;
-			expect(postBefore?.body).to.be.null;
+			expect(postBefore?.content).to.be.null;
 
 			const page = "content about bar";
 			pageFetcher = new MockPageFetcher({ page });
@@ -123,7 +123,7 @@ describe("SyncService", () => {
 
 			const postAfter = await storage.post.readByUrl(POST_BAR.url);
 			expect(postAfter).to.not.be.undefined;
-			expect(postAfter?.body).to.equal(page);
+			expect(postAfter?.content).to.equal(page);
 
 			throw new RollbackError();
 		});

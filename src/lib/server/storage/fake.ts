@@ -20,8 +20,8 @@ export function generateFakePost(blogId: string): CreatePostParams {
 	const params: CreatePostParams = {
 		url: faker.internet.url(),
 		title: faker.lorem.words(),
-		updatedAt: faker.date.past(),
-		body: faker.lorem.words(),
+		publishedAt: faker.date.past(),
+		content: faker.lorem.words(),
 		blogId,
 	};
 	return params;

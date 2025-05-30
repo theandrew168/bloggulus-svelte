@@ -17,11 +17,11 @@ export type Blog = {
 
 export type Post = {
 	id: string;
+	blogId: string;
 	url: string;
 	title: string;
-	updatedAt: Date;
-	body: string | null;
-	blogId: string;
+	publishedAt: Date;
+	content: string | null;
 };
 
 export type Tag = {
