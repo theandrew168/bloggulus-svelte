@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/stores";
 
-	$: q = $page.url.searchParams.get("q") ?? "";
+	let q = $derived($page.url.searchParams.get("q") ?? "");
 </script>
 
 <header class="shadow">

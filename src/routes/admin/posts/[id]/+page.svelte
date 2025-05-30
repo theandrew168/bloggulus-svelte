@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
 
-	export let data;
+	let { data } = $props();
 
 	const body = data.post.body ?? "<empty>";
 </script>

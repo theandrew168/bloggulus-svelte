@@ -2,11 +2,11 @@
 	import { page } from "$app/stores";
 	import Post from "$lib/components/Post.svelte";
 
-	export let data;
+	let { data } = $props();
 
-	$: q = $page.url.searchParams.get("q") ?? "";
-	$: p = parseInt($page.url.searchParams.get("p") ?? "1") || 1;
-	$: moreLink = `/?p=${p + 1}` + (q ? `&q=${q}` : "");
+	let q = $derived($page.url.searchParams.get("q") ?? "");
+	let p = $derived(parseInt($page.url.searchParams.get("p") ?? "1") || 1);
+	let moreLink = $derived(`/?p=${p + 1}` + (q ? `&q=${q}` : ""));
 </script>
 
 <div class="container">

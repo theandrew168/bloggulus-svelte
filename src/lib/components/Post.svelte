@@ -2,7 +2,11 @@
 	import type { PostWithBlogAndTags } from "$lib/types";
 	import Tag from "./Tag.svelte";
 
-	export let post: PostWithBlogAndTags;
+	interface Props {
+		post: PostWithBlogAndTags;
+	}
+
+	let { post }: Props = $props();
 </script>
 
 <div class="post shadow">

@@ -1,8 +1,16 @@
+<script lang="ts">
+	interface Props {
+		children?: import("svelte").Snippet;
+	}
+
+	let { children }: Props = $props();
+</script>
+
 <div class="container toolbar">
 	<a href="/admin/blogs">Blogs</a>
 	<a href="/admin/tags">Tags</a>
 </div>
-<slot />
+{@render children?.()}
 
 <style>
 	.toolbar {
