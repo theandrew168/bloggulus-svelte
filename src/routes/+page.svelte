@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
+
 	import Post from "$lib/components/Post.svelte";
 
 	let { data } = $props();

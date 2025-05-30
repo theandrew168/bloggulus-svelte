@@ -1,9 +1,9 @@
 import postgres from "postgres";
 
 import { PostgresBlogStorage, type BlogStorage } from "./blog";
+import { RollbackError } from "./errors";
 import { PostgresPostStorage, type PostStorage } from "./post";
 import { PostgresTagStorage, type TagStorage } from "./tag";
-import { RollbackError } from "./errors";
 
 const DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres";
 

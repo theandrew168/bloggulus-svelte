@@ -1,6 +1,7 @@
 import type { Blog } from "$lib/types";
+
+import { hydrateFeed, parseFeed, type FeedPost } from "./feed";
 import { defaultFeedFetcher, defaultPageFetcher, type FeedFetcher, type PageFetcher } from "./fetch";
-import { parseFeed, type FeedPost, hydrateFeed } from "./feed";
 import type { Storage } from "./storage/storage";
 
 /**

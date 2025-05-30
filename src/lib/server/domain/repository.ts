@@ -1,7 +1,8 @@
 import type { UUID } from "node:crypto";
+
+import type { Account } from "./account";
 import type { Blog } from "./blog";
 import type { Post } from "./post";
-import type { Account } from "./account";
 import type { Session } from "./session";
 import type { Tag } from "./tag";
 

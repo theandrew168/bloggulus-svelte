@@ -1,7 +1,8 @@
 import type { Actions } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
 
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
+
+import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const tags = await locals.storage.tag.list();

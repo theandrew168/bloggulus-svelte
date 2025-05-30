@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PostWithBlogAndTags } from "$lib/types";
+
 	import Tag from "./Tag.svelte";
 
 	interface Props {

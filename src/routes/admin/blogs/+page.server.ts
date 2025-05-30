@@ -1,7 +1,7 @@
-import type { Actions, PageServerLoad } from "./$types";
-
-import { SyncService } from "$lib/server/sync";
 import { errorBadRequest } from "$lib/server/errors";
+import { SyncService } from "$lib/server/sync";
+
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const blogs = await locals.storage.blog.list();

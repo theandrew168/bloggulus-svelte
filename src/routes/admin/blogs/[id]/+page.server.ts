@@ -1,9 +1,10 @@
 import { redirect } from "@sveltejs/kit";
-import type { Actions, PageServerLoad } from "./$types";
 
-import { isValidUuid } from "$lib/utils";
 import { errorBadRequest, errorNotFound } from "$lib/server/errors";
 import { SyncService } from "$lib/server/sync";
+import { isValidUuid } from "$lib/utils";
+
+import type { Actions, PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params, locals }) => {
 	const id = params.id;

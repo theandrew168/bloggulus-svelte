@@ -2,9 +2,10 @@ import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
 import { isValidUuid } from "$lib/utils";
+
+import { RollbackError } from "./errors";
 import { generateFakeBlog, generateFakePost } from "./fake";
 import { connect } from "./storage";
-import { RollbackError } from "./errors";
 
 describe("PostStorage", () => {
 	const storage = connect();

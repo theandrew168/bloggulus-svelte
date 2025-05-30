@@ -2,9 +2,10 @@ import _ from "lodash";
 import { describe, expect, test } from "vitest";
 
 import { isValidUuid } from "$lib/utils";
+
+import { RollbackError } from "./errors";
 import { generateFakeTag } from "./fake";
 import { connect } from "./storage";
-import { RollbackError } from "./errors";
 
 describe("TagStorage", () => {
 	const storage = connect();

@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 
+import type { FeedBlog, FeedPost } from "./feed";
+import { BLOG_FOOBAR, mockAtomFeed, MockFeedFetcher, MockPageFetcher, POST_BAR, POST_FOO } from "./mock";
+import { RollbackError } from "./storage/errors";
 import { connect } from "./storage/storage";
 import { SyncService } from "./sync";
-import { BLOG_FOOBAR, MockFeedFetcher, MockPageFetcher, POST_BAR, POST_FOO, mockAtomFeed } from "./mock";
-import type { FeedBlog, FeedPost } from "./feed";
-import { RollbackError } from "./storage/errors";
 
 describe("SyncService", () => {
 	const storage = connect();

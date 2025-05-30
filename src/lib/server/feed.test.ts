@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
-import { parseFeed, hydrateFeed } from "./feed";
-import { BLOG_FOOBAR, MockPageFetcher, mockAtomFeed } from "./mock";
+import { hydrateFeed, parseFeed } from "./feed";
+import { BLOG_FOOBAR, mockAtomFeed, MockPageFetcher } from "./mock";
 
 test("parseFeed", async () => {
 	const url = BLOG_FOOBAR.feedUrl;

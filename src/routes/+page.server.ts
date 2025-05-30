@@ -1,6 +1,6 @@
-import type { PageServerLoad } from "./$types";
-
 import { SyncService } from "$lib/server/sync";
+
+import type { PageServerLoad } from "./$types";
 
 const PAGE_SIZE = 15;
 
