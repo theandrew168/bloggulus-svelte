@@ -1,8 +1,11 @@
-import { randomUUID } from "node:crypto";
+import { randomUUID, type UUID } from "node:crypto";
 
 import type { FeedFetcher, FeedParser, FeedPost } from "./feed";
-import type { AccountID, Blog, BlogID, Post, PostID, Session, SessionID } from "./model";
 import type { AccountRepository, BlogRepository, PostRepository, SessionRepository } from "./repository";
+import { Blog } from "./blog";
+import { Post } from "./post";
+import { Session } from "./session";
+import { Account } from "./account";
 
 // Should run periodically to sync all blogs and their posts.
 async function syncAllBlogs(
@@ -42,12 +45,11 @@ async function addOrSyncBlog(
 
 	let existingBlog = await blogRepo.readByFeedURL(feedURL);
 	if (!existingBlog) {
-		existingBlog = {
-			id: randomUUID(),
+		existingBlog = new Blog({
 			title: feedBlog.title,
 			feedURL: feedBlog.feedURL,
 			siteURL: feedBlog.siteURL,
-		};
+		});
 		await blogRepo.createOrUpdate(existingBlog);
 	}
 
@@ -78,14 +80,15 @@ function comparePosts(
 	for (const feedPost of feedPosts) {
 		const knownPost = knownPostsByURL[feedPost.url.toString()];
 		if (!knownPost) {
-			postsToCreate.push({
-				id: randomUUID(),
-				blogID: blog.id,
-				url: feedPost.url,
-				title: feedPost.title,
-				content: feedPost.content || "",
-				publishedAt: feedPost.publishedAt,
-			});
+			postsToCreate.push(
+				new Post({
+					blogID: blog.id,
+					url: feedPost.url,
+					title: feedPost.title,
+					publishedAt: feedPost.publishedAt,
+					content: feedPost.content,
+				}),
+			);
 		} else {
 			// TODO: Check if the post needs to be updated
 			postsToUpdate.push(knownPost);
@@ -102,26 +105,22 @@ async function signIn(
 ): Promise<Session> {
 	let account = await accountRepo.readByUsername(username);
 	if (!account) {
-		account = {
-			id: randomUUID(),
+		account = new Account({
 			username: username,
-			isAdmin: false,
-			followedBlogs: [],
-		};
+		});
 		await accountRepo.createOrUpdate(account);
 	}
 
-	const session: Session = {
-		id: randomUUID(),
+	const session = new Session({
 		accountID: account.id,
 		expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day expiration
-	};
+	});
 	await sessionRepo.createOrUpdate(session);
 
 	return session;
 }
 
-async function signOut(sessionRepo: SessionRepository, sessionID: SessionID): Promise<void> {
+async function signOut(sessionRepo: SessionRepository, sessionID: UUID): Promise<void> {
 	const session = await sessionRepo.readByID(sessionID);
 	if (!session) {
 		return;
@@ -130,7 +129,7 @@ async function signOut(sessionRepo: SessionRepository, sessionID: SessionID): Pr
 	await sessionRepo.delete(session);
 }
 
-async function deleteAccount(accountRepo: AccountRepository, accountID: AccountID): Promise<void> {
+async function deleteAccount(accountRepo: AccountRepository, accountID: UUID): Promise<void> {
 	const account = await accountRepo.readByID(accountID);
 	if (!account) {
 		throw new Error("Account not found");
@@ -139,29 +138,47 @@ async function deleteAccount(accountRepo: AccountRepository, accountID: AccountI
 	await accountRepo.delete(account);
 }
 
-async function followBlog(accountRepo: AccountRepository, accountID: AccountID, blogID: BlogID): Promise<void> {
+async function followBlog(
+	accountRepo: AccountRepository,
+	blogRepo: BlogRepository,
+	accountID: UUID,
+	blogID: UUID,
+): Promise<void> {
 	const account = await accountRepo.readByID(accountID);
 	if (!account) {
 		throw new Error("Account not found");
 	}
 
-	if (!account.followedBlogs.includes(blogID)) {
-		account.followedBlogs.push(blogID);
-		await accountRepo.createOrUpdate(account);
-	}
-}
-
-async function unfollowBlog(accountRepo: AccountRepository, accountID: AccountID, blogID: BlogID): Promise<void> {
-	const account = await accountRepo.readByID(accountID);
-	if (!account) {
-		throw new Error("Account not found");
+	const blog = await blogRepo.readByID(blogID);
+	if (!blog) {
+		throw new Error("Blog not found");
 	}
 
-	account.followedBlogs = account.followedBlogs.filter((id) => id !== blogID);
+	account.followBlog(blog.id);
 	await accountRepo.createOrUpdate(account);
 }
 
-async function deleteBlog(blogRepo: BlogRepository, blogID: BlogID): Promise<void> {
+async function unfollowBlog(
+	accountRepo: AccountRepository,
+	blogRepo: BlogRepository,
+	accountID: UUID,
+	blogID: UUID,
+): Promise<void> {
+	const account = await accountRepo.readByID(accountID);
+	if (!account) {
+		throw new Error("Account not found");
+	}
+
+	const blog = await blogRepo.readByID(blogID);
+	if (!blog) {
+		throw new Error("Blog not found");
+	}
+
+	account.unfollowBlog(blog.id);
+	await accountRepo.createOrUpdate(account);
+}
+
+async function deleteBlog(blogRepo: BlogRepository, blogID: UUID): Promise<void> {
 	const blog = await blogRepo.readByID(blogID);
 	if (!blog) {
 		throw new Error("Blog not found");
@@ -170,7 +187,7 @@ async function deleteBlog(blogRepo: BlogRepository, blogID: BlogID): Promise<voi
 	await blogRepo.delete(blog);
 }
 
-async function deletePost(postRepo: PostRepository, postID: PostID): Promise<void> {
+async function deletePost(postRepo: PostRepository, postID: UUID): Promise<void> {
 	const post = await postRepo.readByID(postID);
 	if (!post) {
 		throw new Error("Post not found");
