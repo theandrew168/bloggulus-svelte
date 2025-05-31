@@ -1,13 +1,15 @@
-import type { Account, Blog, BlogID, Post, PostID, SessionID, Tag } from "./model";
+import type { UUID } from "node:crypto";
+
+import type { Account } from "./account";
 import type { AccountRepository, BlogRepository, PostRepository, SessionRepository } from "./repository";
 
-type Article = {
+export type Article = {
 	title: string;
 	url: URL;
 	blogTitle: string;
 	blogURL: URL;
 	publishedAt: Date;
-	tags: Tag[];
+	tags: string[];
 };
 
 // Powers the index page.
@@ -39,7 +41,7 @@ async function listAccounts(): Promise<Account[]> {
 async function findAccountBySessionID(
 	accountRepo: AccountRepository,
 	sessionRepo: SessionRepository,
-	sessionID: SessionID,
+	sessionID: UUID,
 ): Promise<Account | undefined> {
 	const session = await sessionRepo.readByID(sessionID);
 	if (!session) {
@@ -49,18 +51,34 @@ async function findAccountBySessionID(
 	return accountRepo.readByID(session.accountID);
 }
 
+export type BlogDetails = {
+	id: UUID;
+	feedURL: string;
+	siteURL: string;
+	title: string;
+	syncedAt?: Date;
+};
+
 // Powers the blog details page (admin only).
-async function readBlogByID(blogRepo: BlogRepository, blogID: BlogID): Promise<Blog | undefined> {
-	return blogRepo.readByID(blogID);
+async function readBlogDetailsByID(blogRepo: BlogRepository, blogID: UUID): Promise<BlogDetails | undefined> {
+	return undefined;
 }
+
+export type PostDetails = {
+	id: UUID;
+	blogID: UUID;
+	url: string;
+	title: string;
+	publishedAt: Date;
+};
 
 // Powers the post details page (admin only).
-async function readPostByID(postRepo: PostRepository, postID: PostID): Promise<Post | undefined> {
-	return postRepo.readByID(postID);
+async function readPostDetailsByID(postRepo: PostRepository, postID: UUID): Promise<PostDetails | undefined> {
+	return undefined;
 }
 
-type BlogForAccount = {
-	id: BlogID;
+export type BlogForAccount = {
+	id: UUID;
 	title: string;
 	siteURL: URL;
 	isFollowed: boolean;
@@ -73,6 +91,6 @@ async function listBlogsForAccount(blogRepo: BlogRepository, account: Account): 
 		id: blog.id,
 		title: blog.title,
 		siteURL: blog.siteURL,
-		isFollowed: account.followedBlogs.includes(blog.id),
+		isFollowed: account.followedBlogIDs.includes(blog.id),
 	}));
 }
