@@ -18,8 +18,8 @@ describe("PostgresTagRepository", () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
 		await repo.createOrUpdate(tag);
 
-		const tagById = await repo.readByID(tag.id);
-		expect(tagById?.id).toEqual(tag.id);
+		const tagByID = await repo.readByID(tag.id);
+		expect(tagByID?.id).toEqual(tag.id);
 	});
 
 	test("delete", async () => {
@@ -28,7 +28,7 @@ describe("PostgresTagRepository", () => {
 
 		await repo.delete(tag);
 
-		const tagById = await repo.readByID(tag.id);
-		expect(tagById).toBeUndefined();
+		const tagByID = await repo.readByID(tag.id);
+		expect(tagByID).toBeUndefined();
 	});
 });
