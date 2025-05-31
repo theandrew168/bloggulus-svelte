@@ -6,9 +6,9 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"migrate": "tsx ./scripts/migrate.ts",
-		"start": "tsx ./scripts/migrate.ts && node ./build/",
-		"test": "tsx ./scripts/migrate.ts && vitest run",
+		"migrate": "tsx ./src/lib/server/postgres/migrate.ts",
+		"start": "npm run migrate && node ./build/",
+		"test": "npm run migrate && vitest run",
 		"check": "tsc && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"format": "prettier --write ."
 	},

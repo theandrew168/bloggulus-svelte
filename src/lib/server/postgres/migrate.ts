@@ -1,6 +1,6 @@
-import { readdir } from "fs/promises";
+import { readdir } from "node:fs/promises";
 
-import sql from "./db";
+import { Connection } from "./postgres";
 
 const MIGRATIONS_DIR = "./migrations/";
 
@@ -11,16 +11,17 @@ type Migration = {
 
 async function main() {
 	console.log("applying migrations...");
+	const conn = Connection.getInstance();
 
 	// create migration table if it doesn't exist
-	await sql`
+	await conn.sql`
 		CREATE TABLE IF NOT EXISTS migration (
 			id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 			name TEXT NOT NULL UNIQUE
 		)`;
 
 	// get migrations that are already applied
-	const rows = await sql<Migration[]>`SELECT id, name FROM migration`;
+	const rows = await conn.sql<Migration[]>`SELECT id, name FROM migration`;
 	const applied = rows.map((row) => row.name);
 
 	// get migrations that should be applied
@@ -33,24 +34,20 @@ async function main() {
 	missing.sort();
 
 	for (const file of missing) {
-		// apply the missing ones
-		console.log("applying: ", file);
-		const path = MIGRATIONS_DIR + file;
-		await sql.file(path);
+		// run each migration within a transaction
+		await conn.sql.begin(async (sql) => {
+			// apply the missing ones
+			console.log("applying: ", file);
+			const path = MIGRATIONS_DIR + file;
+			await sql.file(path);
 
-		// update migration table
-		await sql`INSERT INTO migration (name) VALUES (${file})`;
+			// update migration table
+			await sql`INSERT INTO migration (name) VALUES (${file})`;
+		});
 	}
 
+	await conn.sql.end();
 	console.log("done!");
 }
 
-main()
-	.then(async () => {
-		await sql.end();
-	})
-	.catch(async (e) => {
-		console.error(e);
-		await sql.end();
-		process.exit(1);
-	});
+main();

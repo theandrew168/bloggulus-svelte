@@ -1,0 +1,62 @@
+import type { UUID } from "node:crypto";
+
+import type { TagRepository } from "$lib/server/domain/repository";
+import { Tag } from "$lib/server/domain/tag";
+import { Connection } from "$lib/server/postgres/postgres";
+
+type TagRow = {
+	id: UUID;
+	name: string;
+};
+const tagRowColumns = ["id", "name"] as const;
+
+export class PostgresTagRepository implements TagRepository {
+	private static _instance?: PostgresTagRepository;
+	private _conn: Connection;
+
+	constructor(conn: Connection) {
+		this._conn = conn;
+	}
+
+	static getInstance(): PostgresTagRepository {
+		if (!this._instance) {
+			console.log("Creating a new instance of PostgresTagRepository");
+			const conn = Connection.getInstance();
+			this._instance = new PostgresTagRepository(conn);
+		}
+
+		return this._instance;
+	}
+
+	async readByID(id: UUID): Promise<Tag | undefined> {
+		const rows = await this._conn.sql<TagRow[]>`
+            SELECT ${this._conn.sql(tagRowColumns)}
+            FROM tag
+            WHERE id = ${id}
+        `;
+
+		const row = rows[0];
+		if (!row) {
+			return undefined;
+		}
+
+		return Tag.load(row);
+	}
+
+	async createOrUpdate(tag: Tag): Promise<void> {
+		await this._conn.sql`
+			INSERT INTO tag (${this._conn.sql(tagRowColumns)})
+            VALUES (${tag.id}, ${tag.name})
+            ON CONFLICT (id) DO UPDATE
+            SET name = EXCLUDED.name
+		`;
+	}
+
+	async delete(tag: Tag): Promise<void> {
+		await this._conn.sql`
+			DELETE
+			FROM tag
+			WHERE id = ${tag.id}
+		`;
+	}
+}
