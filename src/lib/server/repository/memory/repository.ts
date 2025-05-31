@@ -37,8 +37,7 @@ export class MemoryRepository implements Repository {
 		return this._instance;
 	}
 
-	async withTransaction(operation: (repo: Repository) => Promise<void>): Promise<void> {
-		// In a memory repository, we cannot really handle transactions.
+	async asUnitOfWork(operation: (repo: Repository) => Promise<void>): Promise<void> {
 		return operation(this);
 	}
 }

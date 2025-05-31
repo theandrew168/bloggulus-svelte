@@ -55,5 +55,5 @@ export type Repository = {
 	readonly post: PostRepository;
 	readonly tag: TagRepository;
 
-	withTransaction: (operation: (repo: Repository) => Promise<void>) => Promise<void>;
+	asUnitOfWork: (operation: (repo: Repository) => Promise<void>) => Promise<void>;
 };
