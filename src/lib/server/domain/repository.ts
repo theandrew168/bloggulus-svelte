@@ -26,7 +26,6 @@ export type PostRepository = {
 export type AccountRepository = {
 	readByID: (id: UUID) => Promise<Account | undefined>;
 	readByUsername: (username: string) => Promise<Account | undefined>;
-	readBySessionToken: (sessionToken: string) => Promise<Account | undefined>;
 	createOrUpdate: (account: Account) => Promise<void>;
 	delete: (account: Account) => Promise<void>;
 };
@@ -35,6 +34,7 @@ export type SessionRepository = {
 	// Used for deleting expired sessions.
 	listExpired: (now: Date) => Promise<Session[]>;
 	readByID: (id: UUID) => Promise<Session | undefined>;
+	readByToken: (token: string) => Promise<Session | undefined>;
 	createOrUpdate: (session: Session) => Promise<void>;
 	delete: (session: Session) => Promise<void>;
 };

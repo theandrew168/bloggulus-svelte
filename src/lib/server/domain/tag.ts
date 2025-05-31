@@ -13,7 +13,7 @@ export class Tag {
 		this._name = name;
 	}
 
-	get id(): string {
+	get id(): UUID {
 		return this._id;
 	}
 

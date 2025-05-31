@@ -4,19 +4,35 @@ import type { Account } from "$lib/server/domain/account";
 import type { AccountRepository } from "$lib/server/domain/repository";
 
 export class MemoryAccountRepository implements AccountRepository {
+	private static _instance?: MemoryAccountRepository;
+	private _db: Map<UUID, Account>;
+
+	constructor() {
+		this._db = new Map();
+	}
+
+	static getInstance(): MemoryAccountRepository {
+		if (!this._instance) {
+			console.log("Creating a new instance of MemoryAccountRepository");
+			this._instance = new MemoryAccountRepository();
+		}
+
+		return this._instance;
+	}
+
 	async readByID(id: UUID): Promise<Account | undefined> {
-		return undefined;
+		return this._db.get(id);
 	}
 
 	async readByUsername(username: string): Promise<Account | undefined> {
-		return undefined;
+		return this._db.values().find((account) => account.username === username);
 	}
 
-	async readBySessionToken(sessionToken: string): Promise<Account | undefined> {
-		return undefined;
+	async createOrUpdate(account: Account): Promise<void> {
+		this._db.set(account.id, account);
 	}
 
-	async createOrUpdate(account: Account): Promise<void> {}
-
-	async delete(account: Account): Promise<void> {}
+	async delete(account: Account): Promise<void> {
+		this._db.delete(account.id);
+	}
 }
