@@ -2,7 +2,7 @@ import type { UUID } from "node:crypto";
 
 import type { TagRepository } from "$lib/server/domain/repository";
 import { Tag } from "$lib/server/domain/tag";
-import { Connection } from "$lib/server/postgres/postgres";
+import { Connection } from "$lib/server/postgres/connection";
 
 type TagRow = {
 	id: UUID;
@@ -19,7 +19,6 @@ export class PostgresTagRepository implements TagRepository {
 
 	static getInstance(): PostgresTagRepository {
 		if (!this._instance) {
-			console.log("Creating a new instance of PostgresTagRepository");
 			const conn = Connection.getInstance();
 			this._instance = new PostgresTagRepository(conn);
 		}

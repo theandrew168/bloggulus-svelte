@@ -13,7 +13,6 @@ export class MemorySessionRepository implements SessionRepository {
 
 	static getInstance(): MemorySessionRepository {
 		if (!this._instance) {
-			console.log("Creating a new instance of MemorySessionRepository");
 			this._instance = new MemorySessionRepository();
 		}
 

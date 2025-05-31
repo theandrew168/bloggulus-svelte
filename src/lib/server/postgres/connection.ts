@@ -14,11 +14,14 @@ export class Connection {
 
 	static getInstance(): Connection {
 		if (!this._instance) {
-			console.log("Creating a new instance of Connection");
 			const connectionString = process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
 			this._instance = new Connection(connectionString);
 		}
 
 		return this._instance;
+	}
+
+	async withTransaction(callback: (sql: Sql) => Promise<void>): Promise<void> {
+		return this.sql.begin(callback);
 	}
 }

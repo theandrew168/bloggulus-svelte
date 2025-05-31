@@ -13,7 +13,6 @@ export class MemoryTagRepository implements TagRepository {
 
 	static getInstance(): MemoryTagRepository {
 		if (!this._instance) {
-			console.log("Creating a new instance of MemoryTagRepository");
 			this._instance = new MemoryTagRepository();
 		}
 

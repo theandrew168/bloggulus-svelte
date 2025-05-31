@@ -2,7 +2,7 @@ import type { UUID } from "node:crypto";
 
 import { Account } from "$lib/server/domain/account";
 import type { AccountRepository } from "$lib/server/domain/repository";
-import { Connection } from "$lib/server/postgres/postgres";
+import { Connection } from "$lib/server/postgres/connection";
 
 type AccountRow = {
 	id: UUID;
@@ -21,7 +21,6 @@ export class PostgresAccountRepository implements AccountRepository {
 
 	static getInstance(): PostgresAccountRepository {
 		if (!this._instance) {
-			console.log("Creating a new instance of PostgresAccountRepository");
 			const conn = Connection.getInstance();
 			this._instance = new PostgresAccountRepository(conn);
 		}
@@ -94,6 +93,31 @@ export class PostgresAccountRepository implements AccountRepository {
 				username = EXCLUDED.username,
 				is_admin = EXCLUDED.is_admin;
 		`;
+
+		const followedBlogIDRows = await this._conn.sql<{ blog_id: UUID }[]>`
+			SELECT blog_id
+			FROM account_blog
+			WHERE account_id = ${account.id};
+		`;
+		const followedBlogIDs = followedBlogIDRows.map((row) => row.blog_id);
+
+		const blogsToFollow = account.followedBlogIDs.filter((blogID) => !followedBlogIDs.includes(blogID));
+		for (const blogID of blogsToFollow) {
+			await this._conn.sql`
+				INSERT INTO account_blog
+					(account_id, blog_id)
+				VALUES
+					(${account.id}, ${blogID});
+			`;
+		}
+
+		const blogsToUnfollow = followedBlogIDs.filter((blogID) => !account.followedBlogIDs.includes(blogID));
+		for (const blogID of blogsToUnfollow) {
+			await this._conn.sql`
+				DELETE FROM account_blog
+				WHERE account_id = ${account.id} AND blog_id = ${blogID};
+			`;
+		}
 	}
 
 	async delete(account: Account): Promise<void> {

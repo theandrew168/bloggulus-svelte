@@ -13,7 +13,6 @@ export class MemoryBlogRepository implements BlogRepository {
 
 	static getInstance(): MemoryBlogRepository {
 		if (!this._instance) {
-			console.log("Creating a new instance of MemoryBlogRepository");
 			this._instance = new MemoryBlogRepository();
 		}
 

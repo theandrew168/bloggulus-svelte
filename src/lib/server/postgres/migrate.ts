@@ -1,6 +1,6 @@
 import { readdir } from "node:fs/promises";
 
-import { Connection } from "./postgres";
+import { Connection } from "./connection";
 
 const MIGRATIONS_DIR = "./migrations/";
 
@@ -35,7 +35,7 @@ async function main() {
 
 	for (const file of missing) {
 		// run each migration within a transaction
-		await conn.sql.begin(async (sql) => {
+		await conn.withTransaction(async (sql) => {
 			// apply the missing ones
 			console.log("applying: ", file);
 			const path = MIGRATIONS_DIR + file;

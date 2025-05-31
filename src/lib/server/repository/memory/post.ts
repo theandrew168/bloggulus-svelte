@@ -13,7 +13,6 @@ export class MemoryPostRepository implements PostRepository {
 
 	static getInstance(): MemoryPostRepository {
 		if (!this._instance) {
-			console.log("Creating a new instance of MemoryPostRepository");
 			this._instance = new MemoryPostRepository();
 		}
 

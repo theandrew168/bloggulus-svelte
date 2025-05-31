@@ -13,7 +13,6 @@ export class MemoryAccountRepository implements AccountRepository {
 
 	static getInstance(): MemoryAccountRepository {
 		if (!this._instance) {
-			console.log("Creating a new instance of MemoryAccountRepository");
 			this._instance = new MemoryAccountRepository();
 		}
 
