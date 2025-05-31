@@ -8,7 +8,6 @@ type TagRow = {
 	id: UUID;
 	name: string;
 };
-const tagRowColumns = ["id", "name"] as const;
 
 export class PostgresTagRepository implements TagRepository {
 	private static _instance?: PostgresTagRepository;
@@ -30,9 +29,11 @@ export class PostgresTagRepository implements TagRepository {
 
 	async readByID(id: UUID): Promise<Tag | undefined> {
 		const rows = await this._conn.sql<TagRow[]>`
-            SELECT ${this._conn.sql(tagRowColumns)}
+            SELECT
+                id,
+                name
             FROM tag
-            WHERE id = ${id}
+            WHERE id = ${id};
         `;
 
 		const row = rows[0];
@@ -45,10 +46,13 @@ export class PostgresTagRepository implements TagRepository {
 
 	async createOrUpdate(tag: Tag): Promise<void> {
 		await this._conn.sql`
-			INSERT INTO tag (${this._conn.sql(tagRowColumns)})
-            VALUES (${tag.id}, ${tag.name})
-            ON CONFLICT (id) DO UPDATE
-            SET name = EXCLUDED.name
+			INSERT INTO tag
+                (id, name)
+            VALUES
+                (${tag.id}, ${tag.name})
+            ON CONFLICT (id)
+            DO UPDATE SET
+                name = EXCLUDED.name;
 		`;
 	}
 
@@ -56,7 +60,7 @@ export class PostgresTagRepository implements TagRepository {
 		await this._conn.sql`
 			DELETE
 			FROM tag
-			WHERE id = ${tag.id}
+			WHERE id = ${tag.id};
 		`;
 	}
 }

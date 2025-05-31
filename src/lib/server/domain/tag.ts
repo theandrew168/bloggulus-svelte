@@ -21,6 +21,7 @@ export class Tag {
 	static load({ id, name }: LoadTagParams): Tag {
 		const tag = new Tag({ name });
 		tag._id = id;
+		tag._name = name;
 		return tag;
 	}
 

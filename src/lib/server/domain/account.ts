@@ -4,6 +4,13 @@ export type NewAccountParams = {
 	username: string;
 };
 
+export type LoadAccountParams = {
+	id: UUID;
+	username: string;
+	isAdmin: boolean;
+	followedBlogIDs: UUID[];
+};
+
 export class Account {
 	private _id: UUID;
 	private _username: string;
@@ -15,6 +22,15 @@ export class Account {
 		this._username = username;
 		this._isAdmin = false;
 		this._followedBlogIDs = [];
+	}
+
+	static load({ id, username, isAdmin, followedBlogIDs }: LoadAccountParams): Account {
+		const account = new Account({ username });
+		account._id = id;
+		account._username = username;
+		account._isAdmin = isAdmin;
+		account._followedBlogIDs = followedBlogIDs;
+		return account;
 	}
 
 	get id(): UUID {

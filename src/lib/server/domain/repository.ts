@@ -6,8 +6,10 @@ import type { Post } from "./post";
 import type { Session } from "./session";
 import type { Tag } from "./tag";
 
+// TODO: Should the delete methods just accept IDs instead of full objects?
+
 export type BlogRepository = {
-	// Used for syncing blogs.
+	// Used for syncing blogs (should this be a query?).
 	list: () => Promise<Blog[]>;
 	readByID: (id: UUID) => Promise<Blog | undefined>;
 	readByFeedURL: (feedURL: URL) => Promise<Blog | undefined>;
@@ -16,7 +18,7 @@ export type BlogRepository = {
 };
 
 export type PostRepository = {
-	// Used for syncing a blog's posts.
+	// Used for syncing a blog's posts (should this be a query?).
 	listByBlogID: (blogID: UUID) => Promise<Post[]>;
 	readByID: (id: UUID) => Promise<Post | undefined>;
 	createOrUpdate: (post: Post) => Promise<void>;
@@ -31,7 +33,7 @@ export type AccountRepository = {
 };
 
 export type SessionRepository = {
-	// Used for deleting expired sessions.
+	// Used for deleting expired sessions (should this be a query?).
 	listExpired: (now: Date) => Promise<Session[]>;
 	readByID: (id: UUID) => Promise<Session | undefined>;
 	readByToken: (token: string) => Promise<Session | undefined>;

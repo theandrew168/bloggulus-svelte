@@ -1,5 +1,12 @@
 import { randomBytes, randomUUID, type UUID } from "node:crypto";
 
+// TODO: Should session actually be nested under the account aggregate?
+// The fact that I want a "readAccountBySessionToken" method suggests that it should be.
+// Furthermore, sessions without accounts don't make sense. What about deleting expired
+// sessions? That shouldn't be any more complex that necessary. Otherwise, the auth
+// middleware will be required to perform TWO queries: one to get the session and
+// another to get the account.
+
 export type NewSessionParams = {
 	accountID: UUID;
 	expiresAt: Date;
