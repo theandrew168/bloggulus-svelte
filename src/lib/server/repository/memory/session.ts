@@ -6,9 +6,11 @@ import type { Session } from "$lib/server/domain/session";
 export class MemorySessionRepository implements SessionRepository {
 	private static _instance?: MemorySessionRepository;
 	private _db: Map<UUID, Session>;
+	private _tokenToID: Map<string, UUID>;
 
 	constructor() {
 		this._db = new Map();
+		this._tokenToID = new Map();
 	}
 
 	static getInstance(): MemorySessionRepository {
@@ -28,14 +30,25 @@ export class MemorySessionRepository implements SessionRepository {
 	}
 
 	async readByToken(token: string): Promise<Session | undefined> {
-		return this._db.values().find((session) => session.token === token);
+		const id = this._tokenToID.get(token);
+		if (!id) {
+			return undefined;
+		}
+
+		return this.readByID(id);
 	}
 
-	async createOrUpdate(session: Session): Promise<void> {
+	async createOrUpdate(session: Session, token: string): Promise<void> {
 		this._db.set(session.id, session);
+		this._tokenToID.set(token, session.id);
 	}
 
 	async delete(session: Session): Promise<void> {
 		this._db.delete(session.id);
+		for (const [token, id] of this._tokenToID.entries()) {
+			if (id === session.id) {
+				this._tokenToID.delete(token);
+			}
+		}
 	}
 }

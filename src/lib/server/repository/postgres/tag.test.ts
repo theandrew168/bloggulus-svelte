@@ -7,28 +7,28 @@ import { PostgresTagRepository } from "./tag";
 
 describe("PostgresTagRepository", () => {
 	const chance = new Chance();
-	const repo = PostgresTagRepository.getInstance();
+	const tagRepo = PostgresTagRepository.getInstance();
 
 	test("createOrUpdate", async () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
-		await repo.createOrUpdate(tag);
+		await tagRepo.createOrUpdate(tag);
 	});
 
 	test("readById", async () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
-		await repo.createOrUpdate(tag);
+		await tagRepo.createOrUpdate(tag);
 
-		const tagByID = await repo.readByID(tag.id);
+		const tagByID = await tagRepo.readByID(tag.id);
 		expect(tagByID?.id).toEqual(tag.id);
 	});
 
 	test("delete", async () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
-		await repo.createOrUpdate(tag);
+		await tagRepo.createOrUpdate(tag);
 
-		await repo.delete(tag);
+		await tagRepo.delete(tag);
 
-		const tagByID = await repo.readByID(tag.id);
+		const tagByID = await tagRepo.readByID(tag.id);
 		expect(tagByID).toBeUndefined();
 	});
 });

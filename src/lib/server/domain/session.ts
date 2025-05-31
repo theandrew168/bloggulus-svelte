@@ -1,4 +1,4 @@
-import { randomBytes, randomUUID, type UUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID, type UUID } from "node:crypto";
 
 // TODO: Should session actually be nested under the account aggregate?
 // The fact that I want a "readAccountBySessionToken" method suggests that it should be.
@@ -12,17 +12,32 @@ export type NewSessionParams = {
 	expiresAt: Date;
 };
 
+export type LoadSessionParams = {
+	id: UUID;
+	accountID: UUID;
+	expiresAt: Date;
+};
+
 export class Session {
 	private _id: UUID;
 	private _accountID: UUID;
-	private _token: string;
 	private _expiresAt: Date;
 
 	constructor({ accountID, expiresAt }: NewSessionParams) {
 		this._id = randomUUID();
 		this._accountID = accountID;
-		this._token = randomBytes(32).toString("base64url"); // Ensure token is unique and secure
 		this._expiresAt = expiresAt;
+	}
+
+	static load({ id, accountID, expiresAt }: LoadSessionParams): Session {
+		const session = new Session({
+			accountID,
+			expiresAt,
+		});
+		session._id = id;
+		session._accountID = accountID;
+		session._expiresAt = expiresAt;
+		return session;
 	}
 
 	get id(): UUID {
@@ -33,11 +48,15 @@ export class Session {
 		return this._accountID;
 	}
 
-	get token(): string {
-		return this._token;
-	}
-
 	get expiresAt(): Date {
 		return this._expiresAt;
 	}
+}
+
+export function generateToken(): string {
+	return randomBytes(32).toString("base64url");
+}
+
+export function sha256(token: string): string {
+	return createHash("sha256").update(token).digest("hex");
 }

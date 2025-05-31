@@ -11,7 +11,7 @@ import type { Tag } from "./tag";
 
 export type BlogRepository = {
 	// Used for syncing blogs (should this be a query?). We need id and feedURL.
-	list: () => Promise<Blog[]>;
+	// list: () => Promise<Blog[]>;
 	readByID: (id: UUID) => Promise<Blog | undefined>;
 	readByFeedURL: (feedURL: URL) => Promise<Blog | undefined>;
 	createOrUpdate: (blog: Blog) => Promise<void>;
@@ -20,7 +20,7 @@ export type BlogRepository = {
 
 export type PostRepository = {
 	// Used for syncing a blog's posts (should this be a query?). We need id and url.
-	listByBlogID: (blogID: UUID) => Promise<Post[]>;
+	// listByBlogID: (blogID: UUID) => Promise<Post[]>;
 	readByID: (id: UUID) => Promise<Post | undefined>;
 	createOrUpdate: (post: Post) => Promise<void>;
 	delete: (post: Post) => Promise<void>;
@@ -35,10 +35,10 @@ export type AccountRepository = {
 
 export type SessionRepository = {
 	// Used for deleting expired sessions (should this be a query?). We need id.
-	listExpired: (now: Date) => Promise<Session[]>;
+	// listExpired: (now: Date) => Promise<Session[]>;
 	readByID: (id: UUID) => Promise<Session | undefined>;
 	readByToken: (token: string) => Promise<Session | undefined>;
-	createOrUpdate: (session: Session) => Promise<void>;
+	createOrUpdate: (session: Session, token: string) => Promise<void>;
 	delete: (session: Session) => Promise<void>;
 };
 

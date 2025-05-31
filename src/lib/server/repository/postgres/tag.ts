@@ -40,7 +40,10 @@ export class PostgresTagRepository implements TagRepository {
 			return undefined;
 		}
 
-		return Tag.load(row);
+		return Tag.load({
+			id: row.id,
+			name: row.name,
+		});
 	}
 
 	async createOrUpdate(tag: Tag): Promise<void> {
