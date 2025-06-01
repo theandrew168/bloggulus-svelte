@@ -52,8 +52,8 @@ export class PostgresBlogRepository implements BlogRepository {
 
 		return Blog.load({
 			id: row.id,
-			feedURL: new URL(row.feed_url),
-			siteURL: new URL(row.site_url),
+			feedURL: row.feed_url,
+			siteURL: row.site_url,
 			title: row.title,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
@@ -61,7 +61,7 @@ export class PostgresBlogRepository implements BlogRepository {
 		});
 	}
 
-	async readByFeedURL(feedURL: URL): Promise<Blog | undefined> {
+	async readByFeedURL(feedURL: string): Promise<Blog | undefined> {
 		const rows = await this._conn.sql<BlogRow[]>`
             SELECT
                 id,
@@ -72,7 +72,7 @@ export class PostgresBlogRepository implements BlogRepository {
                 last_modified,
                 synced_at
             FROM blog
-            WHERE feed_url = ${feedURL.toString()};
+            WHERE feed_url = ${feedURL};
         `;
 
 		const row = rows[0];
@@ -82,8 +82,8 @@ export class PostgresBlogRepository implements BlogRepository {
 
 		return Blog.load({
 			id: row.id,
-			feedURL: new URL(row.feed_url),
-			siteURL: new URL(row.site_url),
+			feedURL: row.feed_url,
+			siteURL: row.site_url,
 			title: row.title,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,

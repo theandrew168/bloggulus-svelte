@@ -258,7 +258,7 @@ async function readPostDetailsByID(conn: Connection, postID: UUID): Promise<Post
 export type BlogForAccount = {
 	id: UUID;
 	title: string;
-	siteURL: URL;
+	siteURL: string;
 	isFollowed: boolean;
 };
 

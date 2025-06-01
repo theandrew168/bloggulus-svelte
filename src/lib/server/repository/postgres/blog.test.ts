@@ -11,8 +11,8 @@ describe("PostgresBlogRepository", () => {
 
 	test("createOrUpdate", async () => {
 		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
+			feedURL: chance.url(),
+			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
 		await blogRepo.createOrUpdate(blog);
@@ -20,8 +20,8 @@ describe("PostgresBlogRepository", () => {
 
 	test("readByID", async () => {
 		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
+			feedURL: chance.url(),
+			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
 		await blogRepo.createOrUpdate(blog);
@@ -32,8 +32,8 @@ describe("PostgresBlogRepository", () => {
 
 	test("readByFeedURL", async () => {
 		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
+			feedURL: chance.url(),
+			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
 		await blogRepo.createOrUpdate(blog);
@@ -44,8 +44,8 @@ describe("PostgresBlogRepository", () => {
 
 	test("delete", async () => {
 		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
+			feedURL: chance.url(),
+			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
 		await blogRepo.createOrUpdate(blog);

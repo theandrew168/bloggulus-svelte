@@ -3,15 +3,15 @@ import { randomUUID, type UUID } from "node:crypto";
 export const SyncCooldownMS = 2 * 60 * 60 * 1000;
 
 export type NewBlogParams = {
-	feedURL: URL;
-	siteURL: URL;
+	feedURL: string;
+	siteURL: string;
 	title: string;
 };
 
 export type LoadBlogParams = {
 	id: UUID;
-	feedURL: URL;
-	siteURL: URL;
+	feedURL: string;
+	siteURL: string;
 	title: string;
 	etag?: string;
 	lastModified?: string;
@@ -20,8 +20,8 @@ export type LoadBlogParams = {
 
 export class Blog {
 	private _id: UUID;
-	private _feedURL: URL;
-	private _siteURL: URL;
+	private _feedURL: string;
+	private _siteURL: string;
 	private _title: string;
 	private _etag?: string;
 	private _lastModified?: string;
@@ -50,11 +50,11 @@ export class Blog {
 		return this._id;
 	}
 
-	get feedURL(): URL {
+	get feedURL(): string {
 		return this._feedURL;
 	}
 
-	get siteURL(): URL {
+	get siteURL(): string {
 		return this._siteURL;
 	}
 

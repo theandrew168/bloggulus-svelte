@@ -51,7 +51,7 @@ export class PostgresPostRepository implements PostRepository {
 		return Post.load({
 			id: row.id,
 			blogID: row.blog_id,
-			url: new URL(row.url),
+			url: row.url,
 			title: row.title,
 			publishedAt: new Date(row.published_at),
 			content: row.content ?? undefined,

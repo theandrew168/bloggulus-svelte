@@ -14,15 +14,15 @@ describe("PostgresPostRepository", () => {
 
 	test("createOrUpdate", async () => {
 		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
+			feedURL: chance.url(),
+			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
 		await blogRepo.createOrUpdate(blog);
 
 		const post = new Post({
 			blogID: blog.id,
-			url: new URL(chance.url()),
+			url: chance.url(),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
@@ -32,15 +32,15 @@ describe("PostgresPostRepository", () => {
 
 	test("readByID", async () => {
 		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
+			feedURL: chance.url(),
+			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
 		await blogRepo.createOrUpdate(blog);
 
 		const post = new Post({
 			blogID: blog.id,
-			url: new URL(chance.url()),
+			url: chance.url(),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
@@ -53,15 +53,15 @@ describe("PostgresPostRepository", () => {
 
 	test("delete", async () => {
 		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
+			feedURL: chance.url(),
+			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
 		await blogRepo.createOrUpdate(blog);
 
 		const post = new Post({
 			blogID: blog.id,
-			url: new URL(chance.url()),
+			url: chance.url(),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),

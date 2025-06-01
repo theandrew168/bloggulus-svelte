@@ -2,7 +2,7 @@ import { randomUUID, type UUID } from "node:crypto";
 
 export type NewPostParams = {
 	blogID: UUID;
-	url: URL;
+	url: string;
 	title: string;
 	publishedAt: Date;
 	content?: string;
@@ -11,7 +11,7 @@ export type NewPostParams = {
 export type LoadPostParams = {
 	id: UUID;
 	blogID: UUID;
-	url: URL;
+	url: string;
 	title: string;
 	publishedAt: Date;
 	content?: string;
@@ -20,7 +20,7 @@ export type LoadPostParams = {
 export class Post {
 	private _id: UUID;
 	private _blogID: UUID;
-	private _url: URL;
+	private _url: string;
 	private _title: string;
 	private _publishedAt: Date;
 	private _content?: string;
@@ -53,7 +53,7 @@ export class Post {
 		return this._blogID;
 	}
 
-	get url(): URL {
+	get url(): string {
 		return this._url;
 	}
 

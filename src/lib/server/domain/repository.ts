@@ -13,7 +13,7 @@ export type BlogRepository = {
 	// Used for syncing blogs (should this be a query?). We need id and feedURL.
 	// list: () => Promise<Blog[]>;
 	readByID: (id: UUID) => Promise<Blog | undefined>;
-	readByFeedURL: (feedURL: URL) => Promise<Blog | undefined>;
+	readByFeedURL: (feedURL: string) => Promise<Blog | undefined>;
 	createOrUpdate: (blog: Blog) => Promise<void>;
 	delete: (blog: Blog) => Promise<void>;
 };

@@ -23,8 +23,8 @@ export class MemoryBlogRepository implements BlogRepository {
 		return this._db.get(id);
 	}
 
-	async readByFeedURL(feedURL: URL): Promise<Blog | undefined> {
-		return this._db.values().find((blog) => blog.feedURL.toString() === feedURL.toString());
+	async readByFeedURL(feedURL: string): Promise<Blog | undefined> {
+		return this._db.values().find((blog) => blog.feedURL === feedURL);
 	}
 
 	async createOrUpdate(blog: Blog): Promise<void> {
