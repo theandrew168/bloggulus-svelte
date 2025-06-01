@@ -8,6 +8,15 @@ export type NewPostParams = {
 	content?: string;
 };
 
+export type LoadPostParams = {
+	id: UUID;
+	blogID: UUID;
+	url: URL;
+	title: string;
+	publishedAt: Date;
+	content?: string;
+};
+
 export class Post {
 	private _id: UUID;
 	private _blogID: UUID;
@@ -23,6 +32,17 @@ export class Post {
 		this._title = title;
 		this._publishedAt = publishedAt;
 		this._content = content;
+	}
+
+	static load({ id, blogID, url, title, publishedAt, content }: LoadPostParams): Post {
+		const post = new Post({ blogID, url, title, publishedAt });
+		post._id = id;
+		post._blogID = blogID;
+		post._url = url;
+		post._title = title;
+		post._publishedAt = publishedAt;
+		post._content = content;
+		return post;
 	}
 
 	get id(): UUID {

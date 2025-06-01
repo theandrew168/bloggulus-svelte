@@ -19,10 +19,6 @@ export class MemoryPostRepository implements PostRepository {
 		return this._instance;
 	}
 
-	async listByBlogID(blogID: UUID): Promise<Post[]> {
-		return Array.from(this._db.values()).filter((post) => post.blogID === blogID);
-	}
-
 	async readByID(id: UUID): Promise<Post | undefined> {
 		return this._db.get(id);
 	}

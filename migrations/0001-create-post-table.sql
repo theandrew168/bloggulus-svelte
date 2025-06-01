@@ -3,8 +3,8 @@ CREATE TABLE post (
 	blog_id uuid NOT NULL REFERENCES blog(id) ON DELETE CASCADE,
 	url TEXT NOT NULL UNIQUE,
 	title TEXT NOT NULL,
-	content TEXT,
 	published_at TIMESTAMPTZ NOT NULL,
+	content TEXT,
 	fts_data TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', title || ' ' || content)) STORED,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
