@@ -1,38 +1,48 @@
-<script lang="ts">
-	import { page } from "$app/stores";
-
-	let q = $derived($page.url.searchParams.get("q") ?? "");
-</script>
-
-<header class="shadow">
-	<div class="container">
-		<div class="items">
-			<a class="home" href="/">Bloggulus</a>
-			<form data-sveltekit-keepfocus>
-				<input value={q} name="q" type="text" placeholder="Search" />
-			</form>
-		</div>
-	</div>
+<header>
+	<nav>
+		<ul>
+			<li class="first"><a class="home" href="/">Bloggulus</a></li>
+			<li><a href="/signin">Sign in</a></li>
+		</ul>
+	</nav>
 </header>
 
 <style>
 	header {
-		background-color: var(--light-color);
-		padding: 1rem 0;
+		background-color: var(--color-white);
+		box-shadow: var(--shadow);
 	}
-	.items {
+
+	ul {
+		max-width: var(--container-width);
+		margin: 0 auto;
+		padding: 1em;
 		display: flex;
-		justify-content: space-between;
 		align-items: center;
+		gap: 1em;
 	}
-	.home {
-		color: var(--dark-color);
-		font-size: 1.5rem;
+
+	.first {
+		margin-right: auto;
+	}
+
+	a {
+		display: inline-block;
+		color: var(--color-dark);
 		text-decoration: none;
+		font-size: 1rem;
+		/* Make buttons look like links, if necessary (like for the logout form). */
+		background: none;
+		border: none;
+		cursor: pointer;
+		padding: 0;
 	}
-	input {
-		padding: 0.5rem;
-		border: 1px solid black;
-		border-radius: 0.375rem;
+
+	a:hover {
+		color: var(--color-medium);
+	}
+
+	.home {
+		font-size: 1.5rem;
 	}
 </style>

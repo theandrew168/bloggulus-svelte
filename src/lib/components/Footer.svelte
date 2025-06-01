@@ -1,28 +1,57 @@
-<footer class="shadow">
-	<div class="container">
-		<div class="items">
-			<a class="home" href="/">Bloggulus</a>
-			<a href="https://shallowbrooksoftware.com">Shallow Brook Software</a>
-		</div>
-	</div>
+<footer>
+	<nav>
+		<ul>
+			<li><a class="big" href="/">Bloggulus</a></li>
+			<li><a class="small" href="/docs/privacy.html">Privacy Policy</a></li>
+			<li><a href="https://shallowbrooksoftware.com">Shallow Brook Software</a></li>
+		</ul>
+	</nav>
 </footer>
 
 <style>
 	footer {
-		background-color: var(--dark-color);
-		padding: 1rem 0;
+		background-color: var(--color-dark);
 	}
-	.items {
+
+	/* On mobile devices, stack and center the footer links. */
+	ul {
+		max-width: var(--container-width);
+		margin: 0 auto;
+		padding: 1em;
 		display: flex;
-		justify-content: space-between;
+		flex-direction: column;
 		align-items: center;
+		gap: 1em;
 	}
+
+	/* On larger screens, show footer links as a single row with space between. */
+	@media only screen and (min-width: 768px) {
+		ul {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+
+		ul li:last-child {
+			margin-left: auto;
+		}
+	}
+
 	a {
-		color: var(--light-color);
+		color: var(--color-white);
 		text-decoration: none;
 	}
-	.home {
+
+	a:hover {
+		color: var(--color-light);
+	}
+
+	.big {
 		font-size: 1.25rem;
 		font-weight: 500;
+	}
+
+	.small {
+		font-size: 0.75rem;
 	}
 </style>

@@ -1,23 +1,35 @@
 <script lang="ts">
-	import { page } from "$app/stores";
+	import { page } from "$app/state";
 
-	import Post from "$lib/components/Post.svelte";
+	import Article from "$lib/components/Article.svelte";
 
 	let { data } = $props();
 
-	let q = $derived($page.url.searchParams.get("q") ?? "");
-	let p = $derived(parseInt($page.url.searchParams.get("p") ?? "1") || 1);
+	let q = $derived(page.url.searchParams.get("q") ?? "");
+	let p = $derived(parseInt(page.url.searchParams.get("p") ?? "1") || 1);
 	let moreLink = $derived(`/?p=${p + 1}` + (q ? `&q=${q}` : ""));
 </script>
 
+<header class="articles-header">
+	{#if q}
+		<h1 class="articles-header__title">Relevant Articles</h1>
+	{:else}
+		<h1 class="articles-header__title">Recent Articles</h1>
+	{/if}
+	<search>
+		<form method="GET" action="/">
+			<input class="input" type="text" name="q" value={q} placeholder="Search" />
+		</form>
+	</search>
+</header>
+
 <div class="container">
-	<h1>Recent Posts</h1>
 	<div class="posts">
-		{#each data.posts as post}
-			<Post {post} />
+		{#each data.articles as article}
+			<Article {article} />
 		{/each}
 	</div>
-	{#if data.posts.length === 15}
+	{#if data.articles.length === 15}
 		<div class="more">
 			<a class="shadow" href={moreLink}>See More</a>
 		</div>
@@ -25,13 +37,21 @@
 </div>
 
 <style>
+	header {
+		max-width: var(--container-width);
+		margin: 0 auto;
+		padding: 1.5em 1em;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
 	h1 {
-		color: var(--dark-color);
+		color: var(--color-dark);
 		font-size: 24px;
 		font-weight: 600;
-		margin-top: 1.5rem;
-		margin-bottom: 1.5rem;
 	}
+
 	.posts {
 		display: flex;
 		flex-direction: column;

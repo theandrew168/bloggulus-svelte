@@ -1,32 +1,33 @@
 <script lang="ts">
+	import type { Article } from "$lib/server/domain/query";
 	import type { PostWithBlogAndTags } from "$lib/types";
 
 	import Tag from "./Tag.svelte";
 
 	interface Props {
-		post: PostWithBlogAndTags;
+		article: Article;
 	}
 
-	let { post }: Props = $props();
+	let { article }: Props = $props();
 </script>
 
-<div class="post shadow">
+<div class="article shadow">
 	<div class="top">
-		<div class="updated">{post.updatedAt.toDateString()}</div>
-		{#each post.tags.slice(0, 3) as tag}
+		<div class="updated">{article.publishedAt.toDateString()}</div>
+		{#each article.tags.slice(0, 3) as tag}
 			<Tag name={tag} />
 		{/each}
 	</div>
 	<div class="title">
-		<a href={post.url}>{post.title}</a>
+		<a href={article.url.toString()}>{article.title}</a>
 	</div>
 	<div class="blogTitle">
-		<a href={post.blogUrl}>{post.blogTitle}</a>
+		<a href={article.blogURL.toString()}>{article.blogTitle}</a>
 	</div>
 </div>
 
 <style>
-	.post {
+	.article {
 		background-color: var(--light-color);
 		text-align: left;
 		padding: 1.5rem;

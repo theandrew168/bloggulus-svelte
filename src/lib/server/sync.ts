@@ -33,7 +33,13 @@ export class SyncService {
 
 		const blogs = await this.storage.blog.list();
 		for (const blog of blogs) {
-			const delta = (now.getTime() - blog.syncedAt.getTime()) / 1000;
+			const syncedAt = blog.syncedAt;
+			if (!syncedAt) {
+				await this.syncBlog(blog.feedUrl);
+				continue;
+			}
+
+			const delta = (now.getTime() - syncedAt.getTime()) / 1000;
 			if (delta < 3600) {
 				console.log("recently synced: ", blog.title);
 				continue;
