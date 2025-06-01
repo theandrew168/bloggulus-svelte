@@ -33,8 +33,8 @@ export class Connection {
 
 	async withTransaction(callback: (conn: Connection) => Promise<void>): Promise<void> {
 		return this.sql.begin((tx) => {
-			const txconn = new Connection(tx);
-			return callback(txconn);
+			const txConn = new Connection(tx);
+			return callback(txConn);
 		});
 	}
 }
