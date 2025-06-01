@@ -77,8 +77,12 @@ export class PostgresSessionRepository implements SessionRepository {
 		await this._conn.sql`
 			INSERT INTO session
                 (id, account_id, expires_at, hash)
-            VALUES
-                (${session.id}, ${session.accountID}, ${session.expiresAt}, ${hash})
+            VALUES (
+				${session.id},
+				${session.accountID},
+				${session.expiresAt},
+				${hash}
+			)
 		`;
 	}
 

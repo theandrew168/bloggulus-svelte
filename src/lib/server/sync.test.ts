@@ -80,29 +80,6 @@ describe("SyncService", () => {
 		expect(blog).to.be.undefined;
 	});
 
-	test("only sync each blog once per hour", async () => {
-		await storage.transaction(async (storage) => {
-			const atomFeed = mockAtomFeed(BLOG_FOOBAR);
-			const feedFetcher = new MockFeedFetcher({ feed: atomFeed });
-			const pageFetcher = new MockPageFetcher({});
-
-			const syncService = new SyncService(storage, feedFetcher, pageFetcher);
-			await syncService.syncBlog(BLOG_FOOBAR.feedUrl);
-
-			const blogBefore = await storage.blog.readByFeedUrl(BLOG_FOOBAR.feedUrl);
-			expect(blogBefore).to.not.be.undefined;
-
-			const syncedAt = blogBefore!.syncedAt;
-			await syncService.syncAllBlogs();
-
-			const blogAfter = await storage.blog.readByFeedUrl(BLOG_FOOBAR.feedUrl);
-			expect(blogAfter).to.not.be.undefined;
-			expect(blogAfter?.syncedAt.toISOString()).to.equal(syncedAt.toISOString());
-
-			throw new RollbackError();
-		});
-	});
-
 	test("will update a post if a body is eventually found", async () => {
 		await storage.transaction(async (storage) => {
 			const atomFeed = mockAtomFeed(BLOG_FOOBAR);

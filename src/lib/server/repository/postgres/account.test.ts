@@ -14,7 +14,7 @@ describe("PostgresAccountRepository", () => {
 		await accountRepo.createOrUpdate(account);
 	});
 
-	test("readById", async () => {
+	test("readByID", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await accountRepo.createOrUpdate(account);
 
@@ -26,8 +26,8 @@ describe("PostgresAccountRepository", () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await accountRepo.createOrUpdate(account);
 
-		const accountByID = await accountRepo.readByUsername(account.username);
-		expect(accountByID?.id).toEqual(account.id);
+		const accountByUsername = await accountRepo.readByUsername(account.username);
+		expect(accountByUsername?.id).toEqual(account.id);
 	});
 
 	test("delete", async () => {

@@ -14,7 +14,7 @@ describe("PostgresTagRepository", () => {
 		await tagRepo.createOrUpdate(tag);
 	});
 
-	test("readById", async () => {
+	test("readByID", async () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
 		await tagRepo.createOrUpdate(tag);
 

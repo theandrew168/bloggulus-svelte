@@ -8,6 +8,16 @@ export type NewBlogParams = {
 	title: string;
 };
 
+export type LoadBlogParams = {
+	id: UUID;
+	feedURL: URL;
+	siteURL: URL;
+	title: string;
+	etag?: string;
+	lastModified?: string;
+	syncedAt?: Date;
+};
+
 export class Blog {
 	private _id: UUID;
 	private _feedURL: URL;
@@ -22,6 +32,18 @@ export class Blog {
 		this._feedURL = feedURL;
 		this._siteURL = siteURL;
 		this._title = title;
+	}
+
+	static load({ id, feedURL, siteURL, title, etag, lastModified, syncedAt }: LoadBlogParams): Blog {
+		const blog = new Blog({ feedURL, siteURL, title });
+		blog._id = id;
+		blog._feedURL = feedURL;
+		blog._siteURL = siteURL;
+		blog._title = title;
+		blog._etag = etag;
+		blog._lastModified = lastModified;
+		blog._syncedAt = syncedAt;
+		return blog;
 	}
 
 	get id(): UUID {

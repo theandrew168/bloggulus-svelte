@@ -21,7 +21,7 @@ describe("PostgresSessionRepository", () => {
 		await sessionRepo.createOrUpdate(session, token);
 	});
 
-	test("readById", async () => {
+	test("readByID", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await accountRepo.createOrUpdate(account);
 
@@ -41,8 +41,8 @@ describe("PostgresSessionRepository", () => {
 		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await sessionRepo.createOrUpdate(session, token);
 
-		const sessionByID = await sessionRepo.readByToken(token);
-		expect(sessionByID?.id).toEqual(session.id);
+		const sessionByToken = await sessionRepo.readByToken(token);
+		expect(sessionByToken?.id).toEqual(session.id);
 	});
 
 	test("delete", async () => {

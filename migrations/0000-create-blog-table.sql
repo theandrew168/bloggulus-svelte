@@ -5,7 +5,7 @@ CREATE TABLE blog (
 	title TEXT NOT NULL,
 	etag TEXT,
 	last_modified TEXT,
-	synced_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	synced_at TIMESTAMPTZ,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

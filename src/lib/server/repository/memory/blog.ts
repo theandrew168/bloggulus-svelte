@@ -19,10 +19,6 @@ export class MemoryBlogRepository implements BlogRepository {
 		return this._instance;
 	}
 
-	async list(): Promise<Blog[]> {
-		return Array.from(this._db.values());
-	}
-
 	async readByID(id: UUID): Promise<Blog | undefined> {
 		return this._db.get(id);
 	}

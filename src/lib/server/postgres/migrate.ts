@@ -35,14 +35,14 @@ async function main() {
 
 	for (const file of missing) {
 		// run each migration within a transaction
-		await conn.withTransaction(async (sql) => {
+		await conn.withTransaction(async (tx) => {
 			// apply the missing ones
 			console.log("applying: ", file);
 			const path = MIGRATIONS_DIR + file;
-			await sql.file(path);
+			await tx.sql.file(path);
 
 			// update migration table
-			await sql`INSERT INTO migration (name) VALUES (${file})`;
+			await tx.sql`INSERT INTO migration (name) VALUES (${file})`;
 		});
 	}
 

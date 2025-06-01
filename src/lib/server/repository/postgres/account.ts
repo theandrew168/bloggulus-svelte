@@ -86,8 +86,11 @@ export class PostgresAccountRepository implements AccountRepository {
 		await this._conn.sql`
 			INSERT INTO account
                 (id, username, is_admin)
-            VALUES
-                (${account.id}, ${account.username}, ${account.isAdmin})
+            VALUES (
+				${account.id},
+				${account.username},
+				${account.isAdmin}
+			)
             ON CONFLICT (id)
 			DO UPDATE SET
 				username = EXCLUDED.username,

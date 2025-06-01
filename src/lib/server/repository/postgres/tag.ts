@@ -50,8 +50,10 @@ export class PostgresTagRepository implements TagRepository {
 		await this._conn.sql`
 			INSERT INTO tag
                 (id, name)
-            VALUES
-                (${tag.id}, ${tag.name})
+            VALUES (
+				${tag.id},
+				${tag.name}
+			)
             ON CONFLICT (id)
             DO UPDATE SET
                 name = EXCLUDED.name;
