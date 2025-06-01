@@ -13,7 +13,7 @@ async function listArticles(conn: Connection, q: string, limit: number, offset: 
 	return listRecentArticles(conn, limit, offset);
 }
 
-export const load: PageServerLoad = async ({ url, locals }) => {
+export const load: PageServerLoad = async ({ url }) => {
 	const q = url.searchParams.get("q") ?? "";
 	const p = parseInt(url.searchParams.get("p") ?? "1") || 1;
 

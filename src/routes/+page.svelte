@@ -2,6 +2,8 @@
 	import { page } from "$app/state";
 
 	import Article from "$lib/components/Article.svelte";
+	import Input from "$lib/components/Input.svelte";
+	import LinkButton from "$lib/components/LinkButton.svelte";
 
 	let { data } = $props();
 
@@ -10,31 +12,28 @@
 	let moreLink = $derived(`/?p=${p + 1}` + (q ? `&q=${q}` : ""));
 </script>
 
-<header class="articles-header">
+<header>
 	{#if q}
-		<h1 class="articles-header__title">Relevant Articles</h1>
+		<h1>Relevant Articles</h1>
 	{:else}
-		<h1 class="articles-header__title">Recent Articles</h1>
+		<h1>Recent Articles</h1>
 	{/if}
 	<search>
 		<form method="GET" action="/">
-			<input class="input" type="text" name="q" value={q} placeholder="Search" />
+			<Input type="text" name="q" value={q} placeholder="Search" />
 		</form>
 	</search>
 </header>
 
-<div class="container">
-	<div class="posts">
-		{#each data.articles as article}
-			<Article {article} />
-		{/each}
-	</div>
-	{#if data.articles.length === 15}
-		<div class="more">
-			<a class="shadow" href={moreLink}>See More</a>
-		</div>
-	{/if}
-</div>
+<section>
+	{#each data.articles as article}
+		<Article {article} />
+	{/each}
+</section>
+
+<footer>
+	<LinkButton href={moreLink} isOutline>See More</LinkButton>
+</footer>
 
 <style>
 	header {
@@ -52,25 +51,19 @@
 		font-weight: 600;
 	}
 
-	.posts {
+	section {
+		max-width: var(--container-width);
+		margin: 0 auto;
+		padding: 0 1em;
 		display: flex;
 		flex-direction: column;
-		gap: 1.5rem;
-		margin-bottom: 1.5rem;
+		gap: 1em;
 	}
-	.more {
+
+	footer {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-bottom: 1.5rem;
-	}
-	.more a {
-		padding: 0.5rem 1.5rem;
-		border-radius: 0.25rem;
-
-		font-weight: 600;
-		text-decoration: none;
-		color: var(--dark-color);
-		background-color: var(--light-color);
+		padding: 1.5em 0.5em;
 	}
 </style>

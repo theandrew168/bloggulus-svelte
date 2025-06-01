@@ -10,11 +10,15 @@
 
 <style>
 	a {
-		color: var(--light-color);
-		background-color: var(--mid-color);
+		color: var(--color-white);
+		background-color: var(--color-dark);
 		font-weight: 600;
-		padding: 0.25rem 0.75rem;
-		border-radius: 0.25rem;
+		padding: 0.25em 0.75em;
+		border-radius: 0.25em;
 		text-decoration: none;
+	}
+
+	a:hover {
+		background-color: var(--color-medium);
 	}
 </style>
