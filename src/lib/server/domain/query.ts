@@ -16,6 +16,44 @@ import type { Repository } from "./repository";
 // Dates can be serialized by SvelteKit but URLs cannot.
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types
 
+// TODO: How should these be organized / grouped? By page (index)? By type (article)? By feature (???)?
+// There should still be some sort of implementation hiding, though. So whatever
+// these groupings are, they'll likely accept a Connection in their constructor.
+
+// Why by page? No question about where / how to slice it. Naming is easy?
+// Why not by page? Pages change. The same data could be used on multiple pages.
+
+// Why by type? Easier to reason about the data itself. Easier to reuse across pages.
+// Why not by type? Without page context, the type names and data itself can be confusing.
+
+// Under the namespace "web", we have:
+// article
+// blog
+// blog details (includes posts)
+// post details
+// account
+
+// But for a different UI, these types might mean something else or contain different data.
+
+// /
+//   article
+//     recent
+//     recent for account
+//     relevant
+//     relevant for account
+// /blogs
+//   blog with follow status
+//     list blogs
+// /blogs/:id (admin)
+//   blog details
+//     read blog details
+// /blogs/:id/posts/:id (admin)
+//   post details
+//     read post details
+// /accounts (admin)
+//   accout details
+//     list accounts
+
 export type Article = {
 	title: string;
 	url: string;
