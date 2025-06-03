@@ -16,12 +16,15 @@ import type { Repository } from "./repository";
 // Dates can be serialized by SvelteKit but URLs cannot.
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types
 
-// TODO: How should these be organized / grouped? By page (index)? By type (article)? By feature (???)?
+// TODO: How should these be organized / grouped? By page (index)? By type (article)?
 // There should still be some sort of implementation hiding, though. So whatever
 // these groupings are, they'll likely accept a Connection in their constructor.
 
 // Why by page? No question about where / how to slice it. Naming is easy?
 // Why not by page? Pages change. The same data could be used on multiple pages.
+// Also, not all queries even come from pages. Sometimes commands need them: sync / session.
+// Note, sync and session _could_ just use the repo (via list methods), but not every
+// loaded blog / post requires changing: only certain ones will.
 
 // Why by type? Easier to reason about the data itself. Easier to reuse across pages.
 // Why not by type? Without page context, the type names and data itself can be confusing.
@@ -53,6 +56,25 @@ import type { Repository } from "./repository";
 // /accounts (admin)
 //   accout details
 //     list accounts
+// SYNC
+//   basic blog (id and feed URL)
+//     list basic blogs
+//   basic post (id, url, title, published, hasContent)
+//     list basic posts (for blog ID)
+// SESSION
+//   basic session (just id for expired sessions)
+//     list expired basic sessions (for delete)
+
+// Maybe each "feature" can be its own subdir? That way, the types can all have "simple"
+// names that rely on the namespace. Since "blog" has diff data in "web" vs "sync", for example.
+// Why not just YOLO Postgres queries? I don't want to leak that abstraction in case the impl
+// ever changes. Could be a redis cache, could be a (mat) view, could be a different database (cdc).
+//
+// Something like (query/<feature>/<type>.ts):
+// query/web/article.ts
+// query/sync/blog.ts
+// query/sync/post.ts
+// query/session/session.ts
 
 export type Article = {
 	title: string;
