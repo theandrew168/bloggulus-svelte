@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 
 import { Blog } from "$lib/server/domain/blog";
-import type { BlogRepository } from "$lib/server/domain/repository";
+import type { BlogRepository } from "$lib/server/domain/repository/blog";
 import { Connection } from "$lib/server/postgres/connection";
 
 type BlogRow = {

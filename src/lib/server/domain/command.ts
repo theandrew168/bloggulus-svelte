@@ -4,7 +4,7 @@ import { Account } from "./account";
 import { Blog } from "./blog";
 import type { FeedFetcher, FeedParser, FeedPost } from "./feed";
 import { Post } from "./post";
-import type { AccountRepository, BlogRepository, PostRepository, SessionRepository } from "./repository";
+import type { AccountRepository, BlogRepository, PostRepository, SessionRepository } from "./repository/repository";
 import { Session } from "./session";
 
 // Should run periodically to sync all blogs and their posts.

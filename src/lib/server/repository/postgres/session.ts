@@ -1,6 +1,6 @@
-import { createHash, type UUID } from "node:crypto";
+import type { UUID } from "node:crypto";
 
-import type { SessionRepository } from "$lib/server/domain/repository";
+import type { SessionRepository } from "$lib/server/domain/repository/session";
 import { Session, sha256 } from "$lib/server/domain/session";
 import { Connection } from "$lib/server/postgres/connection";
 

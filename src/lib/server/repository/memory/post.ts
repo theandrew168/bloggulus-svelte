@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 
 import type { Post } from "$lib/server/domain/post";
-import type { PostRepository } from "$lib/server/domain/repository";
+import type { PostRepository } from "$lib/server/domain/repository/post";
 
 export class MemoryPostRepository implements PostRepository {
 	private static _instance?: MemoryPostRepository;

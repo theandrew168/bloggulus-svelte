@@ -1,6 +1,6 @@
 import type { UUID } from "node:crypto";
 
-import type { TagRepository } from "$lib/server/domain/repository";
+import type { TagRepository } from "$lib/server/domain/repository/tag";
 import { Tag } from "$lib/server/domain/tag";
 import { Connection } from "$lib/server/postgres/connection";
 

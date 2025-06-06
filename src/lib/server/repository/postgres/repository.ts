@@ -1,11 +1,9 @@
-import type {
-	AccountRepository,
-	BlogRepository,
-	PostRepository,
-	Repository,
-	SessionRepository,
-	TagRepository,
-} from "$lib/server/domain/repository";
+import type { AccountRepository } from "$lib/server/domain/repository/account";
+import type { BlogRepository } from "$lib/server/domain/repository/blog";
+import type { PostRepository } from "$lib/server/domain/repository/post";
+import type { Repository } from "$lib/server/domain/repository/repository";
+import type { SessionRepository } from "$lib/server/domain/repository/session";
+import type { TagRepository } from "$lib/server/domain/repository/tag";
 import { Connection } from "$lib/server/postgres/connection";
 
 import { PostgresAccountRepository } from "./account";

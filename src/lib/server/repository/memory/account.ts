@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 
 import type { Account } from "$lib/server/domain/account";
-import type { AccountRepository } from "$lib/server/domain/repository";
+import type { AccountRepository } from "$lib/server/domain/repository/account";
 
 export class MemoryAccountRepository implements AccountRepository {
 	private static _instance?: MemoryAccountRepository;

@@ -1,6 +1,6 @@
 import type { UUID } from "node:crypto";
 
-import type { SessionRepository } from "$lib/server/domain/repository";
+import type { SessionRepository } from "$lib/server/domain/repository/session";
 import type { Session } from "$lib/server/domain/session";
 
 export class MemorySessionRepository implements SessionRepository {
