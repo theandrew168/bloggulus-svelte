@@ -7,6 +7,9 @@
 // import type { AccountRepository, BlogRepository, PostRepository, SessionRepository } from "../repository/repository";
 // import { Session } from "../session";
 
+// TODO: Should commands be unified under a "parent" type like repo and query?
+// If so, how would they be grouped? Or should they just accept the repo as a param?
+
 // // Should run periodically to sync all blogs and their posts.
 // async function syncAllBlogs(
 // 	blogRepo: BlogRepository,

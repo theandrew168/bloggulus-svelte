@@ -3,40 +3,40 @@ import { describe, expect, test } from "vitest";
 
 import { Account } from "$lib/server/account";
 
-import { PostgresAccountRepository } from "./account";
+import { PostgresRepository } from "./repository";
 
-describe("PostgresAccountRepository", () => {
+describe("repository/postgres/account", () => {
 	const chance = new Chance();
-	const accountRepo = PostgresAccountRepository.getInstance();
+	const repo = PostgresRepository.getInstance();
 
 	test("createOrUpdate", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
-		await accountRepo.createOrUpdate(account);
+		await repo.account.createOrUpdate(account);
 	});
 
 	test("readByID", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
-		await accountRepo.createOrUpdate(account);
+		await repo.account.createOrUpdate(account);
 
-		const accountByID = await accountRepo.readByID(account.id);
+		const accountByID = await repo.account.readByID(account.id);
 		expect(accountByID?.id).toEqual(account.id);
 	});
 
 	test("readByUsername", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
-		await accountRepo.createOrUpdate(account);
+		await repo.account.createOrUpdate(account);
 
-		const accountByUsername = await accountRepo.readByUsername(account.username);
+		const accountByUsername = await repo.account.readByUsername(account.username);
 		expect(accountByUsername?.id).toEqual(account.id);
 	});
 
 	test("delete", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
-		await accountRepo.createOrUpdate(account);
+		await repo.account.createOrUpdate(account);
 
-		await accountRepo.delete(account);
+		await repo.account.delete(account);
 
-		const accountByID = await accountRepo.readByID(account.id);
+		const accountByID = await repo.account.readByID(account.id);
 		expect(accountByID).toBeUndefined();
 	});
 });

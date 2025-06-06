@@ -3,11 +3,11 @@ import { describe, expect, test } from "vitest";
 
 import { Blog } from "$lib/server/blog";
 
-import { PostgresBlogRepository } from "./blog";
+import { PostgresRepository } from "./repository";
 
-describe("PostgresBlogRepository", () => {
+describe("repository/postgres/blog", () => {
 	const chance = new Chance();
-	const blogRepo = PostgresBlogRepository.getInstance();
+	const repo = PostgresRepository.getInstance();
 
 	test("createOrUpdate", async () => {
 		const blog = new Blog({
@@ -15,7 +15,7 @@ describe("PostgresBlogRepository", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await blogRepo.createOrUpdate(blog);
+		await repo.blog.createOrUpdate(blog);
 	});
 
 	test("readByID", async () => {
@@ -24,9 +24,9 @@ describe("PostgresBlogRepository", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await blogRepo.createOrUpdate(blog);
+		await repo.blog.createOrUpdate(blog);
 
-		const blogByID = await blogRepo.readByID(blog.id);
+		const blogByID = await repo.blog.readByID(blog.id);
 		expect(blogByID?.id).toEqual(blog.id);
 	});
 
@@ -36,9 +36,9 @@ describe("PostgresBlogRepository", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await blogRepo.createOrUpdate(blog);
+		await repo.blog.createOrUpdate(blog);
 
-		const blogByFeedURL = await blogRepo.readByFeedURL(blog.feedURL);
+		const blogByFeedURL = await repo.blog.readByFeedURL(blog.feedURL);
 		expect(blogByFeedURL?.id).toEqual(blog.id);
 	});
 
@@ -48,11 +48,11 @@ describe("PostgresBlogRepository", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await blogRepo.createOrUpdate(blog);
+		await repo.blog.createOrUpdate(blog);
 
-		await blogRepo.delete(blog);
+		await repo.blog.delete(blog);
 
-		const blogByID = await blogRepo.readByID(blog.id);
+		const blogByID = await repo.blog.readByID(blog.id);
 		expect(blogByID).toBeUndefined();
 	});
 });

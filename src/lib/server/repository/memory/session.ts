@@ -21,6 +21,10 @@ export class MemorySessionRepository implements SessionRepository {
 		return this._instance;
 	}
 
+	async listExpired(now: Date): Promise<Session[]> {
+		return Array.from(this._db.values()).filter((session) => session.expiresAt <= now);
+	}
+
 	async readByID(id: UUID): Promise<Session | undefined> {
 		return this._db.get(id);
 	}

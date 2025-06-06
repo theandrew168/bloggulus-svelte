@@ -40,9 +40,9 @@ export class PostgresRepository implements Repository {
 	}
 
 	async asUnitOfWork(operation: (repo: Repository) => Promise<void>): Promise<void> {
-		return this._conn.withTransaction(async (tx) => {
+		await this._conn.withTransaction(async (tx) => {
 			const txRepo = new PostgresRepository(tx);
-			return operation(txRepo);
+			await operation(txRepo);
 		});
 	}
 }

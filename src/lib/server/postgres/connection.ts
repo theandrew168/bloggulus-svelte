@@ -32,9 +32,13 @@ export class Connection {
 	}
 
 	async withTransaction(callback: (conn: Connection) => Promise<void>): Promise<void> {
-		return this.sql.begin((tx) => {
+		await this.sql.begin(async (tx) => {
 			const txConn = new Connection(tx);
-			return callback(txConn);
+
+			// Await this here to ensure the transaction is completed before returning.
+			// Otherwise, the transaction might not be committed or rolled back properly
+			// due to errors being missed from unawaited promises.
+			await callback(txConn);
 		});
 	}
 }

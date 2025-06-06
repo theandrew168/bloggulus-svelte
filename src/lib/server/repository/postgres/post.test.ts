@@ -4,13 +4,11 @@ import { describe, expect, test } from "vitest";
 import { Blog } from "$lib/server/blog";
 import { Post } from "$lib/server/post";
 
-import { PostgresBlogRepository } from "./blog";
-import { PostgresPostRepository } from "./post";
+import { PostgresRepository } from "./repository";
 
-describe("PostgresPostRepository", () => {
+describe("repository/postgres/post", () => {
 	const chance = new Chance();
-	const blogRepo = PostgresBlogRepository.getInstance();
-	const postRepo = PostgresPostRepository.getInstance();
+	const repo = PostgresRepository.getInstance();
 
 	test("createOrUpdate", async () => {
 		const blog = new Blog({
@@ -18,7 +16,7 @@ describe("PostgresPostRepository", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await blogRepo.createOrUpdate(blog);
+		await repo.blog.createOrUpdate(blog);
 
 		const post = new Post({
 			blogID: blog.id,
@@ -27,7 +25,7 @@ describe("PostgresPostRepository", () => {
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
 		});
-		await postRepo.createOrUpdate(post);
+		await repo.post.createOrUpdate(post);
 	});
 
 	test("readByID", async () => {
@@ -36,7 +34,7 @@ describe("PostgresPostRepository", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await blogRepo.createOrUpdate(blog);
+		await repo.blog.createOrUpdate(blog);
 
 		const post = new Post({
 			blogID: blog.id,
@@ -45,9 +43,9 @@ describe("PostgresPostRepository", () => {
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
 		});
-		await postRepo.createOrUpdate(post);
+		await repo.post.createOrUpdate(post);
 
-		const postByID = await postRepo.readByID(post.id);
+		const postByID = await repo.post.readByID(post.id);
 		expect(postByID?.id).toEqual(post.id);
 	});
 
@@ -57,7 +55,7 @@ describe("PostgresPostRepository", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await blogRepo.createOrUpdate(blog);
+		await repo.blog.createOrUpdate(blog);
 
 		const post = new Post({
 			blogID: blog.id,
@@ -66,11 +64,11 @@ describe("PostgresPostRepository", () => {
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
 		});
-		await postRepo.createOrUpdate(post);
+		await repo.post.createOrUpdate(post);
 
-		await postRepo.delete(post);
+		await repo.post.delete(post);
 
-		const postByID = await postRepo.readByID(post.id);
+		const postByID = await repo.post.readByID(post.id);
 		expect(postByID).toBeUndefined();
 	});
 });

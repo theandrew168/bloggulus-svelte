@@ -27,6 +27,20 @@ export class PostgresSessionRepository implements SessionRepository {
 		return this._instance;
 	}
 
+	async createOrUpdate(session: Session, token: string): Promise<void> {
+		const hash = sha256(token);
+		await this._conn.sql`
+			INSERT INTO session
+                (id, account_id, expires_at, hash)
+            VALUES (
+				${session.id},
+				${session.accountID},
+				${session.expiresAt},
+				${hash}
+			)
+		`;
+	}
+
 	async readByID(id: UUID): Promise<Session | undefined> {
 		const rows = await this._conn.sql<SessionRow[]>`
             SELECT
@@ -72,18 +86,23 @@ export class PostgresSessionRepository implements SessionRepository {
 		});
 	}
 
-	async createOrUpdate(session: Session, token: string): Promise<void> {
-		const hash = sha256(token);
-		await this._conn.sql`
-			INSERT INTO session
-                (id, account_id, expires_at, hash)
-            VALUES (
-				${session.id},
-				${session.accountID},
-				${session.expiresAt},
-				${hash}
-			)
-		`;
+	async listExpired(now: Date): Promise<Session[]> {
+		const rows = await this._conn.sql<SessionRow[]>`
+            SELECT
+                id,
+                account_id,
+                expires_at
+            FROM session
+            WHERE expires_at <= ${now.toISOString()};
+        `;
+
+		return rows.map((row) =>
+			Session.load({
+				id: row.id,
+				accountID: row.account_id,
+				expiresAt: row.expires_at,
+			}),
+		);
 	}
 
 	async delete(session: Session): Promise<void> {

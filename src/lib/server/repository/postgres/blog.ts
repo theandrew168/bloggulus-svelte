@@ -31,6 +31,30 @@ export class PostgresBlogRepository implements BlogRepository {
 		return this._instance;
 	}
 
+	async createOrUpdate(blog: Blog): Promise<void> {
+		await this._conn.sql`
+			INSERT INTO blog
+                (id, feed_url, site_url, title, etag, last_modified, synced_at)
+            VALUES (
+                ${blog.id},
+                ${blog.feedURL.toString()},
+                ${blog.siteURL.toString()},
+                ${blog.title},
+                ${blog.etag ?? null},
+                ${blog.lastModified ?? null},
+                ${blog.syncedAt?.toISOString() ?? null}
+            )
+            ON CONFLICT (id)
+			DO UPDATE SET
+				feed_url = EXCLUDED.feed_url,
+                site_url = EXCLUDED.site_url,
+                title = EXCLUDED.title,
+                etag = EXCLUDED.etag,
+                last_modified = EXCLUDED.last_modified,
+                synced_at = EXCLUDED.synced_at;
+		`;
+	}
+
 	async readByID(id: UUID): Promise<Blog | undefined> {
 		const rows = await this._conn.sql<BlogRow[]>`
             SELECT
@@ -89,30 +113,6 @@ export class PostgresBlogRepository implements BlogRepository {
 			lastModified: row.last_modified ?? undefined,
 			syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
 		});
-	}
-
-	async createOrUpdate(blog: Blog): Promise<void> {
-		await this._conn.sql`
-			INSERT INTO blog
-                (id, feed_url, site_url, title, etag, last_modified, synced_at)
-            VALUES (
-                ${blog.id},
-                ${blog.feedURL.toString()},
-                ${blog.siteURL.toString()},
-                ${blog.title},
-                ${blog.etag ?? null},
-                ${blog.lastModified ?? null},
-                ${blog.syncedAt?.toISOString() ?? null}
-            )
-            ON CONFLICT (id)
-			DO UPDATE SET
-				feed_url = EXCLUDED.feed_url,
-                site_url = EXCLUDED.site_url,
-                title = EXCLUDED.title,
-                etag = EXCLUDED.etag,
-                last_modified = EXCLUDED.last_modified,
-                synced_at = EXCLUDED.synced_at;
-		`;
 	}
 
 	async delete(blog: Blog): Promise<void> {

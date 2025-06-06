@@ -28,6 +28,47 @@ export class PostgresAccountRepository implements AccountRepository {
 		return this._instance;
 	}
 
+	async createOrUpdate(account: Account): Promise<void> {
+		await this._conn.sql`
+			INSERT INTO account
+                (id, username, is_admin)
+            VALUES (
+				${account.id},
+				${account.username},
+				${account.isAdmin}
+			)
+            ON CONFLICT (id)
+			DO UPDATE SET
+				username = EXCLUDED.username,
+				is_admin = EXCLUDED.is_admin;
+		`;
+
+		const followedBlogIDRows = await this._conn.sql<{ blog_id: UUID }[]>`
+			SELECT blog_id
+			FROM account_blog
+			WHERE account_id = ${account.id};
+		`;
+		const followedBlogIDs = followedBlogIDRows.map((row) => row.blog_id);
+
+		const blogsToFollow = account.followedBlogIDs.filter((blogID) => !followedBlogIDs.includes(blogID));
+		for (const blogID of blogsToFollow) {
+			await this._conn.sql`
+				INSERT INTO account_blog
+					(account_id, blog_id)
+				VALUES
+					(${account.id}, ${blogID});
+			`;
+		}
+
+		const blogsToUnfollow = followedBlogIDs.filter((blogID) => !account.followedBlogIDs.includes(blogID));
+		for (const blogID of blogsToUnfollow) {
+			await this._conn.sql`
+				DELETE FROM account_blog
+				WHERE account_id = ${account.id} AND blog_id = ${blogID};
+			`;
+		}
+	}
+
 	async readByID(id: UUID): Promise<Account | undefined> {
 		const rows = await this._conn.sql<AccountRow[]>`
 			SELECT
@@ -80,47 +121,6 @@ export class PostgresAccountRepository implements AccountRepository {
 			isAdmin: row.is_admin,
 			followedBlogIDs: row.followed_blog_ids,
 		});
-	}
-
-	async createOrUpdate(account: Account): Promise<void> {
-		await this._conn.sql`
-			INSERT INTO account
-                (id, username, is_admin)
-            VALUES (
-				${account.id},
-				${account.username},
-				${account.isAdmin}
-			)
-            ON CONFLICT (id)
-			DO UPDATE SET
-				username = EXCLUDED.username,
-				is_admin = EXCLUDED.is_admin;
-		`;
-
-		const followedBlogIDRows = await this._conn.sql<{ blog_id: UUID }[]>`
-			SELECT blog_id
-			FROM account_blog
-			WHERE account_id = ${account.id};
-		`;
-		const followedBlogIDs = followedBlogIDRows.map((row) => row.blog_id);
-
-		const blogsToFollow = account.followedBlogIDs.filter((blogID) => !followedBlogIDs.includes(blogID));
-		for (const blogID of blogsToFollow) {
-			await this._conn.sql`
-				INSERT INTO account_blog
-					(account_id, blog_id)
-				VALUES
-					(${account.id}, ${blogID});
-			`;
-		}
-
-		const blogsToUnfollow = followedBlogIDs.filter((blogID) => !account.followedBlogIDs.includes(blogID));
-		for (const blogID of blogsToUnfollow) {
-			await this._conn.sql`
-				DELETE FROM account_blog
-				WHERE account_id = ${account.id} AND blog_id = ${blogID};
-			`;
-		}
 	}
 
 	async delete(account: Account): Promise<void> {

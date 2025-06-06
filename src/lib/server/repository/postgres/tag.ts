@@ -26,6 +26,20 @@ export class PostgresTagRepository implements TagRepository {
 		return this._instance;
 	}
 
+	async createOrUpdate(tag: Tag): Promise<void> {
+		await this._conn.sql`
+			INSERT INTO tag
+                (id, name)
+            VALUES (
+				${tag.id},
+				${tag.name}
+			)
+            ON CONFLICT (id)
+            DO UPDATE SET
+                name = EXCLUDED.name;
+		`;
+	}
+
 	async readByID(id: UUID): Promise<Tag | undefined> {
 		const rows = await this._conn.sql<TagRow[]>`
             SELECT
@@ -45,21 +59,6 @@ export class PostgresTagRepository implements TagRepository {
 			name: row.name,
 		});
 	}
-
-	async createOrUpdate(tag: Tag): Promise<void> {
-		await this._conn.sql`
-			INSERT INTO tag
-                (id, name)
-            VALUES (
-				${tag.id},
-				${tag.name}
-			)
-            ON CONFLICT (id)
-            DO UPDATE SET
-                name = EXCLUDED.name;
-		`;
-	}
-
 	async delete(tag: Tag): Promise<void> {
 		await this._conn.sql`
 			DELETE
