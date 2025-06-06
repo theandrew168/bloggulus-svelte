@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { isValidUuid } from "./utils";
+import { isValidUUID } from "./utils";
 
 test.each([
 	{ s: "3a83626c-a95c-47ac-9996-d6785122e1c1", expected: true },
@@ -9,5 +9,5 @@ test.each([
 	{ s: "foobar", expected: false },
 	{ s: "", expected: false },
 ])("isValidUuid($s) -> $expected", ({ s, expected }) => {
-	expect(isValidUuid(s)).toEqual(expected);
+	expect(isValidUUID(s)).toEqual(expected);
 });

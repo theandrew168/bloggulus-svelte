@@ -1,16 +1,17 @@
-import { listRecentArticles, listRelevantArticles, type Article } from "$lib/server/domain/query";
-import { Connection } from "$lib/server/postgres/connection";
+import type { WebQuery } from "$lib/server/domain/query/web";
+import { PostgresWebQuery } from "$lib/server/query/postgres/web";
+import type { Article } from "$lib/types";
 
 import type { PageServerLoad } from "./$types";
 
 const PAGE_SIZE = 15;
 
-async function listArticles(conn: Connection, q: string, limit: number, offset: number): Promise<Article[]> {
+async function listArticles(query: WebQuery, q: string, limit: number, offset: number): Promise<Article[]> {
 	if (q) {
-		return listRelevantArticles(conn, q, limit, offset);
+		return query.listRelevantArticles(q, limit, offset);
 	}
 
-	return listRecentArticles(conn, limit, offset);
+	return query.listRecentArticles(limit, offset);
 }
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -20,7 +21,8 @@ export const load: PageServerLoad = async ({ url }) => {
 	const limit = PAGE_SIZE;
 	const offset = (p - 1) * limit;
 
-	const conn = Connection.getInstance();
-	const articles = await listArticles(conn, q, limit, offset);
+	// TODO: Should the WebQuery be injected (by a server hook or something?).
+	const query = PostgresWebQuery.getInstance();
+	const articles = await listArticles(query, q, limit, offset);
 	return { articles };
 };

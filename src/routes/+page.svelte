@@ -29,6 +29,7 @@
 	{#each data.articles as article}
 		<Article {article} />
 	{/each}
+	<!-- TODO: Add empty state w/ "Add Blog" CTA. -->
 </section>
 
 <footer>

@@ -1,40 +1,38 @@
-// In an ideal world, these types would use optional fields instead of nullable.
-// However, since I'm returning these types directly from the storage layer,
-// empty values will actually be null. The "right" thing to do would probably be
-// to create FooRow types that are typed with "| null" and then convert to optionals
-// before returning. Or if I was rolling with a more DDD approach, I'd convert those
-// FooRow types to rich domain objects.
+import type { UUID } from "node:crypto";
 
-export type Blog = {
-	id: string;
-	feedUrl: string;
-	siteUrl: string;
-	title: string;
-	syncedAt: Date;
-	etag: string | null;
-	lastModified: string | null;
+export type Account = {
+	id: UUID;
+	username: string;
 };
 
-export type Post = {
-	id: string;
-	blogId: string;
+export type Article = {
+	title: string;
+	url: string;
+	blogTitle: string;
+	blogURL: string;
+	publishedAt: Date;
+	tags: string[];
+};
+
+export type BlogDetails = {
+	id: UUID;
+	feedURL: string;
+	siteURL: string;
+	title: string;
+	syncedAt?: Date;
+};
+
+export type PostDetails = {
+	id: UUID;
+	blogID: UUID;
 	url: string;
 	title: string;
 	publishedAt: Date;
-	content: string | null;
 };
 
-export type Tag = {
-	id: string;
-	name: string;
-};
-
-/**
- * Post enriched with blog metadata and linked tags
- */
-export type PostWithBlogAndTags = Post & {
-	blogId: string;
-	blogUrl: string;
-	blogTitle: string;
-	tags: string[];
+export type Blog = {
+	id: UUID;
+	title: string;
+	siteURL: string;
+	isFollowed: boolean;
 };

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Article } from "$lib/server/domain/query";
+	import type { Article } from "$lib/types";
 
 	import Tag from "./Tag.svelte";
 
