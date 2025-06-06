@@ -1,4 +1,4 @@
-import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "./fetch";
+import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "../fetch";
 
 const USER_AGENT = "Bloggulus/0.5.2 (+https://bloggulus.com)";
 
