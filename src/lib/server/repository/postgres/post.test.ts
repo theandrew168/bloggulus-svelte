@@ -1,8 +1,8 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Blog } from "$lib/server/domain/blog";
-import { Post } from "$lib/server/domain/post";
+import { Blog } from "$lib/server/blog";
+import { Post } from "$lib/server/post";
 
 import { PostgresBlogRepository } from "./blog";
 import { PostgresPostRepository } from "./post";

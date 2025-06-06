@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 
-import type { TagRepository } from "$lib/server/domain/repository/tag";
-import type { Tag } from "$lib/server/domain/tag";
+import type { TagRepository } from "$lib/server/repository/tag";
+import type { Tag } from "$lib/server/tag";
 
 export class MemoryTagRepository implements TagRepository {
 	private static _instance?: MemoryTagRepository;

@@ -1,7 +1,7 @@
 import type { UUID } from "crypto";
 
-import type { WebQuery } from "$lib/server/domain/query/web";
 import { Connection } from "$lib/server/postgres/connection";
+import type { WebQuery } from "$lib/server/query/web";
 import type { Account, Article, Blog, BlogDetails, PostDetails } from "$lib/types";
 
 type ArticleRow = {

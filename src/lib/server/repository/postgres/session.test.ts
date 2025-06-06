@@ -1,8 +1,8 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Account } from "$lib/server/domain/account";
-import { generateToken, Session } from "$lib/server/domain/session";
+import { Account } from "$lib/server/account";
+import { generateToken, Session } from "$lib/server/session";
 
 import { PostgresAccountRepository } from "./account";
 import { PostgresSessionRepository } from "./session";

@@ -1,7 +1,7 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Tag } from "$lib/server/domain/tag";
+import { Tag } from "$lib/server/tag";
 
 import { PostgresTagRepository } from "./tag";
 

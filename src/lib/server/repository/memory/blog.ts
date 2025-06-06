@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 
-import type { Blog } from "$lib/server/domain/blog";
-import type { BlogRepository } from "$lib/server/domain/repository/blog";
+import type { Blog } from "$lib/server/blog";
+import type { BlogRepository } from "$lib/server/repository/blog";
 
 export class MemoryBlogRepository implements BlogRepository {
 	private static _instance?: MemoryBlogRepository;

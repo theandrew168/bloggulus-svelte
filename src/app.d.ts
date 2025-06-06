@@ -1,5 +1,5 @@
-import type { WebQuery } from "$lib/server/domain/query/web";
-import type { Repository } from "$lib/server/domain/repository/repository";
+import type { WebQuery } from "$lib/server/query/web";
+import type { Repository } from "$lib/server/repository/repository";
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces

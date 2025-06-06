@@ -1,7 +1,7 @@
-import type { Blog } from "$lib/server/domain/blog";
-import { Post } from "$lib/server/domain/post";
+import type { Blog } from "$lib/server/blog";
 import type { FetchFeedResponse } from "$lib/server/feed/fetch";
 import type { FeedPost } from "$lib/server/feed/parse";
+import { Post } from "$lib/server/post";
 
 export function updateCacheHeaders(blog: Blog, response: FetchFeedResponse): boolean {
 	let haveHeadersChanged = false;

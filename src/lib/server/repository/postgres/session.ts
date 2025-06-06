@@ -1,8 +1,8 @@
 import type { UUID } from "node:crypto";
 
-import type { SessionRepository } from "$lib/server/domain/repository/session";
-import { Session, sha256 } from "$lib/server/domain/session";
 import { Connection } from "$lib/server/postgres/connection";
+import type { SessionRepository } from "$lib/server/repository/session";
+import { Session, sha256 } from "$lib/server/session";
 
 type SessionRow = {
 	id: UUID;

@@ -1,5 +1,5 @@
-import type { WebQuery } from "$lib/server/domain/query/web";
 import { PostgresWebQuery } from "$lib/server/query/postgres/web";
+import type { WebQuery } from "$lib/server/query/web";
 import type { Article } from "$lib/types";
 
 import type { PageServerLoad } from "./$types";
