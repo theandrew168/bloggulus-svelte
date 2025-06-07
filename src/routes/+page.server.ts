@@ -1,4 +1,3 @@
-import { PostgresWebQuery } from "$lib/server/query/postgres/web";
 import type { WebQuery } from "$lib/server/query/web";
 import type { Article } from "$lib/types";
 
@@ -32,6 +31,5 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const offset = (p - 1) * limit;
 
 	const articlesWithTotal = await listArticles(locals.query, q, limit, offset);
-	console.log("DERZ", articlesWithTotal);
 	return articlesWithTotal;
 };

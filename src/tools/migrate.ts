@@ -1,6 +1,6 @@
 import { readdir } from "node:fs/promises";
 
-import { Connection } from "./connection";
+import { Connection } from "$lib/server/postgres/connection";
 
 const MIGRATIONS_DIR = "./migrations/";
 
