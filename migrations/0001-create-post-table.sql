@@ -10,5 +10,7 @@ CREATE TABLE post (
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Used when querying for posts by blog.
 CREATE INDEX post_blog_id_idx ON post(blog_id);
+-- Used when searching for posts.
 CREATE INDEX post_fts_data_idx ON post USING GIN(fts_data);

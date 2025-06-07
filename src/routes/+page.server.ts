@@ -6,23 +6,32 @@ import type { PageServerLoad } from "./$types";
 
 const PAGE_SIZE = 15;
 
-async function listArticles(query: WebQuery, q: string, limit: number, offset: number): Promise<Article[]> {
+type ArticlesWithTotal = {
+	articles: Article[];
+	total: number;
+};
+
+async function listArticles(query: WebQuery, q: string, limit: number, offset: number): Promise<ArticlesWithTotal> {
 	if (q) {
-		return query.listRelevantArticles(q, limit, offset);
+		const [total, articles] = await Promise.all([
+			query.countRelevantArticles(q),
+			query.listRelevantArticles(q, limit, offset),
+		]);
+		return { articles, total };
 	}
 
-	return query.listRecentArticles(limit, offset);
+	const [total, articles] = await Promise.all([query.countRecentArticles(), query.listRecentArticles(limit, offset)]);
+	return { articles, total };
 }
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ locals, url }) => {
 	const q = url.searchParams.get("q") ?? "";
 	const p = parseInt(url.searchParams.get("p") ?? "1") || 1;
 
 	const limit = PAGE_SIZE;
 	const offset = (p - 1) * limit;
 
-	// TODO: Should the WebQuery be injected (by a server hook or something?).
-	const query = PostgresWebQuery.getInstance();
-	const articles = await listArticles(query, q, limit, offset);
-	return { articles };
+	const articlesWithTotal = await listArticles(locals.query, q, limit, offset);
+	console.log("DERZ", articlesWithTotal);
+	return articlesWithTotal;
 };

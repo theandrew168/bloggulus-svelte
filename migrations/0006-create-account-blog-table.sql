@@ -5,3 +5,6 @@ CREATE TABLE account_blog (
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 	PRIMARY KEY (account_id, blog_id)
 );
+
+-- Used when querying for blogs / posts by account.
+CREATE INDEX account_blog_account_id_idx ON account_blog(account_id);

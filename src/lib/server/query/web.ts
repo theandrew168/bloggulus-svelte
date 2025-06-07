@@ -6,12 +6,21 @@ import type { Account, Article, Blog, BlogDetails, PostDetails } from "$lib/type
 // split up by type (article, account, blog, post, etc) or by page (less good?).
 export type WebQuery = {
 	// Powers the index page.
+	countRecentArticles: () => Promise<number>;
+	// Powers the index page.
 	listRecentArticles: (limit: number, offset: number) => Promise<Article[]>;
 	// Powers the index page.
-	listRecentArticlesByAccount: (account: Account, limit: number, offset: number) => Promise<Article[]>;
+	countRecentArticlesByAccount: (account: Account) => Promise<number>;
 	// Powers the index page.
+	listRecentArticlesByAccount: (account: Account, limit: number, offset: number) => Promise<Article[]>;
+
+	// Powers the index page (when searching).
+	countRelevantArticles: (search: string) => Promise<number>;
+	// Powers the index page (when searching).
 	listRelevantArticles: (search: string, limit: number, offset: number) => Promise<Article[]>;
 	// Powers the index page.
+	countRelevantArticlesByAccount: (account: Account, search: string) => Promise<number>;
+	// Powers the index page (when searching).
 	listRelevantArticlesByAccount: (
 		account: Account,
 		search: string,

@@ -13,6 +13,10 @@ type ArticleRow = {
 	tags: string[];
 };
 
+type Count = {
+	count: number;
+};
+
 export class PostgresWebQuery implements WebQuery {
 	private static _instance?: PostgresWebQuery;
 	private _conn: Connection;
@@ -28,6 +32,16 @@ export class PostgresWebQuery implements WebQuery {
 		}
 
 		return this._instance;
+	}
+
+	async countRecentArticles(): Promise<number> {
+		const rows = await this._conn.sql<Count[]>`
+            SELECT
+                COUNT(post.id) AS count
+            FROM post;
+        `;
+
+		return rows[0].count;
 	}
 
 	async listRecentArticles(limit: number, offset: number): Promise<Article[]> {
@@ -67,7 +81,24 @@ export class PostgresWebQuery implements WebQuery {
 		}));
 	}
 
-	async listRecentArticlesByAccount(account: { id: UUID }, limit: number, offset: number): Promise<Article[]> {
+	async countRecentArticlesByAccount(account: Account): Promise<number> {
+		const rows = await this._conn.sql<Count[]>`
+            SELECT
+                COUNT(post.id) AS count
+            FROM post
+            INNER JOIN blog
+                ON blog.id = post.blog_id
+            INNER JOIN account_blog
+                ON account_blog.blog_id = blog.id
+            INNER JOIN account
+                ON account.id = account_blog.account_id
+            WHERE account.id = ${account.id};
+        `;
+
+		return rows[0].count;
+	}
+
+	async listRecentArticlesByAccount(account: Account, limit: number, offset: number): Promise<Article[]> {
 		const rows = await this._conn.sql<ArticleRow[]>`
             WITH latest AS (
                 SELECT
@@ -77,7 +108,9 @@ export class PostgresWebQuery implements WebQuery {
                     ON blog.id = post.blog_id
                 INNER JOIN account_blog
                     ON account_blog.blog_id = blog.id
-                    AND account_blog.account_id = ${account.id}
+                INNER JOIN account
+                    ON account.id = account_blog.account_id
+                WHERE account.id = ${account.id}
                 ORDER BY post.published_at DESC
                 LIMIT ${limit} OFFSET ${offset}
             )
@@ -107,6 +140,17 @@ export class PostgresWebQuery implements WebQuery {
 			publishedAt: new Date(row.published_at),
 			tags: row.tags,
 		}));
+	}
+
+	async countRelevantArticles(search: string): Promise<number> {
+		const rows = await this._conn.sql<Count[]>`
+            SELECT
+                COUNT(post.id) AS count
+            FROM post
+            WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search});
+        `;
+
+		return rows[0].count;
 	}
 
 	async listRelevantArticles(search: string, limit: number, offset: number): Promise<Article[]> {
@@ -147,6 +191,24 @@ export class PostgresWebQuery implements WebQuery {
 		}));
 	}
 
+	async countRelevantArticlesByAccount(account: Account, search: string): Promise<number> {
+		const rows = await this._conn.sql<Count[]>`
+            SELECT
+                COUNT(post.id) AS count
+            FROM post
+            INNER JOIN blog
+                ON blog.id = post.blog_id
+            INNER JOIN account_blog
+                ON account_blog.blog_id = blog.id
+            INNER JOIN account
+                ON account.id = account_blog.account_id
+            WHERE account.id = ${account.id}
+                AND post.fts_data @@ websearch_to_tsquery('english',  ${search});
+        `;
+
+		return rows[0].count;
+	}
+
 	async listRelevantArticlesByAccount(
 		account: Account,
 		search: string,
@@ -162,7 +224,9 @@ export class PostgresWebQuery implements WebQuery {
                     ON blog.id = post.blog_id
                 INNER JOIN account_blog
                     ON account_blog.blog_id = blog.id
-                    AND account_blog.account_id = ${account.id}
+                INNER JOIN account
+                    ON account.id = account_blog.account_id
+                WHERE account.id = ${account.id}
                 ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC
                 LIMIT ${limit} OFFSET ${offset}
             )
