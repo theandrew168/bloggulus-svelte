@@ -1,11 +1,14 @@
 import { randomUUID, type UUID } from "node:crypto";
 
-export const SyncCooldownMS = 2 * 60 * 60 * 1000;
+const SYNC_COOLDOWN_MS = 2 * 60 * 60 * 1000;
 
 export type NewBlogParams = {
 	feedURL: string;
 	siteURL: string;
 	title: string;
+	etag?: string;
+	lastModified?: string;
+	syncedAt?: Date;
 };
 
 export type LoadBlogParams = {
@@ -27,11 +30,14 @@ export class Blog {
 	private _lastModified?: string;
 	private _syncedAt?: Date;
 
-	constructor({ feedURL, siteURL, title }: NewBlogParams) {
+	constructor({ feedURL, siteURL, title, etag, lastModified, syncedAt }: NewBlogParams) {
 		this._id = randomUUID();
 		this._feedURL = feedURL;
 		this._siteURL = siteURL;
 		this._title = title;
+		this._etag = etag;
+		this._lastModified = lastModified;
+		this._syncedAt = syncedAt;
 	}
 
 	static load({ id, feedURL, siteURL, title, etag, lastModified, syncedAt }: LoadBlogParams): Blog {
@@ -91,6 +97,6 @@ export class Blog {
 			return true;
 		}
 
-		return now.getTime() - this._syncedAt.getTime() >= SyncCooldownMS;
+		return now.getTime() - this._syncedAt.getTime() >= SYNC_COOLDOWN_MS;
 	}
 }

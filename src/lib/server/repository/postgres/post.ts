@@ -80,6 +80,30 @@ export class PostgresPostRepository implements PostRepository {
 		});
 	}
 
+	async listByBlogID(blogID: UUID): Promise<Post[]> {
+		const rows = await this._conn.sql<PostRow[]>`
+            SELECT
+                id,
+                blog_id,
+                url,
+                title,
+                published_at,
+                content
+            FROM post
+            WHERE blog_id = ${blogID};
+        `;
+		return rows.map((row) =>
+			Post.load({
+				id: row.id,
+				blogID: row.blog_id,
+				url: row.url,
+				title: row.title,
+				publishedAt: new Date(row.published_at),
+				content: row.content ?? undefined,
+			}),
+		);
+	}
+
 	async delete(post: Post): Promise<void> {
 		await this._conn.sql`
 			DELETE

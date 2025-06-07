@@ -1,8 +1,8 @@
 import Parser from "rss-parser";
 
 export type FeedBlog = {
-	feedUrl: string;
-	siteUrl: string;
+	feedURL: string;
+	siteURL: string;
 	title: string;
 	posts: FeedPost[];
 };
@@ -46,8 +46,8 @@ export async function parseFeed(url: string, feed: string): Promise<FeedBlog> {
 	const title = parsedFeed.title ?? siteUrl;
 
 	const blog: FeedBlog = {
-		feedUrl: url,
-		siteUrl,
+		feedURL: url,
+		siteURL: siteUrl,
 		title,
 		posts,
 	};

@@ -115,6 +115,31 @@ export class PostgresBlogRepository implements BlogRepository {
 		});
 	}
 
+	async list(): Promise<Blog[]> {
+		const rows = await this._conn.sql<BlogRow[]>`
+            SELECT
+                id,
+                feed_url,
+                site_url,
+                title,
+                etag,
+                last_modified,
+                synced_at
+            FROM blog;
+        `;
+		return rows.map((row) =>
+			Blog.load({
+				id: row.id,
+				feedURL: row.feed_url,
+				siteURL: row.site_url,
+				title: row.title,
+				etag: row.etag ?? undefined,
+				lastModified: row.last_modified ?? undefined,
+				syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
+			}),
+		);
+	}
+
 	async delete(blog: Blog): Promise<void> {
 		await this._conn.sql`
 			DELETE

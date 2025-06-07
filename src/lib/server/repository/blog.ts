@@ -3,10 +3,10 @@ import type { UUID } from "node:crypto";
 import type { Blog } from "../blog";
 
 export type BlogRepository = {
-	// Used for syncing blogs.
-	// list: () => Promise<Blog[]>;
+	createOrUpdate: (blog: Blog) => Promise<void>;
 	readByID: (id: UUID) => Promise<Blog | undefined>;
 	readByFeedURL: (feedURL: string) => Promise<Blog | undefined>;
-	createOrUpdate: (blog: Blog) => Promise<void>;
+	// Used for syncing blogs.
+	list: () => Promise<Blog[]>;
 	delete: (blog: Blog) => Promise<void>;
 };

@@ -18,7 +18,7 @@ export type WebQuery = {
 	countRelevantArticles: (search: string) => Promise<number>;
 	// Powers the index page (when searching).
 	listRelevantArticles: (search: string, limit: number, offset: number) => Promise<Article[]>;
-	// Powers the index page.
+	// Powers the index page (when searching).
 	countRelevantArticlesByAccount: (account: Account, search: string) => Promise<number>;
 	// Powers the index page (when searching).
 	listRelevantArticlesByAccount: (
