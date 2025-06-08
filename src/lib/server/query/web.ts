@@ -2,8 +2,15 @@ import type { UUID } from "node:crypto";
 
 import type { Account, Article, Blog, BlogDetails, PostDetails } from "$lib/types";
 
+// TODO: For a large project, would this get out of hand? What is an alternative?
+// Do I just cut the abstraction and let UIs make their own queries? While that'd
+// be less code, it'd make it difficult to change the underlying data model. Maybe
+// I wanna do some caching, add CDC, or even use a different database. If the
+// queries are all in one place, I can do that without having to change the UIs.
+
 // These queries are specific to the web frontend. If necessary, these could be
 // split up by type (article, account, blog, post, etc) or by page (less good?).
+// Some queries could be used across multiple pages (like basic account info).
 export type WebQuery = {
 	// Powers the index page.
 	countRecentArticles: () => Promise<number>;
