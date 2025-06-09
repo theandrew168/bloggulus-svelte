@@ -1,8 +1,27 @@
+<script lang="ts">
+	import type { Account } from "$lib/types";
+
+	interface Props {
+		account?: Account;
+	}
+
+	let { account }: Props = $props();
+</script>
+
 <header>
 	<nav>
 		<ul>
 			<li class="first"><a class="home" href="/">Bloggulus</a></li>
-			<li><a href="/signin">Sign in</a></li>
+			{#if account}
+				<li><a href="/blogs">Blogs</a></li>
+				<li>
+					<form method="POST" action="/signout">
+						<button type="submit">Sign out</button>
+					</form>
+				</li>
+			{:else}
+				<li><a href="/signin">Sign in</a></li>
+			{/if}
 		</ul>
 	</nav>
 </header>
@@ -26,7 +45,8 @@
 		margin-right: auto;
 	}
 
-	a {
+	a,
+	button {
 		display: inline-block;
 		color: var(--color-dark);
 		text-decoration: none;
@@ -38,7 +58,8 @@
 		padding: 0;
 	}
 
-	a:hover {
+	a:hover,
+	button:hover {
 		color: var(--color-medium);
 	}
 

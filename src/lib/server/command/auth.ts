@@ -2,8 +2,8 @@ import { Account } from "../account";
 import type { Repository } from "../repository/repository";
 import { generateToken, Session } from "../session";
 
-const SESSION_EXPIRY_HOURS = 7 * 24;
-const SESSION_EXPIRY_MS = SESSION_EXPIRY_HOURS * 60 * 60 * 1000;
+export const SESSION_EXPIRY_HOURS = 7 * 24;
+export const SESSION_EXPIRY_SECONDS = SESSION_EXPIRY_HOURS * 60 * 60;
 
 export async function signIn(repo: Repository, username: string): Promise<string> {
 	const token = generateToken();
@@ -16,7 +16,7 @@ export async function signIn(repo: Repository, username: string): Promise<string
 
 		const session = new Session({
 			accountID: account.id,
-			expiresAt: new Date(Date.now() + SESSION_EXPIRY_MS),
+			expiresAt: new Date(Date.now() + SESSION_EXPIRY_SECONDS * 1000),
 		});
 		await uow.session.createOrUpdate(session, token);
 	});

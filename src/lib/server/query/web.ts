@@ -36,7 +36,7 @@ export type WebQuery = {
 	) => Promise<Article[]>;
 
 	// Powers authentication middleware.
-	readAccountBySessionID: (sessionID: UUID) => Promise<Account | undefined>;
+	readAccountBySessionToken: (sessionToken: string) => Promise<Account | undefined>;
 	// Powers the add / follow blogs page.
 	listBlogs: (account: Account) => Promise<Blog[]>;
 

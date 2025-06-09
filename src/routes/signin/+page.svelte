@@ -1,5 +1,5 @@
 <script lang="ts">
-	const ENABLE_DEBUG_AUTH = true;
+	let { data } = $props();
 </script>
 
 <section>
@@ -8,7 +8,7 @@
 
 		<hr />
 
-		{#if ENABLE_DEBUG_AUTH}
+		{#if data.isDevelopment}
 			<form method="POST" action="/signin/debug">
 				<button type="submit">
 					<img src="/img/bloggulus.png" alt="Bloggulus logo" />

@@ -2,6 +2,7 @@ import type { UUID } from "crypto";
 
 import { Connection } from "$lib/server/postgres/connection";
 import type { WebQuery } from "$lib/server/query/web";
+import { sha256 } from "$lib/server/utils";
 import type { Account, Article, Blog, BlogDetails, PostDetails } from "$lib/types";
 
 type ArticleRow = {
@@ -259,8 +260,27 @@ export class PostgresWebQuery implements WebQuery {
 		}));
 	}
 
-	async readAccountBySessionID(sessionID: UUID): Promise<Account | undefined> {
-		return undefined;
+	async readAccountBySessionToken(sessionToken: string): Promise<Account | undefined> {
+		const sessionTokenHash = sha256(sessionToken);
+		const rows = await this._conn.sql<Account[]>`
+            SELECT
+                account.id,
+                account.username
+            FROM account
+            INNER JOIN session
+                ON session.account_id = account.id
+            WHERE session.token_hash = ${sessionTokenHash}
+        `;
+
+		const row = rows[0];
+		if (!row) {
+			return undefined;
+		}
+
+		return {
+			id: row.id,
+			username: row.username,
+		};
 	}
 
 	async listBlogs(account: Account): Promise<Blog[]> {

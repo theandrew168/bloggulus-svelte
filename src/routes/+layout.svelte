@@ -4,10 +4,10 @@
 
 	import type { LayoutProps } from "./$types";
 
-	let { children }: LayoutProps = $props();
+	let { data, children }: LayoutProps = $props();
 </script>
 
-<Header />
+<Header account={data.account} />
 <main>
 	{@render children()}
 </main>

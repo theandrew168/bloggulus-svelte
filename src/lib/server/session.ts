@@ -1,4 +1,6 @@
-import { createHash, randomBytes, randomUUID, type UUID } from "node:crypto";
+import { randomUUID, type UUID } from "node:crypto";
+
+import { randomString } from "./utils";
 
 // TODO: Should session actually be nested under the account aggregate?
 // The fact that I want a "readAccountBySessionToken" method suggests that it should be.
@@ -54,9 +56,5 @@ export class Session {
 }
 
 export function generateToken(): string {
-	return randomBytes(32).toString("base64url");
-}
-
-export function sha256(token: string): string {
-	return createHash("sha256").update(token).digest("hex");
+	return randomString(32);
 }

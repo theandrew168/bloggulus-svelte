@@ -1,9 +1,14 @@
 import postgres, { type Sql } from "postgres";
 
-const DEFAULT_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres";
+const LOCAL_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres";
+const TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:5433/postgres";
 
 export function getConnectionString(): string {
-	return process.env.DATABASE_URL || DEFAULT_DATABASE_URL;
+	if (process.env.NODE_ENV === "test") {
+		return TEST_DATABASE_URL;
+	}
+
+	return process.env.DATABASE_URL || LOCAL_DATABASE_URL;
 }
 
 export function connect(connectionString: string): Sql {
