@@ -8,7 +8,7 @@
 
 		<hr />
 
-		{#if data.isDevelopment}
+		{#if data.enableDebugAuth}
 			<form method="POST" action="/signin/debug">
 				<button type="submit">
 					<img src="/img/bloggulus.png" alt="Bloggulus logo" />

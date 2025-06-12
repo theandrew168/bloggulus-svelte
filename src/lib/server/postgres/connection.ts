@@ -1,15 +1,6 @@
 import postgres, { type Sql } from "postgres";
 
-const LOCAL_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres";
-const TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:5433/postgres";
-
-export function getConnectionString(): string {
-	if (process.env.NODE_ENV === "test") {
-		return TEST_DATABASE_URL;
-	}
-
-	return process.env.DATABASE_URL || LOCAL_DATABASE_URL;
-}
+import { EnvConfig } from "../config/config";
 
 export function connect(connectionString: string): Sql {
 	const sql = postgres(connectionString, {
@@ -28,8 +19,8 @@ export class Connection {
 
 	static getInstance(): Connection {
 		if (!this._instance) {
-			const connectionString = getConnectionString();
-			const sql = connect(connectionString);
+			const config = EnvConfig.getInstance();
+			const sql = connect(config.databaseURL);
 			this._instance = new Connection(sql);
 		}
 

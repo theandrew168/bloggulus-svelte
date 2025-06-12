@@ -1,7 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 
-import { SESSION_EXPIRY_SECONDS, signIn, signOut } from "$lib/server/command/auth";
-import { hmac, randomString } from "$lib/server/utils";
+import { signOut } from "$lib/server/command/auth";
 
 import type { Actions } from "./$types";
 
