@@ -5,11 +5,12 @@ import { Account } from "$lib/server/account";
 import { generateToken, Session } from "$lib/server/session";
 
 import { PostgresRepository } from "../repository/postgres/repository";
-import { deleteExpiredSessions } from "./auth";
+import { AuthCommand } from "./auth";
 
 describe("command/auth", () => {
 	const chance = new Chance();
 	const repo = PostgresRepository.getInstance();
+	const auth = new AuthCommand(repo);
 
 	test("deleteExpiredSessions", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
@@ -23,7 +24,7 @@ describe("command/auth", () => {
 		const validSession = new Session({ accountID: account.id, expiresAt: new Date(now.getTime() + 1000) });
 		await repo.session.createOrUpdate(validSession, generateToken());
 
-		await deleteExpiredSessions(repo, now);
+		await auth.deleteExpiredSessions(now);
 
 		const deletedSession = await repo.session.readByID(expiredSession.id);
 		expect(deletedSession).toBeUndefined();

@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 
-import { SESSION_EXPIRY_SECONDS, signIn } from "$lib/server/command/auth";
+import { SESSION_EXPIRY_SECONDS } from "$lib/server/command/auth";
 import { hmac, randomString } from "$lib/server/utils";
 import { errorNotFound } from "$lib/server/web/errors";
 
@@ -20,7 +20,7 @@ export const actions = {
 		const username = hmac(secretKey, userID);
 
 		// Sign the user in and generate a session token.
-		const sessionToken = await signIn(locals.repo, username);
+		const sessionToken = await locals.command.auth.signIn(username);
 
 		// Set a permanent cookie after sign in.
 		cookies.set("bloggulus_session", sessionToken, {

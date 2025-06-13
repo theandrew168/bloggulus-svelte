@@ -1,7 +1,5 @@
 import { redirect } from "@sveltejs/kit";
 
-import { signOut } from "$lib/server/command/auth";
-
 import type { Actions } from "./$types";
 
 export const actions = {
@@ -18,7 +16,7 @@ export const actions = {
 		});
 
 		// Sign the user out.
-		await signOut(locals.repo, sessionToken);
+		await locals.command.auth.signOut(sessionToken);
 
 		// Redirect back to the index page.
 		redirect(303, "/");
