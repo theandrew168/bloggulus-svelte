@@ -9,13 +9,13 @@ describe("repository/postgres/blog", () => {
 	const chance = new Chance();
 	const repo = PostgresRepository.getInstance();
 
-	test("createOrUpdate", async () => {
+	test("create", async () => {
 		const blog = new Blog({
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.create(blog);
 	});
 
 	test("readByID", async () => {
@@ -24,7 +24,7 @@ describe("repository/postgres/blog", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.create(blog);
 
 		const blogByID = await repo.blog.readByID(blog.id);
 		expect(blogByID?.id).toEqual(blog.id);
@@ -36,10 +36,29 @@ describe("repository/postgres/blog", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.create(blog);
 
 		const blogByFeedURL = await repo.blog.readByFeedURL(blog.feedURL);
 		expect(blogByFeedURL?.id).toEqual(blog.id);
+	});
+
+	test("update", async () => {
+		const blog = new Blog({
+			feedURL: chance.url(),
+			siteURL: chance.url(),
+			title: chance.sentence({ words: 5 }),
+		});
+		await repo.blog.create(blog);
+
+		blog.etag = chance.word();
+		blog.lastModified = chance.word();
+		blog.syncedAt = new Date();
+		await repo.blog.update(blog);
+
+		const blogByID = await repo.blog.readByID(blog.id);
+		expect(blogByID?.etag).toEqual(blog.etag);
+		expect(blogByID?.lastModified).toEqual(blog.lastModified);
+		expect(blogByID?.syncedAt).toEqual(blog.syncedAt);
 	});
 
 	test("delete", async () => {
@@ -48,7 +67,7 @@ describe("repository/postgres/blog", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.create(blog);
 
 		await repo.blog.delete(blog);
 

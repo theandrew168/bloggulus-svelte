@@ -26,17 +26,14 @@ export class PostgresTagRepository implements TagRepository {
 		return this._instance;
 	}
 
-	async createOrUpdate(tag: Tag): Promise<void> {
+	async create(tag: Tag): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO tag
                 (id, name)
             VALUES (
 				${tag.id},
 				${tag.name}
-			)
-            ON CONFLICT (id)
-            DO UPDATE SET
-                name = EXCLUDED.name;
+			);
 		`;
 	}
 

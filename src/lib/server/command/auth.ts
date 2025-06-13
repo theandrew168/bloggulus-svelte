@@ -18,7 +18,7 @@ export class AuthCommand {
 			let account = await uow.account.readByUsername(username);
 			if (!account) {
 				account = new Account({ username });
-				await uow.account.createOrUpdate(account);
+				await uow.account.create(account);
 			}
 
 			const session = new Session({

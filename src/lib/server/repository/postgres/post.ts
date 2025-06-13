@@ -30,25 +30,18 @@ export class PostgresPostRepository implements PostRepository {
 		return this._instance;
 	}
 
-	async createOrUpdate(post: Post): Promise<void> {
+	async create(post: Post): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO post
                 (id, blog_id, url, title, published_at, content)
             VALUES (
                 ${post.id},
                 ${post.blogID},
-                ${post.url.toString()},
+                ${post.url},
                 ${post.title},
-                ${post.publishedAt.toISOString()},
+                ${post.publishedAt},
                 ${post.content ?? null}
-            )
-            ON CONFLICT (id)
-			DO UPDATE SET
-				blog_id = EXCLUDED.blog_id,
-                url = EXCLUDED.url,
-                title = EXCLUDED.title,
-                published_at = EXCLUDED.published_at,
-                content = EXCLUDED.content;
+            );
 		`;
 	}
 
@@ -102,6 +95,20 @@ export class PostgresPostRepository implements PostRepository {
 				content: row.content ?? undefined,
 			}),
 		);
+	}
+
+	async update(post: Post): Promise<void> {
+		// TODO: Compare updated_at to catch race conditions.
+		await this._conn.sql`
+			UPDATE post
+			SET
+				blog_id = ${post.blogID},
+				url = ${post.url},
+				title = ${post.title},
+				published_at = ${post.publishedAt},
+				content = ${post.content ?? null}
+			WHERE id = ${post.id};
+		`;
 	}
 
 	async delete(post: Post): Promise<void> {

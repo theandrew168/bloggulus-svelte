@@ -31,27 +31,19 @@ export class PostgresBlogRepository implements BlogRepository {
 		return this._instance;
 	}
 
-	async createOrUpdate(blog: Blog): Promise<void> {
+	async create(blog: Blog): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO blog
                 (id, feed_url, site_url, title, etag, last_modified, synced_at)
             VALUES (
                 ${blog.id},
-                ${blog.feedURL.toString()},
-                ${blog.siteURL.toString()},
+                ${blog.feedURL},
+                ${blog.siteURL},
                 ${blog.title},
                 ${blog.etag ?? null},
                 ${blog.lastModified ?? null},
-                ${blog.syncedAt?.toISOString() ?? null}
-            )
-            ON CONFLICT (id)
-			DO UPDATE SET
-				feed_url = EXCLUDED.feed_url,
-                site_url = EXCLUDED.site_url,
-                title = EXCLUDED.title,
-                etag = EXCLUDED.etag,
-                last_modified = EXCLUDED.last_modified,
-                synced_at = EXCLUDED.synced_at;
+                ${blog.syncedAt ?? null}
+            );
 		`;
 	}
 
@@ -138,6 +130,21 @@ export class PostgresBlogRepository implements BlogRepository {
 				syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
 			}),
 		);
+	}
+
+	async update(blog: Blog): Promise<void> {
+		// TODO: Compare updated_at to catch race conditions.
+		await this._conn.sql`
+			UPDATE blog
+			SET
+				feed_url = ${blog.feedURL},
+				site_url = ${blog.siteURL},
+				title = ${blog.title},
+				etag = ${blog.etag ?? null},
+				last_modified = ${blog.lastModified ?? null},
+				synced_at = ${blog.syncedAt ?? null}
+			WHERE id = ${blog.id};
+		`;
 	}
 
 	async delete(blog: Blog): Promise<void> {

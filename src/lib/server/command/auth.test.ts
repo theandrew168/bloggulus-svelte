@@ -14,15 +14,15 @@ describe("command/auth", () => {
 
 	test("deleteExpiredSessions", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
-		await repo.account.createOrUpdate(account);
+		await repo.account.create(account);
 
 		const now = new Date();
 
 		const expiredSession = new Session({ accountID: account.id, expiresAt: new Date(now.getTime() - 1000) });
-		await repo.session.createOrUpdate(expiredSession, generateToken());
+		await repo.session.create(expiredSession, generateToken());
 
 		const validSession = new Session({ accountID: account.id, expiresAt: new Date(now.getTime() + 1000) });
-		await repo.session.createOrUpdate(validSession, generateToken());
+		await repo.session.create(validSession, generateToken());
 
 		await auth.deleteExpiredSessions(now);
 

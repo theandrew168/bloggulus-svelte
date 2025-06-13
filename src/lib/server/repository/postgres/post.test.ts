@@ -10,13 +10,13 @@ describe("repository/postgres/post", () => {
 	const chance = new Chance();
 	const repo = PostgresRepository.getInstance();
 
-	test("createOrUpdate", async () => {
+	test("create", async () => {
 		const blog = new Blog({
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.create(blog);
 
 		const post = new Post({
 			blogID: blog.id,
@@ -25,7 +25,7 @@ describe("repository/postgres/post", () => {
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
 		});
-		await repo.post.createOrUpdate(post);
+		await repo.post.create(post);
 	});
 
 	test("readByID", async () => {
@@ -34,7 +34,7 @@ describe("repository/postgres/post", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.create(blog);
 
 		const post = new Post({
 			blogID: blog.id,
@@ -43,10 +43,38 @@ describe("repository/postgres/post", () => {
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
 		});
-		await repo.post.createOrUpdate(post);
+		await repo.post.create(post);
 
 		const postByID = await repo.post.readByID(post.id);
 		expect(postByID?.id).toEqual(post.id);
+	});
+
+	test("update", async () => {
+		const blog = new Blog({
+			feedURL: chance.url(),
+			siteURL: chance.url(),
+			title: chance.sentence({ words: 5 }),
+		});
+		await repo.blog.create(blog);
+
+		const post = new Post({
+			blogID: blog.id,
+			url: chance.url(),
+			title: chance.sentence({ words: 5 }),
+			publishedAt: new Date(),
+			content: chance.paragraph({ sentences: 3 }),
+		});
+		await repo.post.create(post);
+
+		post.title = chance.sentence({ words: 5 });
+		post.publishedAt = new Date();
+		post.content = chance.paragraph({ sentences: 3 });
+		await repo.post.update(post);
+
+		const postByID = await repo.post.readByID(post.id);
+		expect(postByID?.title).toEqual(post.title);
+		expect(postByID?.publishedAt).toEqual(post.publishedAt);
+		expect(postByID?.content).toEqual(post.content);
 	});
 
 	test("delete", async () => {
@@ -55,7 +83,7 @@ describe("repository/postgres/post", () => {
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
 		});
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.create(blog);
 
 		const post = new Post({
 			blogID: blog.id,
@@ -64,7 +92,7 @@ describe("repository/postgres/post", () => {
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
 		});
-		await repo.post.createOrUpdate(post);
+		await repo.post.create(post);
 
 		await repo.post.delete(post);
 

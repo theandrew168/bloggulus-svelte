@@ -28,7 +28,7 @@ export class PostgresSessionRepository implements SessionRepository {
 		return this._instance;
 	}
 
-	async createOrUpdate(session: Session, token: string): Promise<void> {
+	async create(session: Session, token: string): Promise<void> {
 		const tokenHash = sha256(token);
 		await this._conn.sql`
 			INSERT INTO session
@@ -38,7 +38,7 @@ export class PostgresSessionRepository implements SessionRepository {
 				${session.accountID},
 				${session.expiresAt},
 				${tokenHash}
-			)
+			);
 		`;
 	}
 
@@ -94,7 +94,7 @@ export class PostgresSessionRepository implements SessionRepository {
                 account_id,
                 expires_at
             FROM session
-            WHERE expires_at <= ${now.toISOString()};
+            WHERE expires_at <= ${now};
         `;
 
 		return rows.map((row) =>

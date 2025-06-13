@@ -1,5 +1,3 @@
-Split createOrUpdate
-Bundle commands together
 Impl blogs page
 Impl blog details page
 Impl post details page

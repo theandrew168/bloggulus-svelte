@@ -3,7 +3,7 @@ import type { UUID } from "node:crypto";
 import type { Session } from "../session";
 
 export type SessionRepository = {
-	createOrUpdate: (session: Session, token: string) => Promise<void>;
+	create: (session: Session, token: string) => Promise<void>;
 	readByID: (id: UUID) => Promise<Session | undefined>;
 	readByToken: (token: string) => Promise<Session | undefined>;
 	// Used for deleting expired sessions.

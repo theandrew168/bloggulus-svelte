@@ -9,14 +9,14 @@ describe("repository/postgres/tag", () => {
 	const chance = new Chance();
 	const repo = PostgresRepository.getInstance();
 
-	test("createOrUpdate", async () => {
+	test("create", async () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
-		await repo.tag.createOrUpdate(tag);
+		await repo.tag.create(tag);
 	});
 
 	test("readByID", async () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
-		await repo.tag.createOrUpdate(tag);
+		await repo.tag.create(tag);
 
 		const tagByID = await repo.tag.readByID(tag.id);
 		expect(tagByID?.id).toEqual(tag.id);
@@ -24,7 +24,7 @@ describe("repository/postgres/tag", () => {
 
 	test("delete", async () => {
 		const tag = new Tag({ name: chance.word({ length: 20 }) });
-		await repo.tag.createOrUpdate(tag);
+		await repo.tag.create(tag);
 
 		await repo.tag.delete(tag);
 

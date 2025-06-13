@@ -22,7 +22,7 @@ export class AccountCommand {
 			}
 
 			account.followBlog(blog.id);
-			await uow.account.createOrUpdate(account);
+			await uow.account.update(account);
 		});
 	}
 
@@ -39,7 +39,7 @@ export class AccountCommand {
 			}
 
 			account.unfollowBlog(blog.id);
-			await uow.account.createOrUpdate(account);
+			await uow.account.update(account);
 		});
 	}
 
