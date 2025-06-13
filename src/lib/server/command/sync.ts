@@ -1,5 +1,5 @@
 import type { FeedFetcher } from "../feed/fetch";
-import type { Repository } from "../repository/repository";
+import type { Repository } from "../repository";
 import { syncExistingBlog, syncNewBlog } from "./sync/utils";
 
 export class SyncCommand {

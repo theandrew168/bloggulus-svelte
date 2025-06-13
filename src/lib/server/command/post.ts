@@ -1,6 +1,6 @@
 import type { UUID } from "node:crypto";
 
-import type { Repository } from "../repository/repository";
+import type { Repository } from "../repository";
 
 export class PostCommand {
 	private _repo: Repository;

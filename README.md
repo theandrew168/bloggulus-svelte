@@ -63,7 +63,7 @@ When building for production, SvelteKit's [adapter-node](https://svelte.dev/docs
 npm run build
 ```
 
-To run this compiled version of the project locally, run `node` directly:
+Then, to run the built / compiled version of the project locally, run `node` directly:
 
 ```
 NODE_ENV=development ORIGIN=http://127.0.0.1:3000 node build

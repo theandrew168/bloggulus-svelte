@@ -1,8 +1,8 @@
 import type { Handle } from "@sveltejs/kit";
 
-import { Command } from "$lib/server/command/command";
-import { EnvConfig } from "$lib/server/config/config";
-import { Connection } from "$lib/server/postgres/connection";
+import { Command } from "$lib/server/command";
+import { EnvConfig } from "$lib/server/config/env";
+import { Connection } from "$lib/server/postgres";
 import { PostgresWebQuery } from "$lib/server/query/postgres/web";
 
 // Be sure to close the database connection when the server shuts down.

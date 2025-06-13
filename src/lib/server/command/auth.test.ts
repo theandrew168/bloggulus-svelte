@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { Account } from "$lib/server/account";
 import { generateToken, Session } from "$lib/server/session";
 
-import { PostgresRepository } from "../repository/postgres/repository";
+import { PostgresRepository } from "../repository/postgres";
 import { AuthCommand } from "./auth";
 
 describe("command/auth", () => {

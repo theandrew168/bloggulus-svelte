@@ -1,5 +1,5 @@
-import type { Command } from "$lib/server/command/command";
-import type { Config } from "$lib/server/config/config";
+import type { Command } from "$lib/server/command";
+import type { Config } from "$lib/server/config";
 import type { WebQuery } from "$lib/server/query/web";
 
 // See https://kit.svelte.dev/docs/types#app

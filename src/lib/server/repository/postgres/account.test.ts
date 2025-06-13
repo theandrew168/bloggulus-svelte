@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 import { Account } from "$lib/server/account";
 
-import { PostgresRepository } from "./repository";
+import { PostgresRepository } from ".";
 
 describe("repository/postgres/account", () => {
 	const chance = new Chance();

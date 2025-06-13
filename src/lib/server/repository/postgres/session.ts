@@ -1,6 +1,6 @@
 import type { UUID } from "node:crypto";
 
-import { Connection } from "$lib/server/postgres/connection";
+import { Connection } from "$lib/server/postgres";
 import type { SessionRepository } from "$lib/server/repository/session";
 import { Session } from "$lib/server/session";
 import { sha256 } from "$lib/server/utils";

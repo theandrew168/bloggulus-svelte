@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { Account } from "$lib/server/account";
 import { generateToken, Session } from "$lib/server/session";
 
-import { PostgresRepository } from "./repository";
+import { PostgresRepository } from ".";
 
 describe("repository/postgres/session", () => {
 	const chance = new Chance();

@@ -1,7 +1,4 @@
-export type Config = {
-	databaseURL: string;
-	enableDebugAuth: boolean;
-};
+import type { Config } from "..";
 
 const LOCAL_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/postgres";
 const TEST_DATABASE_URL = "postgresql://postgres:postgres@localhost:5433/postgres";

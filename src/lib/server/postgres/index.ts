@@ -1,8 +1,8 @@
 import postgres, { type Sql } from "postgres";
 
-import { EnvConfig } from "../config/config";
+import { EnvConfig } from "../config/env";
 
-export function connect(connectionString: string): Sql {
+function connect(connectionString: string): Sql {
 	const sql = postgres(connectionString, {
 		onnotice: () => {},
 	});

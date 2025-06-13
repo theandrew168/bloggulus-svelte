@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import { Blog } from "$lib/server/blog";
 import { Post } from "$lib/server/post";
 
-import { PostgresRepository } from "./repository";
+import { PostgresRepository } from ".";
 
 describe("repository/postgres/post", () => {
 	const chance = new Chance();

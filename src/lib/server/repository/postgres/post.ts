@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 
 import { Post } from "$lib/server/post";
-import { Connection } from "$lib/server/postgres/connection";
+import { Connection } from "$lib/server/postgres";
 import type { PostRepository } from "$lib/server/repository/post";
 
 type PostRow = {

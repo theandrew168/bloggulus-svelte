@@ -1,7 +1,7 @@
 import type { UUID } from "node:crypto";
 
 import { Account } from "$lib/server/account";
-import { Connection } from "$lib/server/postgres/connection";
+import { Connection } from "$lib/server/postgres";
 import type { AccountRepository } from "$lib/server/repository/account";
 
 type AccountRow = {

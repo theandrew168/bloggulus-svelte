@@ -1,6 +1,6 @@
 import type { UUID } from "crypto";
 
-import { Connection } from "$lib/server/postgres/connection";
+import { Connection } from "$lib/server/postgres";
 import type { WebQuery } from "$lib/server/query/web";
 import { sha256 } from "$lib/server/utils";
 import type { Account, Article, Blog, BlogDetails, PostDetails } from "$lib/types";

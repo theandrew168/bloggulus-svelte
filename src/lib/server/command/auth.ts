@@ -1,5 +1,5 @@
 import { Account } from "../account";
-import type { Repository } from "../repository/repository";
+import type { Repository } from "../repository";
 import { generateToken, Session } from "../session";
 
 export const SESSION_EXPIRY_HOURS = 7 * 24;

@@ -1,7 +1,7 @@
 import type { FeedFetcher } from "../feed/fetch";
 import { WebFeedFetcher } from "../feed/web/fetch";
-import { PostgresRepository } from "../repository/postgres/repository";
-import type { Repository } from "../repository/repository";
+import type { Repository } from "../repository";
+import { PostgresRepository } from "../repository/postgres";
 import { AccountCommand } from "./account";
 import { AuthCommand } from "./auth";
 import { BlogCommand } from "./blog";
