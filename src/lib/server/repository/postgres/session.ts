@@ -9,6 +9,8 @@ type SessionRow = {
 	id: UUID;
 	account_id: UUID;
 	expires_at: Date;
+	created_at: Date;
+	updated_at: Date;
 };
 
 export class PostgresSessionRepository implements SessionRepository {
@@ -47,7 +49,9 @@ export class PostgresSessionRepository implements SessionRepository {
             SELECT
                 id,
                 account_id,
-                expires_at
+                expires_at,
+				created_at,
+				updated_at
             FROM session
             WHERE id = ${id};
         `;
@@ -61,6 +65,8 @@ export class PostgresSessionRepository implements SessionRepository {
 			id: row.id,
 			accountID: row.account_id,
 			expiresAt: row.expires_at,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 		});
 	}
 
@@ -70,7 +76,9 @@ export class PostgresSessionRepository implements SessionRepository {
             SELECT
                 id,
                 account_id,
-                expires_at
+                expires_at,
+				created_at,
+				updated_at
             FROM session
             WHERE token_hash = ${tokenHash};
         `;
@@ -84,6 +92,8 @@ export class PostgresSessionRepository implements SessionRepository {
 			id: row.id,
 			accountID: row.account_id,
 			expiresAt: row.expires_at,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 		});
 	}
 
@@ -92,7 +102,9 @@ export class PostgresSessionRepository implements SessionRepository {
             SELECT
                 id,
                 account_id,
-                expires_at
+                expires_at,
+				created_at,
+				updated_at
             FROM session
             WHERE expires_at <= ${now};
         `;
@@ -102,6 +114,8 @@ export class PostgresSessionRepository implements SessionRepository {
 				id: row.id,
 				accountID: row.account_id,
 				expiresAt: row.expires_at,
+				createdAt: row.created_at,
+				updatedAt: row.updated_at,
 			}),
 		);
 	}

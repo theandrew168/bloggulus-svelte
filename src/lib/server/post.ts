@@ -15,6 +15,8 @@ export type LoadPostParams = {
 	title: string;
 	publishedAt: Date;
 	content?: string;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
 export class Post {
@@ -24,6 +26,8 @@ export class Post {
 	private _title: string;
 	private _publishedAt: Date;
 	private _content?: string;
+	private _createdAt: Date;
+	private _updatedAt: Date;
 
 	constructor({ blogID, url, title, publishedAt, content }: NewPostParams) {
 		this._id = randomUUID();
@@ -32,9 +36,11 @@ export class Post {
 		this._title = title;
 		this._publishedAt = publishedAt;
 		this._content = content;
+		this._createdAt = new Date();
+		this._updatedAt = new Date();
 	}
 
-	static load({ id, blogID, url, title, publishedAt, content }: LoadPostParams): Post {
+	static load({ id, blogID, url, title, publishedAt, content, createdAt, updatedAt }: LoadPostParams): Post {
 		const post = new Post({ blogID, url, title, publishedAt });
 		post._id = id;
 		post._blogID = blogID;
@@ -42,6 +48,8 @@ export class Post {
 		post._title = title;
 		post._publishedAt = publishedAt;
 		post._content = content;
+		post._createdAt = createdAt;
+		post._updatedAt = updatedAt;
 		return post;
 	}
 
@@ -79,5 +87,13 @@ export class Post {
 
 	set content(value: string) {
 		this._content = value;
+	}
+
+	get createdAt(): Date {
+		return this._createdAt;
+	}
+
+	get updatedAt(): Date {
+		return this._updatedAt;
 	}
 }

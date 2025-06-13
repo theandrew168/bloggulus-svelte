@@ -19,6 +19,8 @@ export type LoadBlogParams = {
 	etag?: string;
 	lastModified?: string;
 	syncedAt?: Date;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
 export class Blog {
@@ -29,6 +31,8 @@ export class Blog {
 	private _etag?: string;
 	private _lastModified?: string;
 	private _syncedAt?: Date;
+	private _createdAt: Date;
+	private _updatedAt: Date;
 
 	constructor({ feedURL, siteURL, title, etag, lastModified, syncedAt }: NewBlogParams) {
 		this._id = randomUUID();
@@ -38,9 +42,21 @@ export class Blog {
 		this._etag = etag;
 		this._lastModified = lastModified;
 		this._syncedAt = syncedAt;
+		this._createdAt = new Date();
+		this._updatedAt = new Date();
 	}
 
-	static load({ id, feedURL, siteURL, title, etag, lastModified, syncedAt }: LoadBlogParams): Blog {
+	static load({
+		id,
+		feedURL,
+		siteURL,
+		title,
+		etag,
+		lastModified,
+		syncedAt,
+		createdAt,
+		updatedAt,
+	}: LoadBlogParams): Blog {
 		const blog = new Blog({ feedURL, siteURL, title });
 		blog._id = id;
 		blog._feedURL = feedURL;
@@ -49,6 +65,8 @@ export class Blog {
 		blog._etag = etag;
 		blog._lastModified = lastModified;
 		blog._syncedAt = syncedAt;
+		blog._createdAt = createdAt;
+		blog._updatedAt = updatedAt;
 		return blog;
 	}
 
@@ -90,6 +108,14 @@ export class Blog {
 
 	set syncedAt(value: Date) {
 		this._syncedAt = value;
+	}
+
+	get createdAt(): Date {
+		return this._createdAt;
+	}
+
+	get updatedAt(): Date {
+		return this._updatedAt;
 	}
 
 	canBeSynced(now: Date): boolean {

@@ -12,6 +12,8 @@ type BlogRow = {
 	etag: string | null;
 	last_modified: string | null;
 	synced_at: string | null;
+	created_at: Date;
+	updated_at: Date;
 };
 
 export class PostgresBlogRepository implements BlogRepository {
@@ -56,7 +58,9 @@ export class PostgresBlogRepository implements BlogRepository {
                 title,
                 etag,
                 last_modified,
-                synced_at
+                synced_at,
+				created_at,
+				updated_at
             FROM blog
             WHERE id = ${id};
         `;
@@ -74,6 +78,8 @@ export class PostgresBlogRepository implements BlogRepository {
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
 			syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 		});
 	}
 
@@ -86,7 +92,9 @@ export class PostgresBlogRepository implements BlogRepository {
                 title,
                 etag,
                 last_modified,
-                synced_at
+                synced_at,
+				created_at,
+				updated_at
             FROM blog
             WHERE feed_url = ${feedURL};
         `;
@@ -104,6 +112,8 @@ export class PostgresBlogRepository implements BlogRepository {
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
 			syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 		});
 	}
 
@@ -116,7 +126,9 @@ export class PostgresBlogRepository implements BlogRepository {
                 title,
                 etag,
                 last_modified,
-                synced_at
+                synced_at,
+				created_at,
+				updated_at
             FROM blog;
         `;
 		return rows.map((row) =>
@@ -128,6 +140,8 @@ export class PostgresBlogRepository implements BlogRepository {
 				etag: row.etag ?? undefined,
 				lastModified: row.last_modified ?? undefined,
 				syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
+				createdAt: row.created_at,
+				updatedAt: row.updated_at,
 			}),
 		);
 	}

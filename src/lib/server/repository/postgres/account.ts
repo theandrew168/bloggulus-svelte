@@ -8,6 +8,8 @@ type AccountRow = {
 	id: UUID;
 	username: string;
 	is_admin: boolean;
+	created_at: Date;
+	updated_at: Date;
 	followed_blog_ids: UUID[];
 };
 
@@ -46,6 +48,8 @@ export class PostgresAccountRepository implements AccountRepository {
 				account.id,
 				account.username,
 				account.is_admin,
+				account.created_at,
+				account.updated_at,
 				ARRAY_AGG(account_blog.blog_id) AS followed_blog_ids
 			FROM account
 			LEFT JOIN account_blog
@@ -63,6 +67,8 @@ export class PostgresAccountRepository implements AccountRepository {
 			id: row.id,
 			username: row.username,
 			isAdmin: row.is_admin,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 			followedBlogIDs: row.followed_blog_ids,
 		});
 	}
@@ -73,6 +79,8 @@ export class PostgresAccountRepository implements AccountRepository {
 				account.id,
 				account.username,
 				account.is_admin,
+				account.created_at,
+				account.updated_at,
 				ARRAY_AGG(account_blog.blog_id) AS followed_blog_ids
 			FROM account
 			LEFT JOIN account_blog
@@ -90,6 +98,8 @@ export class PostgresAccountRepository implements AccountRepository {
 			id: row.id,
 			username: row.username,
 			isAdmin: row.is_admin,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 			followedBlogIDs: row.followed_blog_ids,
 		});
 	}

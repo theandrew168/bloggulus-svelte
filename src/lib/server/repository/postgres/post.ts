@@ -11,6 +11,8 @@ type PostRow = {
 	title: string;
 	published_at: string;
 	content: string | null;
+	created_at: Date;
+	updated_at: Date;
 };
 
 export class PostgresPostRepository implements PostRepository {
@@ -53,7 +55,9 @@ export class PostgresPostRepository implements PostRepository {
                 url,
                 title,
                 published_at,
-                content
+                content,
+				created_at,
+				updated_at
             FROM post
             WHERE id = ${id};
         `;
@@ -70,6 +74,8 @@ export class PostgresPostRepository implements PostRepository {
 			title: row.title,
 			publishedAt: new Date(row.published_at),
 			content: row.content ?? undefined,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 		});
 	}
 
@@ -81,7 +87,9 @@ export class PostgresPostRepository implements PostRepository {
                 url,
                 title,
                 published_at,
-                content
+                content,
+				created_at,
+				updated_at
             FROM post
             WHERE blog_id = ${blogID};
         `;
@@ -93,6 +101,8 @@ export class PostgresPostRepository implements PostRepository {
 				title: row.title,
 				publishedAt: new Date(row.published_at),
 				content: row.content ?? undefined,
+				createdAt: row.created_at,
+				updatedAt: row.updated_at,
 			}),
 		);
 	}

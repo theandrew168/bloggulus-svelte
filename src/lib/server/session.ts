@@ -18,27 +18,32 @@ export type LoadSessionParams = {
 	id: UUID;
 	accountID: UUID;
 	expiresAt: Date;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
 export class Session {
 	private _id: UUID;
 	private _accountID: UUID;
 	private _expiresAt: Date;
+	private _createdAt: Date;
+	private _updatedAt: Date;
 
 	constructor({ accountID, expiresAt }: NewSessionParams) {
 		this._id = randomUUID();
 		this._accountID = accountID;
 		this._expiresAt = expiresAt;
+		this._createdAt = new Date();
+		this._updatedAt = new Date();
 	}
 
-	static load({ id, accountID, expiresAt }: LoadSessionParams): Session {
-		const session = new Session({
-			accountID,
-			expiresAt,
-		});
+	static load({ id, accountID, expiresAt, createdAt, updatedAt }: LoadSessionParams): Session {
+		const session = new Session({ accountID, expiresAt });
 		session._id = id;
 		session._accountID = accountID;
 		session._expiresAt = expiresAt;
+		session._createdAt = createdAt;
+		session._updatedAt = updatedAt;
 		return session;
 	}
 
@@ -52,6 +57,14 @@ export class Session {
 
 	get expiresAt(): Date {
 		return this._expiresAt;
+	}
+
+	get createdAt(): Date {
+		return this._createdAt;
+	}
+
+	get updatedAt(): Date {
+		return this._updatedAt;
 	}
 }
 

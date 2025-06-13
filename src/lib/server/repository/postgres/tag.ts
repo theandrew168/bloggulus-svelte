@@ -7,6 +7,8 @@ import { Tag } from "$lib/server/tag";
 type TagRow = {
 	id: UUID;
 	name: string;
+	created_at: Date;
+	updated_at: Date;
 };
 
 export class PostgresTagRepository implements TagRepository {
@@ -41,7 +43,9 @@ export class PostgresTagRepository implements TagRepository {
 		const rows = await this._conn.sql<TagRow[]>`
             SELECT
                 id,
-                name
+                name,
+				created_at,
+				updated_at
             FROM tag
             WHERE id = ${id};
         `;
@@ -54,6 +58,8 @@ export class PostgresTagRepository implements TagRepository {
 		return Tag.load({
 			id: row.id,
 			name: row.name,
+			createdAt: row.created_at,
+			updatedAt: row.updated_at,
 		});
 	}
 	async delete(tag: Tag): Promise<void> {
