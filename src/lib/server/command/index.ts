@@ -1,5 +1,5 @@
-import type { FeedFetcher } from "../feed/fetch";
-import { WebFeedFetcher } from "../feed/web/fetch";
+import type { FeedFetcher } from "../feed";
+import { WebFeedFetcher } from "../feed/web";
 import type { Repository } from "../repository";
 import { PostgresRepository } from "../repository/postgres";
 import { AccountCommand } from "./account";

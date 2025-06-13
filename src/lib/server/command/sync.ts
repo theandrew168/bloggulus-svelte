@@ -1,4 +1,4 @@
-import type { FeedFetcher } from "../feed/fetch";
+import type { FeedFetcher } from "../feed";
 import type { Repository } from "../repository";
 import { syncExistingBlog, syncNewBlog } from "./sync/utils";
 

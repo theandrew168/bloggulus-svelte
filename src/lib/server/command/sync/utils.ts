@@ -1,5 +1,5 @@
 import { Blog } from "$lib/server/blog";
-import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "$lib/server/feed/fetch";
+import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "$lib/server/feed";
 import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import type { Repository } from "$lib/server/repository";
