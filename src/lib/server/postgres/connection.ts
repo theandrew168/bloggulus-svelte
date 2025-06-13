@@ -27,6 +27,15 @@ export class Connection {
 		return this._instance;
 	}
 
+	async close(): Promise<void> {
+		if (!this.sql) {
+			return;
+		}
+
+		await this.sql.end();
+		Connection._instance = undefined;
+	}
+
 	async withTransaction(callback: (conn: Connection) => Promise<void>): Promise<void> {
 		await this.sql.begin(async (tx) => {
 			const txConn = new Connection(tx);
