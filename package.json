@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"migrate": "tsx ./src/tools/migrate.ts",
+		"migrate": "tsx ./src/lib/tools/migrate.ts",
 		"start": "npm run migrate && node ./build/",
 		"test": "NODE_ENV=test npm run migrate && vitest run",
 		"check": "tsc && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
