@@ -3,6 +3,7 @@ import type { UUID } from "node:crypto";
 export type Account = {
 	id: UUID;
 	username: string;
+	isAdmin: boolean;
 };
 
 export type Article = {

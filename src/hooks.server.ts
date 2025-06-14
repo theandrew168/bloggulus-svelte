@@ -16,5 +16,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.config = EnvConfig.getInstance();
 	event.locals.command = Command.getInstance();
 	event.locals.query = PostgresWebQuery.getInstance();
+
+	const sessionToken = event.cookies.get("bloggulus_session");
+	if (sessionToken) {
+		event.locals.account = await event.locals.query.readAccountBySessionToken(sessionToken);
+	}
+
 	return resolve(event);
 };

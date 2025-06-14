@@ -102,7 +102,7 @@ export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, fe
 		lastModified: resp.lastModified,
 		syncedAt: now,
 	});
-	await repo.blog.createOrUpdate(blog);
+	await repo.blog.create(blog);
 
 	await syncPosts(repo, blog, feedBlog.posts);
 }
@@ -118,7 +118,7 @@ export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetche
 
 	const haveHeadersChanged = updateCacheHeaders(blog, resp);
 	if (haveHeadersChanged) {
-		await repo.blog.createOrUpdate(blog);
+		await repo.blog.update(blog);
 	}
 
 	// No feed data from an existing blog can occur if the feed has not changed.
@@ -134,6 +134,6 @@ export async function syncPosts(repo: Repository, blog: Blog, feedPosts: FeedPos
 	const knownPosts = await repo.post.listByBlogID(blog.id);
 	const { postsToCreate, postsToUpdate } = comparePosts(blog, knownPosts, feedPosts);
 
-	await Promise.all(postsToCreate.map((post) => repo.post.createOrUpdate(post)));
-	await Promise.all(postsToUpdate.map((post) => repo.post.createOrUpdate(post)));
+	await Promise.all(postsToCreate.map((post) => repo.post.create(post)));
+	await Promise.all(postsToUpdate.map((post) => repo.post.update(post)));
 }

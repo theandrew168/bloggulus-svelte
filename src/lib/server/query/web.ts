@@ -8,6 +8,8 @@ import type { Account, Article, Blog, BlogDetails, PostDetails } from "$lib/type
 // I wanna do some caching, add CDC, or even use a different database. If the
 // queries are all in one place, I can do that without having to change the UIs.
 
+// TODO: Break these out by type, rename web.ts to index.ts, impl each in subdir like repos.
+
 // These queries are specific to the web frontend. If necessary, these could be
 // split up by type (article, account, blog, post, etc) or by page (less good?).
 // Some queries could be used across multiple pages (like basic account info).

@@ -5,7 +5,9 @@
 	import Input from "$lib/components/Input.svelte";
 	import LinkButton from "$lib/components/LinkButton.svelte";
 
-	let { data } = $props();
+	import type { PageProps } from "./$types";
+
+	let { data }: PageProps = $props();
 
 	let q = $derived(page.url.searchParams.get("q") ?? "");
 	let p = $derived(parseInt(page.url.searchParams.get("p") ?? "1") || 1);

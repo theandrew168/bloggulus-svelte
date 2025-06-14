@@ -25,7 +25,7 @@ export class AuthCommand {
 				accountID: account.id,
 				expiresAt: new Date(Date.now() + SESSION_EXPIRY_SECONDS * 1000),
 			});
-			await uow.session.createOrUpdate(session, token);
+			await uow.session.create(session, token);
 		});
 
 		return token;

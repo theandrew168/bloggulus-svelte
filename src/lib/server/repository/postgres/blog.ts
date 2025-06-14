@@ -11,7 +11,7 @@ type BlogRow = {
 	title: string;
 	etag: string | null;
 	last_modified: string | null;
-	synced_at: string | null;
+	synced_at: Date | null;
 	created_at: Date;
 	updated_at: Date;
 };
@@ -77,7 +77,7 @@ export class PostgresBlogRepository implements BlogRepository {
 			title: row.title,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
-			syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
+			syncedAt: row.synced_at ?? undefined,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
 		});
@@ -111,7 +111,7 @@ export class PostgresBlogRepository implements BlogRepository {
 			title: row.title,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
-			syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
+			syncedAt: row.synced_at ?? undefined,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
 		});
@@ -139,7 +139,7 @@ export class PostgresBlogRepository implements BlogRepository {
 				title: row.title,
 				etag: row.etag ?? undefined,
 				lastModified: row.last_modified ?? undefined,
-				syncedAt: row.synced_at ? new Date(row.synced_at) : undefined,
+				syncedAt: row.synced_at ?? undefined,
 				createdAt: row.created_at,
 				updatedAt: row.updated_at,
 			}),

@@ -10,13 +10,15 @@ export class EnvConfig implements Config {
 	readonly enableDebugAuth: boolean;
 
 	constructor() {
-		if (process.env.NODE_ENV === "test") {
+		const isTest = process.env.NODE_ENV === "test";
+		const isDevelopment = process.env.NODE_ENV === "development";
+		if (isTest) {
 			this.databaseURL = TEST_DATABASE_URL;
 		} else {
 			this.databaseURL = process.env.DATABASE_URL || LOCAL_DATABASE_URL;
 		}
 
-		this.enableDebugAuth = process.env.NODE_ENV === "development";
+		this.enableDebugAuth = isDevelopment || process.env.ENABLE_DEBUG_AUTH === "true";
 	}
 
 	static getInstance(): EnvConfig {
