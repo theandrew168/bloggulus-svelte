@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Footer from "$lib/components/Footer.svelte";
 	import Header from "$lib/components/Header.svelte";
+	import Notification from "$lib/components/Notification.svelte";
 
 	import type { LayoutProps } from "./$types";
 
@@ -9,6 +10,9 @@
 
 <Header account={data.account} />
 <main>
+	{#if data.notification}
+		<Notification message={data.notification} />
+	{/if}
 	{@render children()}
 </main>
 <Footer />

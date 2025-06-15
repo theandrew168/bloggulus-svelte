@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
+
 	import Button from "$lib/components/Button.svelte";
 	import Input from "$lib/components/Input.svelte";
 
@@ -10,7 +12,7 @@
 <section>
 	<header>
 		<h1>Blogs</h1>
-		<form method="POST" action="/blogs/create">
+		<form method="POST" action="?/add" use:enhance>
 			<Input type="text" name="feedURL" placeholder="Follow RSS Feed" />
 			<Button>Follow</Button>
 		</form>
@@ -25,11 +27,13 @@
 				{/if}
 
 				{#if blog.isFollowed}
-					<form method="POST" action="/blogs/{blog.id}/unfollow">
+					<form method="POST" action="?/unfollow" use:enhance>
+						<Input type="hidden" name="blogID" value={blog.id} />
 						<Button isOutline>Unfollow</Button>
 					</form>
 				{:else}
-					<form method="POST" action="/blogs/{blog.id}/follow">
+					<form method="POST" action="?/follow" use:enhance>
+						<Input type="hidden" name="blogID" value={blog.id} />
 						<Button>Follow</Button>
 					</form>
 				{/if}

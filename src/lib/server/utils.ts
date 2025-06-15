@@ -18,3 +18,19 @@ export function sha256(value: string): string {
 export function hmac(key: string, value: string): string {
 	return createHmac("sha256", key).update(value).digest("hex");
 }
+
+export function sessionCookieOptions() {
+	return {
+		path: "/",
+		secure: true,
+		httpOnly: true,
+		sameSite: "lax",
+	} as const;
+}
+
+export function permanentCookieOptions(maxAge: number) {
+	return {
+		...sessionCookieOptions(),
+		maxAge,
+	};
+}

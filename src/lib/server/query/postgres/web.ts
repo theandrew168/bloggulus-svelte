@@ -326,7 +326,7 @@ export class PostgresWebQuery implements WebQuery {
                 ON account_blog.blog_id = blog.id
             LEFT JOIN account
                 ON account.id = account_blog.account_id
-            WHERE account.id = ${account.id};
+                AND account.id = ${account.id};
         `;
 
 		return rows.map((row) => ({
@@ -363,6 +363,32 @@ export class PostgresWebQuery implements WebQuery {
                 blog.synced_at
             FROM blog
             WHERE blog.id = ${blogID};
+        `;
+
+		const row = rows[0];
+		if (!row) {
+			return undefined;
+		}
+
+		return {
+			id: row.id,
+			feedURL: row.feed_url,
+			siteURL: row.site_url,
+			title: row.title,
+			syncedAt: row.synced_at ?? undefined,
+		};
+	}
+
+	async readBlogDetailsByFeedURL(feedURL: string): Promise<BlogDetails | undefined> {
+		const rows = await this._conn.sql<BlogDetailsRow[]>`
+            SELECT
+                blog.id,
+                blog.feed_url,
+                blog.site_url,
+                blog.title,
+                blog.synced_at
+            FROM blog
+            WHERE blog.feed_url = ${feedURL};
         `;
 
 		const row = rows[0];

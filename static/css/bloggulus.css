@@ -32,25 +32,6 @@ svg {
 	height: 1.25em;
 }
 
-.toast {
-	background-color: var(--color-dark);
-	color: var(--color-white);
-	padding: 1em;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-}
-
-.articles-cta {
-	margin-top: 4em;
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 2em;
-}
-
 .blogs,
 .pages,
 .accounts {

@@ -15,6 +15,13 @@ export type Article = {
 	tags: string[];
 };
 
+export type Blog = {
+	id: UUID;
+	title: string;
+	siteURL: string;
+	isFollowed: boolean;
+};
+
 export type BlogDetails = {
 	id: UUID;
 	feedURL: string;
@@ -29,11 +36,4 @@ export type PostDetails = {
 	url: string;
 	title: string;
 	publishedAt: Date;
-};
-
-export type Blog = {
-	id: UUID;
-	title: string;
-	siteURL: string;
-	isFollowed: boolean;
 };

@@ -10,8 +10,6 @@
 	let { data }: PageProps = $props();
 
 	let q = $derived(page.url.searchParams.get("q") ?? "");
-	let p = $derived(parseInt(page.url.searchParams.get("p") ?? "1") || 1);
-	let moreLink = $derived(`/?p=${p + 1}` + (q ? `&q=${q}` : ""));
 </script>
 
 <header>
@@ -30,12 +28,26 @@
 <section>
 	{#each data.articles as article}
 		<Article {article} />
+	{:else}
+		{#if q}
+			<article>
+				<p>No relevant articles! Try searching for something else.</p>
+			</article>
+		{:else}
+			<article>
+				<p>No posts found! Get started by following your favorite blogs.</p>
+				<p>
+					<LinkButton href="/blogs">Follow Blogs</LinkButton>
+				</p>
+			</article>
+		{/if}
 	{/each}
-	<!-- TODO: Add empty state w/ "Add Blog" CTA. -->
 </section>
 
 <footer>
-	<LinkButton href={moreLink} isOutline>See More</LinkButton>
+	{#if data.moreLink}
+		<LinkButton href={data.moreLink} isOutline>See More</LinkButton>
+	{/if}
 </footer>
 
 <style>
@@ -61,6 +73,15 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1em;
+	}
+
+	article {
+		margin-top: 4em;
+		text-align: center;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2em;
 	}
 
 	footer {

@@ -21,6 +21,9 @@ describe("repository/postgres/account", () => {
 
 		const accountByID = await repo.account.readByID(account.id);
 		expect(accountByID?.id).toEqual(account.id);
+		expect(accountByID?.username).toEqual(account.username);
+		expect(accountByID?.isAdmin).toEqual(account.isAdmin);
+		expect(accountByID?.followedBlogIDs).toEqual(account.followedBlogIDs);
 	});
 
 	test("readByUsername", async () => {
@@ -29,6 +32,9 @@ describe("repository/postgres/account", () => {
 
 		const accountByUsername = await repo.account.readByUsername(account.username);
 		expect(accountByUsername?.id).toEqual(account.id);
+		expect(accountByUsername?.username).toEqual(account.username);
+		expect(accountByUsername?.isAdmin).toEqual(account.isAdmin);
+		expect(accountByUsername?.followedBlogIDs).toEqual(account.followedBlogIDs);
 	});
 
 	test("update", async () => {

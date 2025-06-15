@@ -50,7 +50,7 @@ export class PostgresAccountRepository implements AccountRepository {
 				account.is_admin,
 				account.created_at,
 				account.updated_at,
-				ARRAY_AGG(account_blog.blog_id) AS followed_blog_ids
+				ARRAY_REMOVE(ARRAY_AGG(account_blog.blog_id), NULL) AS followed_blog_ids
 			FROM account
 			LEFT JOIN account_blog
 				ON account_blog.account_id = account.id
@@ -81,7 +81,7 @@ export class PostgresAccountRepository implements AccountRepository {
 				account.is_admin,
 				account.created_at,
 				account.updated_at,
-				ARRAY_AGG(account_blog.blog_id) AS followed_blog_ids
+				ARRAY_REMOVE(ARRAY_AGG(account_blog.blog_id), NULL) AS followed_blog_ids
 			FROM account
 			LEFT JOIN account_blog
 				ON account_blog.account_id = account.id

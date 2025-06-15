@@ -16,9 +16,9 @@ export class SyncCommand {
 			const blog = await uow.blog.readByFeedURL(feedURL);
 			if (blog) {
 				await syncExistingBlog(uow, this._feedFetcher, blog);
+			} else {
+				await syncNewBlog(uow, this._feedFetcher, feedURL);
 			}
-
-			await syncNewBlog(uow, this._feedFetcher, feedURL);
 		});
 	}
 

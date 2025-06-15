@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { enhance } from "$app/forms";
+
 	import type { PageProps } from "./$types";
 
 	let { data }: PageProps = $props();
@@ -11,7 +13,7 @@
 		<hr />
 
 		{#if data.enableDebugAuth}
-			<form method="POST" action="/signin/debug">
+			<form method="POST" action="/signin/debug" use:enhance>
 				<button type="submit">
 					<img src="/img/bloggulus.png" alt="Bloggulus logo" />
 					Sign in with Debug
