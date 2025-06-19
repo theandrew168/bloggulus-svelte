@@ -12,6 +12,11 @@
 	let { data, children }: LayoutProps = $props();
 </script>
 
+<svelte:head>
+	<title>Bloggulus - A website for avid blog readers</title>
+	<meta name="description" content="Bloggulus - A website for avid blog readers" />
+</svelte:head>
+
 <Header account={data.account} />
 <main>
 	{#if data.notification}
