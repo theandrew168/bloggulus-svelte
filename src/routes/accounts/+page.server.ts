@@ -5,12 +5,7 @@ import { errorBadRequest, errorNotFound, errorUnauthorized } from "$lib/server/w
 
 import type { Actions, PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ locals, params }) => {
-	const postID = params.postID;
-	if (!isValidUUID(postID)) {
-		errorNotFound();
-	}
-
+export const load: PageServerLoad = async ({ locals }) => {
 	const account = locals.account;
 	if (!account) {
 		errorNotFound();
@@ -20,16 +15,12 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		errorUnauthorized();
 	}
 
-	const post = await locals.query.readPostDetailsByID(postID);
-	if (!post) {
-		errorNotFound();
-	}
-
-	return { post };
+	const accounts = await locals.query.listAccounts();
+	return { accounts };
 };
 
 export const actions = {
-	default: async ({ locals, request, params }) => {
+	default: async ({ locals, request }) => {
 		const account = locals.account;
 		if (!account) {
 			errorNotFound();
@@ -40,17 +31,22 @@ export const actions = {
 		}
 
 		const data = await request.formData();
-		const postID = data.get("postID")?.toString();
-		if (!postID) {
+		const accountID = data.get("accountID")?.toString();
+		if (!accountID) {
 			errorBadRequest();
 		}
 
-		if (!isValidUUID(postID)) {
+		if (!isValidUUID(accountID)) {
 			errorBadRequest();
 		}
 
-		await locals.command.post.deletePost(postID);
+		try {
+			await locals.command.account.deleteAccount(accountID);
+		} catch (error) {
+			console.log(error);
+			errorBadRequest();
+		}
 
-		redirect(303, `/blogs/${params.blogID}`);
+		redirect(303, "/accounts");
 	},
 } satisfies Actions;

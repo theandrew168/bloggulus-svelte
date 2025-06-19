@@ -1,7 +1,7 @@
-Impl post details page
 Impl privacy policy page
 Impl OAuth login flows
 Solve periodic commands (sync and sessions)
+Ensure test coverage is at parity
 
 Align bloggulus-go's DB schema
 Make deployment a bit nicer (mfd deploy <branch/tag>?)

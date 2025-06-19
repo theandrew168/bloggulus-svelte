@@ -50,6 +50,10 @@ export class AccountCommand {
 				throw new Error(`Account does not exist with ID: ${accountID}.`);
 			}
 
+			if (account.isAdmin) {
+				throw new Error("Cannot delete an admin account.");
+			}
+
 			await uow.account.delete(account);
 		});
 	}

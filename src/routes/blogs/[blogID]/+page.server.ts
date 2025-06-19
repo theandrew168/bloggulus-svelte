@@ -34,8 +34,13 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 export const actions = {
 	default: async ({ locals, request }) => {
-		if (!locals.account) {
+		const account = locals.account;
+		if (!account) {
 			errorNotFound();
+		}
+
+		if (!account.isAdmin) {
+			errorUnauthorized();
 		}
 
 		const data = await request.formData();
