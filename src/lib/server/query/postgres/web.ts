@@ -324,9 +324,7 @@ export class PostgresWebQuery implements WebQuery {
             FROM blog
             LEFT JOIN account_blog
                 ON account_blog.blog_id = blog.id
-            LEFT JOIN account
-                ON account.id = account_blog.account_id
-                AND account.id = ${account.id};
+                AND account_blog.account_id = ${account.id};
         `;
 
 		return rows.map((row) => ({
