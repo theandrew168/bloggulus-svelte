@@ -3,9 +3,9 @@
 
 	import Tag from "./Tag.svelte";
 
-	interface Props {
+	type Props = {
 		article: Article;
-	}
+	};
 
 	let { article }: Props = $props();
 </script>

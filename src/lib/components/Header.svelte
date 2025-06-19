@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { Account } from "$lib/types";
 
-	interface Props {
+	type Props = {
 		account?: Account;
-	}
+	};
 
 	let { account }: Props = $props();
 </script>

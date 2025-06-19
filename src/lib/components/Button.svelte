@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
 
-	interface Props {
+	type Props = {
 		isOutline?: boolean;
 		children: Snippet;
-	}
+	};
 
 	let { isOutline, children }: Props = $props();
 </script>

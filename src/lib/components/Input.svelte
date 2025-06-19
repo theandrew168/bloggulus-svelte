@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { HTMLInputTypeAttribute } from "svelte/elements";
 
-	interface Props {
+	type Props = {
 		type: HTMLInputTypeAttribute;
 		name: string;
 		value?: string;
 		placeholder?: string;
-	}
+	};
 
 	let { type, name, value, placeholder }: Props = $props();
 </script>
