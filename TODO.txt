@@ -2,6 +2,50 @@ Impl OAuth login flows
 Solve periodic commands (sync and sessions)
 Ensure test coverage is at parity
 
-Align bloggulus-go's DB schema
 Make deployment a bit nicer (mfd deploy <branch/tag>?)
 Also add an "mfd clean" command
+
+Align bloggulus-go's DB schema:
+
+-- Make blog.etag and blog.last_modified nullable
+alter table blog
+  alter column etag drop not null,
+  alter column etag drop default,
+  alter column last_modified drop not null,
+  alter column last_modified drop default;
+
+-- Replace empty blog.etag with nulls
+update blog
+set etag = null
+where etag = '';
+
+-- Replace empty blog.last_modified with nulls
+update blog
+set last_modified = null
+where last_modified = '';
+
+-- Make post.content nullable
+alter table post
+  alter column content drop not null;
+
+-- Rename session.hash to session.token_hash
+alter table session
+  rename column hash to token_hash;
+
+-- Name session.token_hash index
+alter index session_hash_key
+  rename to session_token_hash_key;
+
+-- Replace migrations
+delete from migration;
+
+insert into migration
+  (name)
+values
+  ('0000-create-blog-table.sql'),
+  ('0001-create-post-table.sql'),
+  ('0002-create-tag-table.sql'),
+  ('0003-insert-default-tags.sql'),
+  ('0004-create-account-table.sql'),
+  ('0005-create-session-table.sql'),
+  ('0006-create-account-blog-table.sql');

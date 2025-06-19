@@ -4,7 +4,7 @@ import { Connection } from "$lib/server/postgres";
 
 const MIGRATIONS_DIR = "./migrations/";
 
-type Migration = {
+type MigrationRow = {
 	id: string;
 	name: string;
 };
@@ -21,7 +21,7 @@ async function main() {
 		)`;
 
 	// get migrations that are already applied
-	const rows = await conn.sql<Migration[]>`SELECT id, name FROM migration`;
+	const rows = await conn.sql<MigrationRow[]>`SELECT id, name FROM migration`;
 	const applied = rows.map((row) => row.name);
 
 	// get migrations that should be applied
