@@ -27,7 +27,7 @@ export type BlogDetails = {
 	feedURL: string;
 	siteURL: string;
 	title: string;
-	syncedAt?: Date;
+	syncedAt: Date;
 };
 
 export type PostDetails = {

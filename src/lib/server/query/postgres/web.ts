@@ -36,7 +36,7 @@ type BlogDetailsRow = {
 	feed_url: string;
 	site_url: string;
 	title: string;
-	synced_at: Date | null;
+	synced_at: Date;
 };
 
 type PostDetailsRow = {
@@ -373,7 +373,7 @@ export class PostgresWebQuery implements WebQuery {
 			feedURL: row.feed_url,
 			siteURL: row.site_url,
 			title: row.title,
-			syncedAt: row.synced_at ?? undefined,
+			syncedAt: row.synced_at,
 		};
 	}
 
@@ -399,8 +399,29 @@ export class PostgresWebQuery implements WebQuery {
 			feedURL: row.feed_url,
 			siteURL: row.site_url,
 			title: row.title,
-			syncedAt: row.synced_at ?? undefined,
+			syncedAt: row.synced_at,
 		};
+	}
+
+	async listPostDetailsByBlogID(blogID: UUID): Promise<PostDetails[]> {
+		const rows = await this._conn.sql<PostDetailsRow[]>`
+            SELECT
+                post.id,
+                post.blog_id,
+                post.url,
+                post.title,
+                post.published_at
+            FROM post
+            WHERE post.blog_id = ${blogID};
+        `;
+
+		return rows.map((row) => ({
+			id: row.id,
+			blogID: row.blog_id,
+			url: row.url,
+			title: row.title,
+			publishedAt: row.published_at,
+		}));
 	}
 
 	async readPostDetailsByID(postID: UUID): Promise<PostDetails | undefined> {

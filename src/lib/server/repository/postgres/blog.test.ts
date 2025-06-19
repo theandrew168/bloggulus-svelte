@@ -14,6 +14,7 @@ describe("repository/postgres/blog", () => {
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
+			syncedAt: new Date(),
 		});
 		await repo.blog.create(blog);
 	});
@@ -23,6 +24,7 @@ describe("repository/postgres/blog", () => {
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
+			syncedAt: new Date(),
 		});
 		await repo.blog.create(blog);
 
@@ -35,6 +37,7 @@ describe("repository/postgres/blog", () => {
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
+			syncedAt: new Date(),
 		});
 		await repo.blog.create(blog);
 
@@ -47,6 +50,7 @@ describe("repository/postgres/blog", () => {
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
+			syncedAt: new Date(),
 		});
 		await repo.blog.create(blog);
 
@@ -66,6 +70,7 @@ describe("repository/postgres/blog", () => {
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 5 }),
+			syncedAt: new Date(),
 		});
 		await repo.blog.create(blog);
 

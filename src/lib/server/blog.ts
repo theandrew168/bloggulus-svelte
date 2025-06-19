@@ -1,14 +1,15 @@
 import type { UUID } from "$lib/types";
 
-const SYNC_COOLDOWN_MS = 2 * 60 * 60 * 1000;
+const SYNC_COOLDOWN_HOURS = 2;
+const SYNC_COOLDOWN_MS = SYNC_COOLDOWN_HOURS * 60 * 60 * 1000;
 
 export type NewBlogParams = {
 	feedURL: string;
 	siteURL: string;
 	title: string;
+	syncedAt: Date;
 	etag?: string;
 	lastModified?: string;
-	syncedAt?: Date;
 };
 
 export type LoadBlogParams = {
@@ -16,9 +17,9 @@ export type LoadBlogParams = {
 	feedURL: string;
 	siteURL: string;
 	title: string;
+	syncedAt: Date;
 	etag?: string;
 	lastModified?: string;
-	syncedAt?: Date;
 	createdAt: Date;
 	updatedAt: Date;
 };
@@ -28,9 +29,9 @@ export class Blog {
 	private _feedURL: string;
 	private _siteURL: string;
 	private _title: string;
+	private _syncedAt: Date;
 	private _etag?: string;
 	private _lastModified?: string;
-	private _syncedAt?: Date;
 	private _createdAt: Date;
 	private _updatedAt: Date;
 
@@ -39,9 +40,9 @@ export class Blog {
 		this._feedURL = feedURL;
 		this._siteURL = siteURL;
 		this._title = title;
+		this._syncedAt = syncedAt;
 		this._etag = etag;
 		this._lastModified = lastModified;
-		this._syncedAt = syncedAt;
 		this._createdAt = new Date();
 		this._updatedAt = new Date();
 	}
@@ -51,13 +52,13 @@ export class Blog {
 		feedURL,
 		siteURL,
 		title,
+		syncedAt,
 		etag,
 		lastModified,
-		syncedAt,
 		createdAt,
 		updatedAt,
 	}: LoadBlogParams): Blog {
-		const blog = new Blog({ feedURL, siteURL, title });
+		const blog = new Blog({ feedURL, siteURL, title, syncedAt });
 		blog._id = id;
 		blog._feedURL = feedURL;
 		blog._siteURL = siteURL;
@@ -102,7 +103,7 @@ export class Blog {
 		this._lastModified = value;
 	}
 
-	get syncedAt(): Date | undefined {
+	get syncedAt(): Date {
 		return this._syncedAt;
 	}
 
@@ -119,10 +120,6 @@ export class Blog {
 	}
 
 	canBeSynced(now: Date): boolean {
-		if (!this._syncedAt) {
-			return true;
-		}
-
 		return now.getTime() - this._syncedAt.getTime() >= SYNC_COOLDOWN_MS;
 	}
 }

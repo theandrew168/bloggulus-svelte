@@ -8,9 +8,9 @@ type BlogRow = {
 	feed_url: string;
 	site_url: string;
 	title: string;
+	synced_at: Date;
 	etag: string | null;
 	last_modified: string | null;
-	synced_at: Date | null;
 	created_at: Date;
 	updated_at: Date;
 };
@@ -35,15 +35,15 @@ export class PostgresBlogRepository implements BlogRepository {
 	async create(blog: Blog): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO blog
-                (id, feed_url, site_url, title, etag, last_modified, synced_at)
+                (id, feed_url, site_url, title, synced_at, etag, last_modified)
             VALUES (
                 ${blog.id},
                 ${blog.feedURL},
                 ${blog.siteURL},
                 ${blog.title},
+                ${blog.syncedAt},
                 ${blog.etag ?? null},
-                ${blog.lastModified ?? null},
-                ${blog.syncedAt ?? null}
+                ${blog.lastModified ?? null}
             );
 		`;
 	}
@@ -55,9 +55,9 @@ export class PostgresBlogRepository implements BlogRepository {
                 feed_url,
                 site_url,
                 title,
+                synced_at,
                 etag,
                 last_modified,
-                synced_at,
 				created_at,
 				updated_at
             FROM blog
@@ -74,9 +74,9 @@ export class PostgresBlogRepository implements BlogRepository {
 			feedURL: row.feed_url,
 			siteURL: row.site_url,
 			title: row.title,
+			syncedAt: row.synced_at,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
-			syncedAt: row.synced_at ?? undefined,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
 		});
@@ -89,9 +89,9 @@ export class PostgresBlogRepository implements BlogRepository {
                 feed_url,
                 site_url,
                 title,
+                synced_at,
                 etag,
                 last_modified,
-                synced_at,
 				created_at,
 				updated_at
             FROM blog
@@ -108,9 +108,9 @@ export class PostgresBlogRepository implements BlogRepository {
 			feedURL: row.feed_url,
 			siteURL: row.site_url,
 			title: row.title,
+			syncedAt: row.synced_at,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
-			syncedAt: row.synced_at ?? undefined,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
 		});
@@ -123,9 +123,9 @@ export class PostgresBlogRepository implements BlogRepository {
                 feed_url,
                 site_url,
                 title,
+                synced_at,
                 etag,
                 last_modified,
-                synced_at,
 				created_at,
 				updated_at
             FROM blog;
@@ -136,9 +136,9 @@ export class PostgresBlogRepository implements BlogRepository {
 				feedURL: row.feed_url,
 				siteURL: row.site_url,
 				title: row.title,
+				syncedAt: row.synced_at,
 				etag: row.etag ?? undefined,
 				lastModified: row.last_modified ?? undefined,
-				syncedAt: row.synced_at ?? undefined,
 				createdAt: row.created_at,
 				updatedAt: row.updated_at,
 			}),
@@ -153,9 +153,9 @@ export class PostgresBlogRepository implements BlogRepository {
 				feed_url = ${blog.feedURL},
 				site_url = ${blog.siteURL},
 				title = ${blog.title},
+				synced_at = ${blog.syncedAt},
 				etag = ${blog.etag ?? null},
-				last_modified = ${blog.lastModified ?? null},
-				synced_at = ${blog.syncedAt ?? null}
+				last_modified = ${blog.lastModified ?? null}
 			WHERE id = ${blog.id};
 		`;
 	}

@@ -1,7 +1,6 @@
-Impl blog details page
 Impl post details page
-Impl OAuth login flows
 Impl privacy policy page
+Impl OAuth login flows
 Solve periodic commands (sync and sessions)
 
 Align bloggulus-go's DB schema

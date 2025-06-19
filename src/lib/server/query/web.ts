@@ -39,13 +39,15 @@ export type WebQuery = {
 	readAccountBySessionToken: (sessionToken: string) => Promise<Account | undefined>;
 	// Powers the add / follow blogs page.
 	listBlogs: (account: Account) => Promise<Blog[]>;
+	// Powers the add / follow blogs page.
+	readBlogDetailsByFeedURL: (feedURL: string) => Promise<BlogDetails | undefined>;
 
 	// Powers the accounts page (admin only).
 	listAccounts: () => Promise<Account[]>;
 	// Powers the blog details page (admin only).
 	readBlogDetailsByID: (blogID: UUID) => Promise<BlogDetails | undefined>;
-	// Powers the add / follow blogs page.
-	readBlogDetailsByFeedURL: (feedURL: string) => Promise<BlogDetails | undefined>;
+	// Powers the blog details page (admin only).
+	listPostDetailsByBlogID: (blogID: UUID) => Promise<PostDetails[]>;
 	// Powers the post details page (admin only).
 	readPostDetailsByID: (postID: UUID) => Promise<PostDetails | undefined>;
 };

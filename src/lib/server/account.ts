@@ -24,7 +24,8 @@ export class Account {
 	constructor({ username }: NewAccountParams) {
 		this._id = crypto.randomUUID();
 		this._username = username;
-		this._isAdmin = false;
+		// TODO: Flip this back to false before production.
+		this._isAdmin = true;
 		this._followedBlogIDs = [];
 		this._createdAt = new Date();
 		this._updatedAt = new Date();

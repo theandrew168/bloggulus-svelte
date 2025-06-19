@@ -45,6 +45,7 @@ describe("repository/postgres/account", () => {
 			feedURL: chance.url(),
 			siteURL: chance.url(),
 			title: chance.sentence({ words: 3 }),
+			syncedAt: new Date(),
 		});
 		await repo.blog.create(blog);
 

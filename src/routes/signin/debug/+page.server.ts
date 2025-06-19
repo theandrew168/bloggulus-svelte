@@ -33,6 +33,6 @@ export const actions = {
 			cookies.delete("next", { path: "/" });
 		}
 
-		redirect(302, next);
+		redirect(303, next);
 	},
 } satisfies Actions;
