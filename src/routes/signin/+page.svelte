@@ -63,6 +63,7 @@
 		font-size: 1rem;
 		font-weight: 500;
 
+		width: 100%;
 		padding: 1em;
 		text-decoration: none;
 		border: 1px solid var(--color-dark);

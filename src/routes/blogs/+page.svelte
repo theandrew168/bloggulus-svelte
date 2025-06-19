@@ -13,7 +13,9 @@
 	<header>
 		<h1>Blogs</h1>
 		<form method="POST" action="?/add" use:enhance>
-			<Input type="text" name="feedURL" placeholder="Follow RSS Feed" />
+			<span>
+				<Input type="text" name="feedURL" placeholder="Follow RSS Feed" />
+			</span>
 			<Button>Follow</Button>
 		</form>
 	</header>
@@ -61,6 +63,12 @@
 		font-size: 1.25rem;
 		font-weight: 600;
 		margin-bottom: 0.5em;
+	}
+
+	/* TODO: Is there a better way control input widths? */
+	span {
+		display: inline-block;
+		width: 50%;
 	}
 
 	ul {

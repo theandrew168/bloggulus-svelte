@@ -15,6 +15,7 @@
 
 <style>
 	input {
+		width: 100%;
 		border: none;
 		box-shadow: inset 0px 0px 0px 1px var(--color-light);
 		border-radius: 0.375em;
