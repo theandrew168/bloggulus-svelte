@@ -2,7 +2,7 @@
 	<nav>
 		<ul>
 			<li><a class="big" href="/">Bloggulus</a></li>
-			<li><a class="small" href="/docs/privacy.html">Privacy Policy</a></li>
+			<li><a class="small" href="/docs/privacy">Privacy Policy</a></li>
 			<li><a href="https://shallowbrooksoftware.com">Shallow Brook Software</a></li>
 		</ul>
 	</nav>
