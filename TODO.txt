@@ -2,8 +2,8 @@ Impl blog details page
 Impl post details page
 Impl OAuth login flows
 Impl privacy policy page
-Fix auth methods width
 Solve periodic commands (sync and sessions)
 
 Align bloggulus-go's DB schema
 Make deployment a bit nicer (mfd deploy <branch/tag>?)
+Also add an "mfd clean" command
