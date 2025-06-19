@@ -46,7 +46,7 @@
 
 <footer>
 	{#if data.moreLink}
-		<LinkButton href={data.moreLink} isOutline>See More</LinkButton>
+		<LinkButton href={data.moreLink} isOutline>View More Articles</LinkButton>
 	{/if}
 </footer>
 

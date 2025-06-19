@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
 
+	import bloggulusLogo from "$lib/assets/img/bloggulus.png";
+	import githubLogo from "$lib/assets/img/github.png";
+	import googleLogo from "$lib/assets/img/google.png";
+
 	import type { PageProps } from "./$types";
 
 	let { data }: PageProps = $props();
@@ -15,19 +19,19 @@
 		{#if data.enableDebugAuth}
 			<form method="POST" action="/signin/debug" use:enhance>
 				<button type="submit">
-					<img src="/img/bloggulus.png" alt="Bloggulus logo" />
+					<img src={bloggulusLogo} alt="Bloggulus logo" />
 					Sign in with Debug
 				</button>
 			</form>
 		{/if}
 
 		<a href="/signin/github">
-			<img src="/img/github.png" alt="GitHub logo" />
+			<img src={githubLogo} alt="GitHub logo" />
 			Sign in with GitHub
 		</a>
 
 		<a href="/signin/google">
-			<img src="/img/google.png" alt="Google logo" />
+			<img src={googleLogo} alt="Google logo" />
 			Sign in with Google
 		</a>
 	</article>

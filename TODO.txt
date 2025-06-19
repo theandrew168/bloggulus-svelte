@@ -2,10 +2,8 @@ Impl blog details page
 Impl post details page
 Impl OAuth login flows
 Impl privacy policy page
-Fix input width (fill parent?), 2 lines on mobile?
 Fix auth methods width
 Solve periodic commands (sync and sessions)
-Better css / img caching via SK itself
 
 Align bloggulus-go's DB schema
 Make deployment a bit nicer (mfd deploy <branch/tag>?)

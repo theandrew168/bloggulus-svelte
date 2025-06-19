@@ -1,4 +1,8 @@
 <script lang="ts">
+	import "$lib/assets/css/reset.css";
+	import "$lib/assets/css/font.css";
+	import "$lib/assets/css/global.css";
+
 	import Footer from "$lib/components/Footer.svelte";
 	import Header from "$lib/components/Header.svelte";
 	import Notification from "$lib/components/Notification.svelte";
