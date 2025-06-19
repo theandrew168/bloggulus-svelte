@@ -1,4 +1,4 @@
-import { randomUUID, type UUID } from "node:crypto";
+import type { UUID } from "$lib/types";
 
 const SYNC_COOLDOWN_MS = 2 * 60 * 60 * 1000;
 
@@ -35,7 +35,7 @@ export class Blog {
 	private _updatedAt: Date;
 
 	constructor({ feedURL, siteURL, title, etag, lastModified, syncedAt }: NewBlogParams) {
-		this._id = randomUUID();
+		this._id = crypto.randomUUID();
 		this._feedURL = feedURL;
 		this._siteURL = siteURL;
 		this._title = title;

@@ -1,4 +1,4 @@
-import { randomUUID, type UUID } from "node:crypto";
+import type { UUID } from "$lib/types";
 
 export type NewPostParams = {
 	blogID: UUID;
@@ -30,7 +30,7 @@ export class Post {
 	private _updatedAt: Date;
 
 	constructor({ blogID, url, title, publishedAt, content }: NewPostParams) {
-		this._id = randomUUID();
+		this._id = crypto.randomUUID();
 		this._blogID = blogID;
 		this._url = url;
 		this._title = title;

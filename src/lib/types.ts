@@ -1,4 +1,4 @@
-import type { UUID } from "node:crypto";
+export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 export type Account = {
 	id: UUID;

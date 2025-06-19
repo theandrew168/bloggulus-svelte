@@ -27,7 +27,6 @@
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@types/chance": "^1.1.6",
 		"@types/lodash": "^4.17.17",
-		"@types/node": "^22.15.26",
 		"chance": "^1.1.13",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.4.0",

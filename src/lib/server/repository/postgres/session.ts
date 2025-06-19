@@ -1,9 +1,8 @@
-import type { UUID } from "node:crypto";
-
 import { Connection } from "$lib/server/postgres";
 import type { SessionRepository } from "$lib/server/repository/session";
 import { Session } from "$lib/server/session";
 import { sha256 } from "$lib/server/utils";
+import type { UUID } from "$lib/types";
 
 type SessionRow = {
 	id: UUID;
@@ -31,7 +30,7 @@ export class PostgresSessionRepository implements SessionRepository {
 	}
 
 	async create(session: Session, token: string): Promise<void> {
-		const tokenHash = sha256(token);
+		const tokenHash = await sha256(token);
 		await this._conn.sql`
 			INSERT INTO session
                 (id, account_id, expires_at, token_hash)
@@ -71,7 +70,7 @@ export class PostgresSessionRepository implements SessionRepository {
 	}
 
 	async readByToken(token: string): Promise<Session | undefined> {
-		const tokenHash = sha256(token);
+		const tokenHash = await sha256(token);
 		const rows = await this._conn.sql<SessionRow[]>`
             SELECT
                 id,

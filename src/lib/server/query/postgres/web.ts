@@ -290,7 +290,7 @@ export class PostgresWebQuery implements WebQuery {
 	}
 
 	async readAccountBySessionToken(sessionToken: string): Promise<Account | undefined> {
-		const sessionTokenHash = sha256(sessionToken);
+		const sessionTokenHash = await sha256(sessionToken);
 		const rows = await this._conn.sql<AccountRow[]>`
             SELECT
                 account.id,

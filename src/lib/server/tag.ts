@@ -1,4 +1,4 @@
-import { randomUUID, type UUID } from "node:crypto";
+import type { UUID } from "$lib/types";
 
 export type NewTagParams = {
 	name: string;
@@ -18,7 +18,7 @@ export class Tag {
 	private _updatedAt: Date;
 
 	constructor({ name }: NewTagParams) {
-		this._id = randomUUID();
+		this._id = crypto.randomUUID();
 		this._name = name;
 		this._createdAt = new Date();
 		this._updatedAt = new Date();

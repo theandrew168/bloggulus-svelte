@@ -3,7 +3,7 @@ import type { Config } from "$lib/server/config";
 import type { WebQuery } from "$lib/server/query/web";
 import type { Account } from "$lib/types";
 
-// See https://kit.svelte.dev/docs/types#app
+// See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 declare global {
 	namespace App {

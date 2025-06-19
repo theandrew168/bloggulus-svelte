@@ -1,4 +1,4 @@
-import { randomUUID, type UUID } from "node:crypto";
+import type { UUID } from "$lib/types";
 
 export type NewAccountParams = {
 	username: string;
@@ -22,7 +22,7 @@ export class Account {
 	private _updatedAt: Date;
 
 	constructor({ username }: NewAccountParams) {
-		this._id = randomUUID();
+		this._id = crypto.randomUUID();
 		this._username = username;
 		this._isAdmin = false;
 		this._followedBlogIDs = [];

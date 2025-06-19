@@ -1,6 +1,14 @@
-import { createHash, createHmac, randomBytes, type UUID } from "node:crypto";
+import type { UUID } from "$lib/types";
 
 // TODO: Find a better place for these.
+
+// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest#converting_a_digest_to_a_hex_string
+function bufferToHex(buffer: ArrayBuffer): string {
+	const view = new Uint8Array(buffer);
+	return Array.from(view)
+		.map((byte) => byte.toString(16).padStart(2, "0"))
+		.join("");
+}
 
 export function isValidUUID(s: string): s is UUID {
 	const pattern = /^[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}$/i;
@@ -8,15 +16,39 @@ export function isValidUUID(s: string): s is UUID {
 }
 
 export function randomString(numBytes: number): string {
-	return randomBytes(numBytes).toString("base64url");
+	const buffer = new Uint8Array(numBytes);
+	crypto.getRandomValues(buffer);
+	return btoa(String.fromCharCode(...buffer));
 }
 
-export function sha256(value: string): string {
-	return createHash("sha256").update(value).digest("hex");
+// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/digest#basic_example
+export async function sha256(value: string): Promise<string> {
+	const encoder = new TextEncoder();
+	const data = encoder.encode(value);
+	const hash = await crypto.subtle.digest("SHA-256", data);
+	return bufferToHex(hash);
 }
 
-export function hmac(key: string, value: string): string {
-	return createHmac("sha256", key).update(value).digest("hex");
+export async function hmac(key: string, value: string): Promise<string> {
+	const encoder = new TextEncoder();
+	const encodedKey = encoder.encode(key);
+	const encodedValue = encoder.encode(value);
+
+	// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey
+	const hmacKey = await crypto.subtle.importKey(
+		"raw",
+		encodedKey,
+		{
+			name: "HMAC",
+			hash: "SHA-256",
+		},
+		true,
+		["sign", "verify"],
+	);
+
+	// https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/sign#hmac_2
+	const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedValue);
+	return bufferToHex(signature);
 }
 
 export function sessionCookieOptions() {

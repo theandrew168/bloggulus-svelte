@@ -1,4 +1,4 @@
-import { randomUUID, type UUID } from "node:crypto";
+import type { UUID } from "$lib/types";
 
 import { randomString } from "./utils";
 
@@ -30,7 +30,7 @@ export class Session {
 	private _updatedAt: Date;
 
 	constructor({ accountID, expiresAt }: NewSessionParams) {
-		this._id = randomUUID();
+		this._id = crypto.randomUUID();
 		this._accountID = accountID;
 		this._expiresAt = expiresAt;
 		this._createdAt = new Date();

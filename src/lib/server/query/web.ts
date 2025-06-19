@@ -1,6 +1,4 @@
-import type { UUID } from "node:crypto";
-
-import type { Account, Article, Blog, BlogDetails, PostDetails } from "$lib/types";
+import type { Account, Article, Blog, BlogDetails, PostDetails, UUID } from "$lib/types";
 
 // TODO: For a large project, would this get out of hand? What is an alternative?
 // Do I just cut the abstraction and let UIs make their own queries? While that'd
