@@ -8,7 +8,7 @@ import type { Actions, PageServerLoad } from "./$types";
 export const load: PageServerLoad = async ({ locals }) => {
 	const account = locals.account;
 	if (!account) {
-		errorNotFound();
+		redirect(303, "/signin");
 	}
 
 	if (!account.isAdmin) {
@@ -23,7 +23,7 @@ export const actions = {
 	default: async ({ locals, request }) => {
 		const account = locals.account;
 		if (!account) {
-			errorNotFound();
+			redirect(303, "/signin");
 		}
 
 		if (!account.isAdmin) {

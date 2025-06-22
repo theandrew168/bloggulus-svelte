@@ -15,6 +15,9 @@ export function isValidUUID(s: string): s is UUID {
 	return pattern.test(s);
 }
 
+/**
+ * Generates a random base64-encoded string of the specified number of bytes.
+ */
 export function randomString(numBytes: number): string {
 	const buffer = new Uint8Array(numBytes);
 	crypto.getRandomValues(buffer);

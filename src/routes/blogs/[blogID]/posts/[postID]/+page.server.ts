@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	const account = locals.account;
 	if (!account) {
-		errorNotFound();
+		redirect(303, "/signin");
 	}
 
 	if (!account.isAdmin) {
@@ -32,7 +32,7 @@ export const actions = {
 	default: async ({ locals, request, params }) => {
 		const account = locals.account;
 		if (!account) {
-			errorNotFound();
+			redirect(303, "/signin");
 		}
 
 		if (!account.isAdmin) {

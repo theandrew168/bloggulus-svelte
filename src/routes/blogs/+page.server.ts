@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 
 import { isValidUUID, sessionCookieOptions } from "$lib/server/utils";
+import { NOTIFICATION_COOKIE_NAME } from "$lib/server/web/cookies";
 import { errorBadRequest, errorNotFound } from "$lib/server/web/errors";
 
 import type { Actions, PageServerLoad } from "./$types";
@@ -8,7 +9,7 @@ import type { Actions, PageServerLoad } from "./$types";
 export const load: PageServerLoad = async ({ locals }) => {
 	const account = locals.account;
 	if (!account) {
-		errorNotFound();
+		redirect(303, "/signin");
 	}
 
 	const blogs = await locals.query.listBlogs(account);
@@ -19,7 +20,7 @@ export const actions = {
 	add: async ({ cookies, locals, request }) => {
 		const account = locals.account;
 		if (!account) {
-			errorNotFound();
+			redirect(303, "/signin");
 		}
 
 		const data = await request.formData();
@@ -52,7 +53,7 @@ export const actions = {
 
 		// Show a notification explaining that the blog will be processed in the background.
 		cookies.set(
-			"bloggulus_notification",
+			NOTIFICATION_COOKIE_NAME,
 			"Once processed, this blog will be added and followed. Check back soon!",
 			sessionCookieOptions(),
 		);
@@ -62,7 +63,7 @@ export const actions = {
 	follow: async ({ locals, request }) => {
 		const account = locals.account;
 		if (!account) {
-			errorNotFound();
+			redirect(303, "/signin");
 		}
 
 		const data = await request.formData();
@@ -82,7 +83,7 @@ export const actions = {
 	unfollow: async ({ locals, request }) => {
 		const account = locals.account;
 		if (!account) {
-			errorNotFound();
+			redirect(303, "/signin");
 		}
 
 		const data = await request.formData();
