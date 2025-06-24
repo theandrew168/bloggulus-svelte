@@ -1,5 +1,3 @@
-Impl OAuth login flows
-Solve periodic commands (sync and sessions)
 Ensure test coverage is at parity
 
 Make deployment a bit nicer (mfd deploy <branch/tag>?)

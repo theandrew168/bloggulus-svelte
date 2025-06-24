@@ -108,6 +108,17 @@ export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, fe
 }
 
 export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetcher, blog: Blog): Promise<void> {
+	const now = new Date();
+	if (!blog.canBeSynced(now)) {
+		return;
+	}
+
+	console.log(`Syncing blog: ${blog.id} (${blog.title})`);
+
+	// Update the blog's syncedAt time.
+	blog.syncedAt = now;
+	await repo.blog.update(blog);
+
 	// Make a conditional fetch for the blog's feed.
 	const req: FetchFeedRequest = {
 		url: blog.feedURL,
@@ -123,6 +134,7 @@ export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetche
 
 	// No feed data from an existing blog can occur if the feed has not changed.
 	if (!resp.feed) {
+		console.log(`skipping blog (no feed content): ${blog.id} (${blog.title})`);
 		return;
 	}
 

@@ -1,3 +1,5 @@
+import pLimit from "p-limit";
+
 import type { FeedFetcher } from "../feed";
 import type { Repository } from "../repository";
 import { syncExistingBlog, syncNewBlog } from "./sync/utils";
@@ -23,11 +25,16 @@ export class SyncCommand {
 	}
 
 	async syncAllBlogs(): Promise<void> {
+		console.log("Syncing all blogs...");
 		const blogs = await this._repo.blog.list();
 
-		// TODO: Sync in batches? Can look into p-limit.
-		for (const blog of blogs) {
-			await syncExistingBlog(this._repo, this._feedFetcher, blog);
-		}
+		const now = new Date();
+		const syncableBlogs = blogs.filter((blog) => blog.canBeSynced(now));
+
+		const limit = pLimit(4);
+		const syncBlogPromises = syncableBlogs.map((blog) =>
+			limit(() => syncExistingBlog(this._repo, this._feedFetcher, blog)),
+		);
+		await Promise.all(syncBlogPromises);
 	}
 }
