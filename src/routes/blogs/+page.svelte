@@ -20,7 +20,7 @@
 		</form>
 	</header>
 	<ul>
-		{#each data.blogs as blog}
+		{#each data.blogs as blog (blog.id)}
 			<li>
 				{#if data.account?.isAdmin}
 					<a href="/blogs/{blog.id}">{blog.title}</a>

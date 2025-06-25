@@ -14,7 +14,7 @@
 		<h1>Accounts</h1>
 	</header>
 	<ul>
-		{#each data.accounts as account}
+		{#each data.accounts as account (account.id)}
 			<li>
 				<p>{account.username}</p>
 

@@ -31,7 +31,7 @@
 	<article class="posts">
 		<h2>{data.posts.length} Posts</h2>
 		<ul>
-			{#each data.posts as post}
+			{#each data.posts as post (post.id)}
 				<li>
 					<a href="/blogs/{post.blogID}/posts/{post.id}">{post.title}</a>
 					<time datetime={post.publishedAt.toISOString()}>{post.publishedAt.toDateString()}</time>

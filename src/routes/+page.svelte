@@ -26,7 +26,7 @@
 </header>
 
 <section>
-	{#each data.articles as article}
+	{#each data.articles as article (article.url)}
 		<Article {article} />
 	{:else}
 		{#if q}
