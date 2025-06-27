@@ -1,6 +1,7 @@
 import type { UUID } from "$lib/types";
 
 import type { Repository } from "../repository";
+import { BlogNotFoundError } from "./errors";
 
 export class BlogCommand {
 	private _repo: Repository;
@@ -13,7 +14,7 @@ export class BlogCommand {
 		await this._repo.asUnitOfWork(async (uow) => {
 			const blog = await uow.blog.readByID(blogID);
 			if (!blog) {
-				throw new Error(`Blog does not exist with ID: ${blogID}.`);
+				throw new BlogNotFoundError(blogID);
 			}
 
 			await uow.blog.delete(blog);

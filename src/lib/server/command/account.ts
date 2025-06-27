@@ -1,6 +1,7 @@
 import type { UUID } from "$lib/types";
 
 import type { Repository } from "../repository";
+import { AccountNotFoundError, AdminAccountDeletionError, BlogNotFoundError } from "./errors";
 
 export class AccountCommand {
 	private _repo: Repository;
@@ -13,12 +14,12 @@ export class AccountCommand {
 		await this._repo.asUnitOfWork(async (uow) => {
 			const account = await uow.account.readByID(accountID);
 			if (!account) {
-				throw new Error(`Account not found with ID: ${accountID}.`);
+				throw new AccountNotFoundError(accountID);
 			}
 
 			const blog = await uow.blog.readByID(blogID);
 			if (!blog) {
-				throw new Error(`Blog not found with ID: ${blogID}.`);
+				throw new BlogNotFoundError(blogID);
 			}
 
 			account.followBlog(blog.id);
@@ -30,12 +31,12 @@ export class AccountCommand {
 		await this._repo.asUnitOfWork(async (uow) => {
 			const account = await uow.account.readByID(accountID);
 			if (!account) {
-				throw new Error(`Account not found with ID: ${accountID}.`);
+				throw new AccountNotFoundError(accountID);
 			}
 
 			const blog = await uow.blog.readByID(blogID);
 			if (!blog) {
-				throw new Error(`Blog not found with ID: ${blogID}.`);
+				throw new BlogNotFoundError(blogID);
 			}
 
 			account.unfollowBlog(blog.id);
@@ -47,11 +48,11 @@ export class AccountCommand {
 		await this._repo.asUnitOfWork(async (uow) => {
 			const account = await uow.account.readByID(accountID);
 			if (!account) {
-				throw new Error(`Account does not exist with ID: ${accountID}.`);
+				throw new AccountNotFoundError(accountID);
 			}
 
 			if (account.isAdmin) {
-				throw new Error("Cannot delete an admin account.");
+				throw new AdminAccountDeletionError(accountID);
 			}
 
 			await uow.account.delete(account);

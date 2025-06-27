@@ -15,6 +15,7 @@ export class WebFeedFetcher implements FeedFetcher {
 			});
 
 			if (!response.ok) {
+				// Throw a custom error for non-2xx HTTP responses.
 				throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
 			}
 

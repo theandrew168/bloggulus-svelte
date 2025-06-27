@@ -4,6 +4,8 @@ import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import type { Repository } from "$lib/server/repository";
 
+import { EmptyFeedError } from "../errors";
+
 export function updateCacheHeaders(blog: Blog, response: FetchFeedResponse): boolean {
 	let haveHeadersChanged = false;
 
@@ -88,7 +90,7 @@ export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, fe
 
 	// No feed data from a new blog is an error.
 	if (!resp.feed) {
-		throw new Error(`Failed to fetch feed from ${feedURL}`);
+		throw new EmptyFeedError(feedURL);
 	}
 
 	const feedBlog = await parseFeed(feedURL, resp.feed);
