@@ -8,7 +8,7 @@ export type LoadAccountParams = {
 	id: UUID;
 	username: string;
 	isAdmin: boolean;
-	followedBlogIDs: UUID[];
+	followedBlogIDs: Set<UUID>;
 	createdAt: Date;
 	updatedAt: Date;
 };
@@ -17,7 +17,7 @@ export class Account {
 	private _id: UUID;
 	private _username: string;
 	private _isAdmin: boolean;
-	private _followedBlogIDs: UUID[];
+	private _followedBlogIDs: Set<UUID>;
 	private _createdAt: Date;
 	private _updatedAt: Date;
 
@@ -26,7 +26,7 @@ export class Account {
 		this._username = username;
 		// TODO: Flip this back to false before production.
 		this._isAdmin = true;
-		this._followedBlogIDs = [];
+		this._followedBlogIDs = new Set();
 		this._createdAt = new Date();
 		this._updatedAt = new Date();
 	}
@@ -54,7 +54,7 @@ export class Account {
 		return this._isAdmin;
 	}
 
-	get followedBlogIDs(): UUID[] {
+	get followedBlogIDs(): Set<UUID> {
 		return structuredClone(this._followedBlogIDs);
 	}
 
@@ -67,19 +67,10 @@ export class Account {
 	}
 
 	followBlog(blogID: UUID): void {
-		if (this._followedBlogIDs.includes(blogID)) {
-			return;
-		}
-
-		this._followedBlogIDs.push(blogID);
+		this._followedBlogIDs.add(blogID);
 	}
 
 	unfollowBlog(blogID: UUID): void {
-		const index = this._followedBlogIDs.indexOf(blogID);
-		if (index === -1) {
-			return;
-		}
-
-		this._followedBlogIDs.splice(index, 1);
+		this._followedBlogIDs.delete(blogID);
 	}
 }

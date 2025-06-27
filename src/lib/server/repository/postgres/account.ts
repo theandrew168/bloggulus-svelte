@@ -68,7 +68,7 @@ export class PostgresAccountRepository implements AccountRepository {
 			isAdmin: row.is_admin,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
-			followedBlogIDs: row.followed_blog_ids,
+			followedBlogIDs: new Set(row.followed_blog_ids),
 		});
 	}
 
@@ -99,7 +99,7 @@ export class PostgresAccountRepository implements AccountRepository {
 			isAdmin: row.is_admin,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
-			followedBlogIDs: row.followed_blog_ids,
+			followedBlogIDs: new Set(row.followed_blog_ids),
 		});
 	}
 
@@ -109,9 +109,9 @@ export class PostgresAccountRepository implements AccountRepository {
 			FROM account_blog
 			WHERE account_id = ${account.id};
 		`;
-		const followedBlogIDs = followedBlogIDRows.map((row) => row.blog_id);
+		const followedBlogIDs = new Set(followedBlogIDRows.map((row) => row.blog_id));
 
-		const blogsToFollow = account.followedBlogIDs.filter((blogID) => !followedBlogIDs.includes(blogID));
+		const blogsToFollow = account.followedBlogIDs.difference(followedBlogIDs);
 		for (const blogID of blogsToFollow) {
 			await this._conn.sql`
 				INSERT INTO account_blog
@@ -121,7 +121,7 @@ export class PostgresAccountRepository implements AccountRepository {
 			`;
 		}
 
-		const blogsToUnfollow = followedBlogIDs.filter((blogID) => !account.followedBlogIDs.includes(blogID));
+		const blogsToUnfollow = followedBlogIDs.difference(account.followedBlogIDs);
 		for (const blogID of blogsToUnfollow) {
 			await this._conn.sql`
 				DELETE FROM account_blog

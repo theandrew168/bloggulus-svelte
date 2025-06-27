@@ -1,8 +1,8 @@
 import { redirect } from "@sveltejs/kit";
 
-import { isValidUUID, sessionCookieOptions } from "$lib/server/utils";
-import { NOTIFICATION_COOKIE_NAME } from "$lib/server/web/cookies";
-import { errorBadRequest, errorNotFound } from "$lib/server/web/errors";
+import { isValidUUID } from "$lib/server/utils";
+import { NOTIFICATION_COOKIE_NAME, sessionCookieOptions } from "$lib/server/web/cookies";
+import { errorBadRequest } from "$lib/server/web/errors";
 
 import type { Actions, PageServerLoad } from "./$types";
 

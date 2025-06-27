@@ -53,19 +53,3 @@ export async function hmac(key: string, value: string): Promise<string> {
 	const signature = await crypto.subtle.sign("HMAC", hmacKey, encodedValue);
 	return bufferToHex(signature);
 }
-
-export function sessionCookieOptions() {
-	return {
-		path: "/",
-		secure: true,
-		httpOnly: true,
-		sameSite: "lax",
-	} as const;
-}
-
-export function permanentCookieOptions(maxAge: number) {
-	return {
-		...sessionCookieOptions(),
-		maxAge,
-	};
-}

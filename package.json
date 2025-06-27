@@ -7,8 +7,7 @@
 		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
-		"migrate": "tsx ./src/lib/tools/migrate.ts",
-		"start": "npm run migrate && node ./build/",
+		"migrate": "tsx ./src/lib/server/tools/migrate.ts",
 		"test": "NODE_ENV=test npm run migrate && vitest run",
 		"check": "tsc && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"format": "prettier --write ."

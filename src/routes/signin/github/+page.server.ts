@@ -1,8 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 import * as arctic from "arctic";
 
-import { sessionCookieOptions } from "$lib/server/utils";
-import { OAUTH_STATE_COOKIE_NAME } from "$lib/server/web/cookies";
+import { OAUTH_STATE_COOKIE_NAME, sessionCookieOptions } from "$lib/server/web/cookies";
 import { errorBadRequest } from "$lib/server/web/errors";
 
 import type { PageServerLoad } from "./$types";

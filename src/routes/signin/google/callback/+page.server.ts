@@ -2,8 +2,14 @@ import { redirect } from "@sveltejs/kit";
 import * as arctic from "arctic";
 
 import { SESSION_EXPIRY_SECONDS } from "$lib/server/command/auth";
-import { hmac, permanentCookieOptions, sessionCookieOptions } from "$lib/server/utils";
-import { OAUTH_CODE_VERIFIER_COOKIE_NAME, OAUTH_STATE_COOKIE_NAME, SESSION_COOKIE_NAME } from "$lib/server/web/cookies";
+import { hmac } from "$lib/server/utils";
+import {
+	OAUTH_CODE_VERIFIER_COOKIE_NAME,
+	OAUTH_STATE_COOKIE_NAME,
+	permanentCookieOptions,
+	SESSION_COOKIE_NAME,
+	sessionCookieOptions,
+} from "$lib/server/web/cookies";
 import { errorBadRequest } from "$lib/server/web/errors";
 
 import type { PageServerLoad } from "./$types";

@@ -1,4 +1,8 @@
 Ensure test coverage is at parity
+  RSS parsing (gen feeds and parse to verify)
+  Commands
+  Queries
+  Domain objects (blog canBeSynced)
 
 Make deployment a bit nicer (mfd deploy <branch/tag>?)
 Also add an "mfd clean" command

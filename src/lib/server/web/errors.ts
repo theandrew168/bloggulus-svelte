@@ -1,5 +1,7 @@
 import { error } from "@sveltejs/kit";
 
+// TODO: Customizable error message.
+
 export function errorBadRequest(): never {
 	error(400, {
 		message: "Bad Request",
