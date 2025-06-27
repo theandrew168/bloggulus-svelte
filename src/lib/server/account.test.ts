@@ -16,7 +16,7 @@ describe("account", () => {
 			expect(account.followedBlogIDs).toContain(blogID);
 		});
 
-		it("should not add the same blog ID multiple times", () => {
+		it("should idempotently follow the same blog multiple times", () => {
 			const account = new Account({ username: chance.word({ length: 20 }) });
 			const blogID = crypto.randomUUID();
 			account.followBlog(blogID);
@@ -38,12 +38,15 @@ describe("account", () => {
 			expect(account.followedBlogIDs).not.toContain(blogID);
 		});
 
-		it("should not throw an error if the blog ID is not in followedBlogIDs", () => {
+		it("should idempotently unfollow the same blog multiple times", () => {
 			const account = new Account({ username: chance.word({ length: 20 }) });
 			const blogID = crypto.randomUUID();
+			account.followBlog(blogID);
 
-			expect(() => account.unfollowBlog(blogID)).not.toThrow();
+			account.unfollowBlog(blogID);
+			account.unfollowBlog(blogID);
 			expect(account.followedBlogIDs).toHaveLength(0);
+			expect(account.followedBlogIDs).not.toContain(blogID);
 		});
 	});
 });

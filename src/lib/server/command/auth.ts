@@ -1,6 +1,6 @@
 import { Account } from "../account";
 import type { Repository } from "../repository";
-import { generateToken, Session } from "../session";
+import { generateSessionToken, Session } from "../session";
 
 export const SESSION_EXPIRY_HOURS = 7 * 24;
 export const SESSION_EXPIRY_SECONDS = SESSION_EXPIRY_HOURS * 60 * 60;
@@ -13,7 +13,7 @@ export class AuthCommand {
 	}
 
 	async signIn(username: string): Promise<string> {
-		const token = generateToken();
+		const token = generateSessionToken();
 		await this._repo.asUnitOfWork(async (uow) => {
 			let account = await uow.account.readByUsername(username);
 			if (!account) {

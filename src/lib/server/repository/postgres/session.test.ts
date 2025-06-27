@@ -2,7 +2,7 @@ import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
 import { Account } from "$lib/server/account";
-import { generateToken, Session } from "$lib/server/session";
+import { generateSessionToken, Session } from "$lib/server/session";
 
 import { PostgresRepository } from ".";
 
@@ -14,7 +14,7 @@ describe("repository/postgres/session", () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await repo.account.create(account);
 
-		const token = generateToken();
+		const token = generateSessionToken();
 		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 	});
@@ -23,7 +23,7 @@ describe("repository/postgres/session", () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await repo.account.create(account);
 
-		const token = generateToken();
+		const token = generateSessionToken();
 		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 
@@ -35,7 +35,7 @@ describe("repository/postgres/session", () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await repo.account.create(account);
 
-		const token = generateToken();
+		const token = generateSessionToken();
 		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 
@@ -50,10 +50,10 @@ describe("repository/postgres/session", () => {
 		const now = new Date();
 
 		const expiredSession = new Session({ accountID: account.id, expiresAt: new Date(now.getTime() - 1000) });
-		await repo.session.create(expiredSession, generateToken());
+		await repo.session.create(expiredSession, generateSessionToken());
 
 		const validSession = new Session({ accountID: account.id, expiresAt: new Date(now.getTime() + 1000) });
-		await repo.session.create(validSession, generateToken());
+		await repo.session.create(validSession, generateSessionToken());
 
 		const expiredSessions = await repo.session.listExpired(now);
 		const expiredSessionsForAccount = expiredSessions.filter((session) => session.accountID === account.id);
@@ -65,7 +65,7 @@ describe("repository/postgres/session", () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await repo.account.create(account);
 
-		const token = generateToken();
+		const token = generateSessionToken();
 		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 

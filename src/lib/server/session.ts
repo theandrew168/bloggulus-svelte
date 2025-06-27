@@ -68,6 +68,6 @@ export class Session {
 	}
 }
 
-export function generateToken(): string {
+export function generateSessionToken(): string {
 	return randomString(32);
 }

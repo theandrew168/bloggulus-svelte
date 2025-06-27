@@ -1,5 +1,7 @@
 import Parser, { type Item } from "rss-parser";
 
+import { InvalidFeedError } from "./errors";
+
 export type FeedBlog = {
 	feedURL: string;
 	siteURL: string;
@@ -60,7 +62,13 @@ export function determinePublishedAt(item: Item, now: Date): Date {
  */
 export async function parseFeed(url: string, feed: string): Promise<FeedBlog> {
 	const parser = new Parser();
-	const parsedFeed = await parser.parseString(feed);
+
+	let parsedFeed: Awaited<ReturnType<typeof parser.parseString>>;
+	try {
+		parsedFeed = await parser.parseString(feed);
+	} catch (error) {
+		throw new InvalidFeedError(url, { cause: error });
+	}
 
 	const siteURL = determineSiteURL(url, parsedFeed.link);
 

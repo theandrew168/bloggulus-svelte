@@ -1,0 +1,30 @@
+import Chance from "chance";
+import { describe, expect, test } from "vitest";
+
+import { Blog } from "../blog";
+import { PostgresRepository } from "../repository/postgres";
+import { BlogCommand } from "./blog";
+
+describe("command/blog", () => {
+	const chance = new Chance();
+	const repo = PostgresRepository.getInstance();
+	const blogCommand = new BlogCommand(repo);
+
+	test("deleteBlog", async () => {
+		const blog = new Blog({
+			feedURL: chance.url(),
+			siteURL: chance.url(),
+			title: chance.sentence({ words: 3 }),
+			syncedAt: new Date(),
+		});
+		await repo.blog.create(blog);
+
+		const existingBlog = await repo.blog.readByID(blog.id);
+		expect(existingBlog).toBeDefined();
+
+		await blogCommand.deleteBlog(blog.id);
+
+		const deletedBlog = await repo.blog.readByID(blog.id);
+		expect(deletedBlog).toBeUndefined();
+	});
+});

@@ -1,7 +1,6 @@
 import type { UUID } from "$lib/types";
 
-const SYNC_COOLDOWN_HOURS = 2;
-const SYNC_COOLDOWN_MS = SYNC_COOLDOWN_HOURS * 60 * 60 * 1000;
+export const SYNC_COOLDOWN_HOURS = 2;
 
 export type NewBlogParams = {
 	feedURL: string;
@@ -35,7 +34,7 @@ export class Blog {
 	private _createdAt: Date;
 	private _updatedAt: Date;
 
-	constructor({ feedURL, siteURL, title, etag, lastModified, syncedAt }: NewBlogParams) {
+	constructor({ feedURL, siteURL, title, syncedAt, etag, lastModified }: NewBlogParams) {
 		this._id = crypto.randomUUID();
 		this._feedURL = feedURL;
 		this._siteURL = siteURL;
@@ -63,9 +62,9 @@ export class Blog {
 		blog._feedURL = feedURL;
 		blog._siteURL = siteURL;
 		blog._title = title;
+		blog._syncedAt = syncedAt;
 		blog._etag = etag;
 		blog._lastModified = lastModified;
-		blog._syncedAt = syncedAt;
 		blog._createdAt = createdAt;
 		blog._updatedAt = updatedAt;
 		return blog;
@@ -120,6 +119,7 @@ export class Blog {
 	}
 
 	canBeSynced(now: Date): boolean {
-		return now.getTime() - this._syncedAt.getTime() >= SYNC_COOLDOWN_MS;
+		const syncCooldownMS = SYNC_COOLDOWN_HOURS * 60 * 60 * 1000;
+		return now.getTime() - this._syncedAt.getTime() >= syncCooldownMS;
 	}
 }

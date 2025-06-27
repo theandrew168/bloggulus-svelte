@@ -1,23 +1,30 @@
 import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "..";
+import { UnreachableFeedError } from "../errors";
 
 const USER_AGENT = "Bloggulus/0.5.2 (+https://bloggulus.com)";
+const ETAG_HEADER = "ETag";
+const LAST_MODIFIED_HEADER = "Last-Modified";
 
 export class WebFeedFetcher implements FeedFetcher {
 	async fetchFeed(req: FetchFeedRequest): Promise<FetchFeedResponse> {
-		const response = await fetch(req.url.toString(), {
-			headers: {
-				"User-Agent": USER_AGENT,
-			},
-		});
+		try {
+			const response = await fetch(req.url, {
+				headers: {
+					"User-Agent": USER_AGENT,
+				},
+			});
 
-		if (!response.ok) {
-			throw new Error(`Failed to fetch feed from ${req.url.toString()}: ${response.statusText}`);
+			if (!response.ok) {
+				throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+			}
+
+			return {
+				feed: await response.text(),
+				etag: response.headers.get(ETAG_HEADER) ?? undefined,
+				lastModified: response.headers.get(LAST_MODIFIED_HEADER) ?? undefined,
+			};
+		} catch (error) {
+			throw new UnreachableFeedError(req.url, { cause: error });
 		}
-
-		return {
-			feed: await response.text(),
-			etag: response.headers.get("ETag") ?? undefined,
-			lastModified: response.headers.get("Last-Modified") ?? undefined,
-		};
 	}
 }
