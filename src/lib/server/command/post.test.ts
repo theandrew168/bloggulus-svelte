@@ -13,8 +13,8 @@ describe("command/post", () => {
 
 	test("deletePost", async () => {
 		const blog = new Blog({
-			feedURL: chance.url(),
-			siteURL: chance.url(),
+			feedURL: new URL(chance.url()),
+			siteURL: new URL(chance.url()),
 			title: chance.sentence({ words: 3 }),
 			syncedAt: new Date(),
 		});
@@ -22,7 +22,7 @@ describe("command/post", () => {
 
 		const post = new Post({
 			blogID: blog.id,
-			url: chance.url(),
+			url: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 		});

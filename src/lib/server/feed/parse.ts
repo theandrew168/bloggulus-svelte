@@ -3,8 +3,8 @@ import Parser, { type Item } from "rss-parser";
 import { InvalidFeedError } from "./errors";
 
 export type FeedBlog = {
-	feedURL: string;
-	siteURL: string;
+	feedURL: URL;
+	siteURL: URL;
 	title: string;
 	posts: FeedPost[];
 };
@@ -16,17 +16,17 @@ export type FeedPost = {
 	content?: string;
 };
 
-export function determineSiteURL(feedURL: string, siteURL?: string): string {
+export function determineSiteURL(feedURL: URL, siteURL?: string): URL {
 	// If the site URL is provided, use it.
 	if (siteURL) {
-		return siteURL;
+		return new URL(siteURL);
 	}
 
 	// Otherwise, extract the origin from the feed URL.
-	return new URL(feedURL).origin;
+	return new URL(feedURL.origin);
 }
 
-export function determinePostURL(postURL: string, siteURL: string): URL {
+export function determinePostURL(postURL: string, siteURL: URL): URL {
 	let url = postURL;
 
 	// If the post URL is relative, make it absolute.
@@ -60,7 +60,7 @@ export function determinePublishedAt(item: Item, now: Date): Date {
 /**
  * Parse an RSS / Atom feed (this doesn't fetch the feed itself).
  */
-export async function parseFeed(url: string, feed: string): Promise<FeedBlog> {
+export async function parseFeed(url: URL, feed: string): Promise<FeedBlog> {
 	const parser = new Parser();
 
 	let parsedFeed: Awaited<ReturnType<typeof parser.parseString>>;
@@ -92,7 +92,7 @@ export async function parseFeed(url: string, feed: string): Promise<FeedBlog> {
 		posts.push(post);
 	}
 
-	const title = parsedFeed.title ?? siteURL;
+	const title = parsedFeed.title ?? siteURL.toString();
 	const blog: FeedBlog = {
 		feedURL: url,
 		siteURL,

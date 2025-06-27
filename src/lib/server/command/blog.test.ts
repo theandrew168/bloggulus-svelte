@@ -12,8 +12,8 @@ describe("command/blog", () => {
 
 	test("deleteBlog", async () => {
 		const blog = new Blog({
-			feedURL: chance.url(),
-			siteURL: chance.url(),
+			feedURL: new URL(chance.url()),
+			siteURL: new URL(chance.url()),
 			title: chance.sentence({ words: 3 }),
 			syncedAt: new Date(),
 		});

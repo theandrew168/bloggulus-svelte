@@ -38,8 +38,8 @@ export class PostgresBlogRepository implements BlogRepository {
                 (id, feed_url, site_url, title, synced_at, etag, last_modified)
             VALUES (
                 ${blog.id},
-                ${blog.feedURL},
-                ${blog.siteURL},
+                ${blog.feedURL.toString()},
+                ${blog.siteURL.toString()},
                 ${blog.title},
                 ${blog.syncedAt},
                 ${blog.etag ?? null},
@@ -71,8 +71,8 @@ export class PostgresBlogRepository implements BlogRepository {
 
 		return Blog.load({
 			id: row.id,
-			feedURL: row.feed_url,
-			siteURL: row.site_url,
+			feedURL: new URL(row.feed_url),
+			siteURL: new URL(row.site_url),
 			title: row.title,
 			syncedAt: row.synced_at,
 			etag: row.etag ?? undefined,
@@ -82,7 +82,7 @@ export class PostgresBlogRepository implements BlogRepository {
 		});
 	}
 
-	async readByFeedURL(feedURL: string): Promise<Blog | undefined> {
+	async readByFeedURL(feedURL: URL): Promise<Blog | undefined> {
 		const rows = await this._conn.sql<BlogRow[]>`
             SELECT
                 id,
@@ -95,7 +95,7 @@ export class PostgresBlogRepository implements BlogRepository {
 				created_at,
 				updated_at
             FROM blog
-            WHERE feed_url = ${feedURL};
+            WHERE feed_url = ${feedURL.toString()};
         `;
 
 		const row = rows[0];
@@ -105,8 +105,8 @@ export class PostgresBlogRepository implements BlogRepository {
 
 		return Blog.load({
 			id: row.id,
-			feedURL: row.feed_url,
-			siteURL: row.site_url,
+			feedURL: new URL(row.feed_url),
+			siteURL: new URL(row.site_url),
 			title: row.title,
 			syncedAt: row.synced_at,
 			etag: row.etag ?? undefined,
@@ -133,8 +133,8 @@ export class PostgresBlogRepository implements BlogRepository {
 		return rows.map((row) =>
 			Blog.load({
 				id: row.id,
-				feedURL: row.feed_url,
-				siteURL: row.site_url,
+				feedURL: new URL(row.feed_url),
+				siteURL: new URL(row.site_url),
 				title: row.title,
 				syncedAt: row.synced_at,
 				etag: row.etag ?? undefined,
@@ -150,8 +150,8 @@ export class PostgresBlogRepository implements BlogRepository {
 		await this._conn.sql`
 			UPDATE blog
 			SET
-				feed_url = ${blog.feedURL},
-				site_url = ${blog.siteURL},
+				feed_url = ${blog.feedURL.toString()},
+				site_url = ${blog.siteURL.toString()},
 				title = ${blog.title},
 				synced_at = ${blog.syncedAt},
 				etag = ${blog.etag ?? null},

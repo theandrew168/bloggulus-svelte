@@ -6,44 +6,44 @@ import { determinePostURL, determinePublishedAt, determineSiteURL } from "./pars
 describe("feed/parse", () => {
 	describe("determineSiteURL", () => {
 		it("should use the given siteURL if provided", () => {
-			const feedURL = "https://example.com/atom.xml";
+			const feedURL = new URL("https://example.com/atom.xml");
 			const siteURL = "https://example.com/blog";
 			const determinedSiteURL = determineSiteURL(feedURL, siteURL);
-			expect(determinedSiteURL).toEqual("https://example.com/blog");
+			expect(determinedSiteURL.toString()).toEqual("https://example.com/blog");
 		});
 
 		it("should use the feedURL's origin if not siteURL is provided", () => {
-			const feedURL = "https://example.com/atom.xml";
+			const feedURL = new URL("https://example.com/atom.xml");
 			const determinedSiteURL = determineSiteURL(feedURL);
-			expect(determinedSiteURL).toEqual("https://example.com");
+			expect(determinedSiteURL.toString()).toEqual("https://example.com/");
 		});
 	});
 
 	describe("determinePostURL", () => {
 		it("should use the given postURL if absolute and with protocol", () => {
 			const postURL = "https://example.com/posts/1";
-			const siteURL = "https://example.com";
+			const siteURL = new URL("https://example.com");
 			const determinedPostURL = determinePostURL(postURL, siteURL);
 			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});
 
 		it("should make relative postURLs absolute (based on the siteURL)", () => {
 			const postURL = "/posts/1";
-			const siteURL = "https://example.com";
+			const siteURL = new URL("https://example.com");
 			const determinedPostURL = determinePostURL(postURL, siteURL);
 			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});
 
 		it("should handle double slashes when making relative URLs absolute", () => {
 			const postURL = "/posts/1";
-			const siteURL = "https://example.com/";
+			const siteURL = new URL("https://example.com");
 			const determinedPostURL = determinePostURL(postURL, siteURL);
 			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});
 
 		it("should default to https if no protocol is provided", () => {
 			const postURL = "example.com/posts/1";
-			const siteURL = "https://example.com/";
+			const siteURL = new URL("https://example.com");
 			const determinedPostURL = determinePostURL(postURL, siteURL);
 			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});

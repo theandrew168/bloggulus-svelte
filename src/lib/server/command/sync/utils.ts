@@ -81,7 +81,7 @@ export function comparePosts(blog: Blog, knownPosts: Post[], feedPosts: FeedPost
 	};
 }
 
-export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, feedURL: string): Promise<void> {
+export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, feedURL: URL): Promise<void> {
 	// Make an unconditional fetch for the blog's feed.
 	const req: FetchFeedRequest = {
 		url: feedURL,

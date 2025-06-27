@@ -1,5 +1,5 @@
 export type FetchFeedRequest = {
-	url: string;
+	url: URL;
 	etag?: string;
 	lastModified?: string;
 };

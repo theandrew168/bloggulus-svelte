@@ -11,8 +11,8 @@ describe("repository/postgres/blog", () => {
 
 	test("create", async () => {
 		const blog = new Blog({
-			feedURL: chance.url(),
-			siteURL: chance.url(),
+			feedURL: new URL(chance.url()),
+			siteURL: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			syncedAt: new Date(),
 		});
@@ -21,8 +21,8 @@ describe("repository/postgres/blog", () => {
 
 	test("readByID", async () => {
 		const blog = new Blog({
-			feedURL: chance.url(),
-			siteURL: chance.url(),
+			feedURL: new URL(chance.url()),
+			siteURL: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			syncedAt: new Date(),
 		});
@@ -34,8 +34,8 @@ describe("repository/postgres/blog", () => {
 
 	test("readByFeedURL", async () => {
 		const blog = new Blog({
-			feedURL: chance.url(),
-			siteURL: chance.url(),
+			feedURL: new URL(chance.url()),
+			siteURL: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			syncedAt: new Date(),
 		});
@@ -47,8 +47,8 @@ describe("repository/postgres/blog", () => {
 
 	test("update", async () => {
 		const blog = new Blog({
-			feedURL: chance.url(),
-			siteURL: chance.url(),
+			feedURL: new URL(chance.url()),
+			siteURL: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			syncedAt: new Date(),
 		});
@@ -67,8 +67,8 @@ describe("repository/postgres/blog", () => {
 
 	test("delete", async () => {
 		const blog = new Blog({
-			feedURL: chance.url(),
-			siteURL: chance.url(),
+			feedURL: new URL(chance.url()),
+			siteURL: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			syncedAt: new Date(),
 		});

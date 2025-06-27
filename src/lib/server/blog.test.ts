@@ -12,8 +12,8 @@ describe("blog", () => {
 			const syncCooldownMS = SYNC_COOLDOWN_HOURS * 60 * 60 * 1000;
 
 			const blog = new Blog({
-				feedURL: chance.url(),
-				siteURL: chance.url(),
+				feedURL: new URL(chance.url()),
+				siteURL: new URL(chance.url()),
 				title: chance.sentence({ words: 3 }),
 				syncedAt: new Date(),
 			});

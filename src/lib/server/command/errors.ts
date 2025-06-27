@@ -29,8 +29,8 @@ export class AdminAccountDeletionError extends Error {
 }
 
 export class EmptyFeedError extends Error {
-	constructor(feedURL: string) {
-		super(`Empty feed: ${feedURL}.`);
+	constructor(feedURL: URL) {
+		super(`Empty feed: ${feedURL.toString()}.`);
 		this.name = "EmptyFeedError";
 	}
 }

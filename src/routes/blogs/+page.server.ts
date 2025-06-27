@@ -24,23 +24,23 @@ export const actions = {
 		}
 
 		const data = await request.formData();
-		const feedURL = data.get("feedURL")?.toString();
-		if (!feedURL) {
+		const maybeFeedURL = data.get("feedURL")?.toString();
+		if (!maybeFeedURL) {
 			errorBadRequest();
 		}
 
-		// TODO: Where should this validation be done? Perhaps syncBlog should accept a URL object instead?
-		// Feels very "parse, don't validate" to me.
+		let feedURL: URL;
 		try {
-			new URL(feedURL);
-		} catch {
+			feedURL = new URL(maybeFeedURL);
+		} catch (error) {
+			console.log("Invalid feed URL:", maybeFeedURL, error);
 			errorBadRequest();
 		}
 
 		locals.command.sync
 			.syncBlog(feedURL)
 			.then(async () => {
-				const blog = await locals.query.readBlogDetailsByFeedURL(feedURL);
+				const blog = await locals.query.readBlogDetailsByFeedURL(maybeFeedURL);
 				if (!blog) {
 					return;
 				}

@@ -13,7 +13,7 @@ export class SyncCommand {
 		this._feedFetcher = feedFetcher;
 	}
 
-	async syncBlog(feedURL: string): Promise<void> {
+	async syncBlog(feedURL: URL): Promise<void> {
 		await this._repo.asUnitOfWork(async (uow) => {
 			const blog = await uow.blog.readByFeedURL(feedURL);
 			if (blog) {

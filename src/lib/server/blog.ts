@@ -3,8 +3,8 @@ import type { UUID } from "$lib/types";
 export const SYNC_COOLDOWN_HOURS = 2;
 
 export type NewBlogParams = {
-	feedURL: string;
-	siteURL: string;
+	feedURL: URL;
+	siteURL: URL;
 	title: string;
 	syncedAt: Date;
 	etag?: string;
@@ -13,8 +13,8 @@ export type NewBlogParams = {
 
 export type LoadBlogParams = {
 	id: UUID;
-	feedURL: string;
-	siteURL: string;
+	feedURL: URL;
+	siteURL: URL;
 	title: string;
 	syncedAt: Date;
 	etag?: string;
@@ -25,8 +25,8 @@ export type LoadBlogParams = {
 
 export class Blog {
 	private _id: UUID;
-	private _feedURL: string;
-	private _siteURL: string;
+	private _feedURL: URL;
+	private _siteURL: URL;
 	private _title: string;
 	private _syncedAt: Date;
 	private _etag?: string;
@@ -74,11 +74,11 @@ export class Blog {
 		return this._id;
 	}
 
-	get feedURL(): string {
+	get feedURL(): URL {
 		return this._feedURL;
 	}
 
-	get siteURL(): string {
+	get siteURL(): URL {
 		return this._siteURL;
 	}
 
