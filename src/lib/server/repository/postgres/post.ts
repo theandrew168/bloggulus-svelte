@@ -38,7 +38,7 @@ export class PostgresPostRepository implements PostRepository {
             VALUES (
                 ${post.id},
                 ${post.blogID},
-                ${post.url},
+                ${post.url.toString()},
                 ${post.title},
                 ${post.publishedAt},
                 ${post.content ?? null}
@@ -69,7 +69,7 @@ export class PostgresPostRepository implements PostRepository {
 		return Post.load({
 			id: row.id,
 			blogID: row.blog_id,
-			url: row.url,
+			url: new URL(row.url),
 			title: row.title,
 			publishedAt: new Date(row.published_at),
 			content: row.content ?? undefined,
@@ -96,7 +96,7 @@ export class PostgresPostRepository implements PostRepository {
 			Post.load({
 				id: row.id,
 				blogID: row.blog_id,
-				url: row.url,
+				url: new URL(row.url),
 				title: row.title,
 				publishedAt: new Date(row.published_at),
 				content: row.content ?? undefined,
@@ -112,7 +112,7 @@ export class PostgresPostRepository implements PostRepository {
 			UPDATE post
 			SET
 				blog_id = ${post.blogID},
-				url = ${post.url},
+				url = ${post.url.toString()},
 				title = ${post.title},
 				published_at = ${post.publishedAt},
 				content = ${post.content ?? null}

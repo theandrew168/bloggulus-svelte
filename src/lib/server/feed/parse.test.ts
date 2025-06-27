@@ -24,28 +24,28 @@ describe("feed/parse", () => {
 			const postURL = "https://example.com/posts/1";
 			const siteURL = "https://example.com";
 			const determinedPostURL = determinePostURL(postURL, siteURL);
-			expect(determinedPostURL).toEqual("https://example.com/posts/1");
+			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});
 
 		it("should make relative postURLs absolute (based on the siteURL)", () => {
 			const postURL = "/posts/1";
 			const siteURL = "https://example.com";
 			const determinedPostURL = determinePostURL(postURL, siteURL);
-			expect(determinedPostURL).toEqual("https://example.com/posts/1");
+			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});
 
 		it("should handle double slashes when making relative URLs absolute", () => {
 			const postURL = "/posts/1";
 			const siteURL = "https://example.com/";
 			const determinedPostURL = determinePostURL(postURL, siteURL);
-			expect(determinedPostURL).toEqual("https://example.com/posts/1");
+			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});
 
 		it("should default to https if no protocol is provided", () => {
 			const postURL = "example.com/posts/1";
 			const siteURL = "https://example.com/";
 			const determinedPostURL = determinePostURL(postURL, siteURL);
-			expect(determinedPostURL).toEqual("https://example.com/posts/1");
+			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
 		});
 	});
 

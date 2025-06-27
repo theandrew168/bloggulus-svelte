@@ -2,7 +2,7 @@ import type { UUID } from "$lib/types";
 
 export type NewPostParams = {
 	blogID: UUID;
-	url: string;
+	url: URL;
 	title: string;
 	publishedAt: Date;
 	content?: string;
@@ -11,7 +11,7 @@ export type NewPostParams = {
 export type LoadPostParams = {
 	id: UUID;
 	blogID: UUID;
-	url: string;
+	url: URL;
 	title: string;
 	publishedAt: Date;
 	content?: string;
@@ -22,7 +22,7 @@ export type LoadPostParams = {
 export class Post {
 	private _id: UUID;
 	private _blogID: UUID;
-	private _url: string;
+	private _url: URL;
 	private _title: string;
 	private _publishedAt: Date;
 	private _content?: string;
@@ -61,7 +61,7 @@ export class Post {
 		return this._blogID;
 	}
 
-	get url(): string {
+	get url(): URL {
 		return this._url;
 	}
 

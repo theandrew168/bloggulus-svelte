@@ -21,7 +21,7 @@ describe("repository/postgres/post", () => {
 
 		const post = new Post({
 			blogID: blog.id,
-			url: chance.url(),
+			url: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
@@ -40,7 +40,7 @@ describe("repository/postgres/post", () => {
 
 		const post = new Post({
 			blogID: blog.id,
-			url: chance.url(),
+			url: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
@@ -62,7 +62,7 @@ describe("repository/postgres/post", () => {
 
 		const post = new Post({
 			blogID: blog.id,
-			url: chance.url(),
+			url: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),
@@ -91,7 +91,7 @@ describe("repository/postgres/post", () => {
 
 		const post = new Post({
 			blogID: blog.id,
-			url: chance.url(),
+			url: new URL(chance.url()),
 			title: chance.sentence({ words: 5 }),
 			publishedAt: new Date(),
 			content: chance.paragraph({ sentences: 3 }),

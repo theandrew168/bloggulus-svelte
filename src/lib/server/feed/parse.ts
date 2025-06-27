@@ -10,7 +10,7 @@ export type FeedBlog = {
 };
 
 export type FeedPost = {
-	url: string;
+	url: URL;
 	title: string;
 	publishedAt: Date;
 	content?: string;
@@ -26,7 +26,7 @@ export function determineSiteURL(feedURL: string, siteURL?: string): string {
 	return new URL(feedURL).origin;
 }
 
-export function determinePostURL(postURL: string, siteURL: string): string {
+export function determinePostURL(postURL: string, siteURL: string): URL {
 	let url = postURL;
 
 	// If the post URL is relative, make it absolute.
@@ -39,7 +39,7 @@ export function determinePostURL(postURL: string, siteURL: string): string {
 		url = `https://${url}`;
 	}
 
-	return url;
+	return new URL(url);
 }
 
 export function determinePublishedAt(item: Item, now: Date): Date {

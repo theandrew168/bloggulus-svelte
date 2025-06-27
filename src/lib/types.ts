@@ -1,3 +1,7 @@
+// NOTE: The URLs in the types below could be replaced with full `URL`s once
+// devalue supports it (can properly serialize / deserialize them):
+// https://github.com/Rich-Harris/devalue/pull/92
+
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 export type Account = {
