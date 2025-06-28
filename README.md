@@ -9,7 +9,7 @@ While the primary [Bloggulus website](https://bloggulus.com) represents my own p
 
 ### Setup
 
-This project depends on [NodeJS](https://nodejs.org/en).
+This project depends on [NodeJS](https://nodejs.org/en) v22 (or higher).
 
 On macOS, this dependency can be easily installed via [Homebrew](https://brew.sh/):
 
