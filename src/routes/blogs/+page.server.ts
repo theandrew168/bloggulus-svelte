@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		redirect(303, "/signin");
 	}
 
-	const blogs = await locals.query.listBlogs(account);
+	const blogs = await locals.query.blog.list(account);
 	return { blogs };
 };
 
@@ -40,7 +40,7 @@ export const actions = {
 		locals.command.sync
 			.syncBlog(feedURL)
 			.then(async () => {
-				const blog = await locals.query.readBlogDetailsByFeedURL(maybeFeedURL);
+				const blog = await locals.query.blog.readDetailsByFeedURL(maybeFeedURL);
 				if (!blog) {
 					return;
 				}

@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 		errorUnauthorized();
 	}
 
-	const post = await locals.query.readPostDetailsByID(postID);
+	const post = await locals.query.post.readDetailsByID(postID);
 	if (!post) {
 		errorNotFound();
 	}

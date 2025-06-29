@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 		errorUnauthorized();
 	}
 
-	const accounts = await locals.query.listAccounts();
+	const accounts = await locals.query.account.list();
 	return { accounts };
 };
 

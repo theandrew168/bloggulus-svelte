@@ -14,28 +14,28 @@ async function listArticles(locals: App.Locals, q: string, limit: number, offset
 	if (account) {
 		if (q) {
 			const [total, articles] = await Promise.all([
-				query.countRelevantArticlesByAccount(account, q),
-				query.listRelevantArticlesByAccount(account, q, limit, offset),
+				query.article.countRelevantByAccount(account, q),
+				query.article.listRelevantByAccount(account, q, limit, offset),
 			]);
 			return { articles, total };
 		} else {
 			const [total, articles] = await Promise.all([
-				query.countRecentArticlesByAccount(account),
-				query.listRecentArticlesByAccount(account, limit, offset),
+				query.article.countRecentByAccount(account),
+				query.article.listRecentByAccount(account, limit, offset),
 			]);
 			return { articles, total };
 		}
 	} else {
 		if (q) {
 			const [total, articles] = await Promise.all([
-				query.countRelevantArticles(q),
-				query.listRelevantArticles(q, limit, offset),
+				query.article.countRelevant(q),
+				query.article.listRelevant(q, limit, offset),
 			]);
 			return { articles, total };
 		} else {
 			const [total, articles] = await Promise.all([
-				query.countRecentArticles(),
-				query.listRecentArticles(limit, offset),
+				query.article.countRecent(),
+				query.article.listRecent(limit, offset),
 			]);
 			return { articles, total };
 		}

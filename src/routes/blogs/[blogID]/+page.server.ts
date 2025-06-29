@@ -21,8 +21,8 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 	}
 
 	const [blog, posts] = await Promise.all([
-		locals.query.readBlogDetailsByID(blogID),
-		locals.query.listPostDetailsByBlogID(blogID),
+		locals.query.blog.readDetailsByID(blogID),
+		locals.query.post.listDetailsByBlogID(blogID),
 	]);
 
 	if (!blog) {

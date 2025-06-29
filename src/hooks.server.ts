@@ -4,7 +4,7 @@ import { Cron } from "croner";
 import { Command } from "$lib/server/command";
 import { EnvConfig } from "$lib/server/config/env";
 import { Connection } from "$lib/server/postgres";
-import { PostgresWebQuery } from "$lib/server/query/postgres/web";
+import { PostgresWebQuery } from "$lib/server/query/web/postgres";
 import { SESSION_COOKIE_NAME } from "$lib/server/web/cookies";
 
 const config = EnvConfig.getInstance();
@@ -45,7 +45,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const sessionToken = event.cookies.get(SESSION_COOKIE_NAME);
 	if (sessionToken) {
-		event.locals.account = await query.readAccountBySessionToken(sessionToken);
+		event.locals.account = await query.account.readBySessionToken(sessionToken);
 	}
 
 	return resolve(event);

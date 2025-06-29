@@ -13,20 +13,10 @@ type SessionRow = {
 };
 
 export class PostgresSessionRepository implements SessionRepository {
-	private static _instance?: PostgresSessionRepository;
 	private _conn: Connection;
 
 	constructor(conn: Connection) {
 		this._conn = conn;
-	}
-
-	static getInstance(): PostgresSessionRepository {
-		if (!this._instance) {
-			const conn = Connection.getInstance();
-			this._instance = new PostgresSessionRepository(conn);
-		}
-
-		return this._instance;
 	}
 
 	async create(session: Session, token: string): Promise<void> {

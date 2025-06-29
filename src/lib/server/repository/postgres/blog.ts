@@ -18,20 +18,10 @@ type BlogRow = {
 };
 
 export class PostgresBlogRepository implements BlogRepository {
-	private static _instance?: PostgresBlogRepository;
 	private _conn: Connection;
 
 	constructor(conn: Connection) {
 		this._conn = conn;
-	}
-
-	static getInstance(): PostgresBlogRepository {
-		if (!this._instance) {
-			const conn = Connection.getInstance();
-			this._instance = new PostgresBlogRepository(conn);
-		}
-
-		return this._instance;
 	}
 
 	async create(blog: Blog): Promise<void> {

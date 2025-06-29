@@ -17,20 +17,10 @@ type PostRow = {
 };
 
 export class PostgresPostRepository implements PostRepository {
-	private static _instance?: PostgresPostRepository;
 	private _conn: Connection;
 
 	constructor(conn: Connection) {
 		this._conn = conn;
-	}
-
-	static getInstance(): PostgresPostRepository {
-		if (!this._instance) {
-			const conn = Connection.getInstance();
-			this._instance = new PostgresPostRepository(conn);
-		}
-
-		return this._instance;
 	}
 
 	async create(post: Post): Promise<void> {

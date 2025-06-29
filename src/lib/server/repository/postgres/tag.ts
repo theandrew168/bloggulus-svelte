@@ -11,20 +11,10 @@ type TagRow = {
 };
 
 export class PostgresTagRepository implements TagRepository {
-	private static _instance?: PostgresTagRepository;
 	private _conn: Connection;
 
 	constructor(conn: Connection) {
 		this._conn = conn;
-	}
-
-	static getInstance(): PostgresTagRepository {
-		if (!this._instance) {
-			const conn = Connection.getInstance();
-			this._instance = new PostgresTagRepository(conn);
-		}
-
-		return this._instance;
 	}
 
 	async create(tag: Tag): Promise<void> {

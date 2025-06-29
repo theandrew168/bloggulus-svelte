@@ -15,6 +15,7 @@ import { PostgresTagRepository } from "./tag";
 export class PostgresRepository implements Repository {
 	private static _instance?: PostgresRepository;
 	private _conn: Connection;
+
 	readonly account: AccountRepository;
 	readonly session: SessionRepository;
 	readonly blog: BlogRepository;

@@ -13,20 +13,10 @@ type AccountRow = {
 };
 
 export class PostgresAccountRepository implements AccountRepository {
-	private static _instance?: PostgresAccountRepository;
 	private _conn: Connection;
 
 	constructor(conn: Connection) {
 		this._conn = conn;
-	}
-
-	static getInstance(): PostgresAccountRepository {
-		if (!this._instance) {
-			const conn = Connection.getInstance();
-			this._instance = new PostgresAccountRepository(conn);
-		}
-
-		return this._instance;
 	}
 
 	async create(account: Account): Promise<void> {
