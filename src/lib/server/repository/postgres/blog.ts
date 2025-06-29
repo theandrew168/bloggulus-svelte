@@ -3,6 +3,8 @@ import { Connection } from "$lib/server/postgres";
 import type { BlogRepository } from "$lib/server/repository/blog";
 import type { UUID } from "$lib/types";
 
+import { ConcurrentUpdateError } from "../errors";
+
 type BlogRow = {
 	id: UUID;
 	feed_url: string;
@@ -35,7 +37,7 @@ export class PostgresBlogRepository implements BlogRepository {
 	async create(blog: Blog): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO blog
-                (id, feed_url, site_url, title, synced_at, etag, last_modified)
+                (id, feed_url, site_url, title, synced_at, etag, last_modified, created_at, updated_at)
             VALUES (
                 ${blog.id},
                 ${blog.feedURL.toString()},
@@ -43,7 +45,9 @@ export class PostgresBlogRepository implements BlogRepository {
                 ${blog.title},
                 ${blog.syncedAt},
                 ${blog.etag ?? null},
-                ${blog.lastModified ?? null}
+                ${blog.lastModified ?? null},
+				${blog.createdAt},
+				${blog.updatedAt}
             );
 		`;
 	}
@@ -146,8 +150,8 @@ export class PostgresBlogRepository implements BlogRepository {
 	}
 
 	async update(blog: Blog): Promise<void> {
-		// TODO: Compare updated_at to catch race conditions.
-		await this._conn.sql`
+		const now = new Date();
+		const rows = await this._conn.sql`
 			UPDATE blog
 			SET
 				feed_url = ${blog.feedURL.toString()},
@@ -155,9 +159,18 @@ export class PostgresBlogRepository implements BlogRepository {
 				title = ${blog.title},
 				synced_at = ${blog.syncedAt},
 				etag = ${blog.etag ?? null},
-				last_modified = ${blog.lastModified ?? null}
-			WHERE id = ${blog.id};
+				last_modified = ${blog.lastModified ?? null},
+				updated_at = ${now}
+			WHERE id = ${blog.id}
+			  	AND updated_at = ${blog.updatedAt}
+			RETURNING id;
 		`;
+
+		if (rows.length !== 1) {
+			throw new ConcurrentUpdateError("Blog", blog.id);
+		}
+
+		blog.updatedAt = now;
 	}
 
 	async delete(blog: Blog): Promise<void> {

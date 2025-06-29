@@ -30,10 +30,12 @@ export class PostgresTagRepository implements TagRepository {
 	async create(tag: Tag): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO tag
-                (id, name)
+                (id, name, created_at, updated_at)
             VALUES (
 				${tag.id},
-				${tag.name}
+				${tag.name},
+				${tag.createdAt},
+				${tag.updatedAt}
 			);
 		`;
 	}

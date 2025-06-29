@@ -33,12 +33,14 @@ export class PostgresSessionRepository implements SessionRepository {
 		const tokenHash = await sha256(token);
 		await this._conn.sql`
 			INSERT INTO session
-                (id, account_id, expires_at, token_hash)
+                (id, account_id, expires_at, token_hash, created_at, updated_at)
             VALUES (
 				${session.id},
 				${session.accountID},
 				${session.expiresAt},
-				${tokenHash}
+				${tokenHash},
+				${session.createdAt},
+				${session.updatedAt}
 			);
 		`;
 	}

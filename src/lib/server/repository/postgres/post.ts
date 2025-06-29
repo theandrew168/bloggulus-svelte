@@ -3,6 +3,8 @@ import { Connection } from "$lib/server/postgres";
 import type { PostRepository } from "$lib/server/repository/post";
 import type { UUID } from "$lib/types";
 
+import { ConcurrentUpdateError } from "../errors";
+
 type PostRow = {
 	id: UUID;
 	blog_id: UUID;
@@ -34,14 +36,16 @@ export class PostgresPostRepository implements PostRepository {
 	async create(post: Post): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO post
-                (id, blog_id, url, title, published_at, content)
+                (id, blog_id, url, title, published_at, content, created_at, updated_at)
             VALUES (
                 ${post.id},
                 ${post.blogID},
                 ${post.url.toString()},
                 ${post.title},
                 ${post.publishedAt},
-                ${post.content ?? null}
+                ${post.content ?? null},
+				${post.createdAt},
+				${post.updatedAt}
             );
 		`;
 	}
@@ -107,17 +111,26 @@ export class PostgresPostRepository implements PostRepository {
 	}
 
 	async update(post: Post): Promise<void> {
-		// TODO: Compare updated_at to catch race conditions.
-		await this._conn.sql`
+		const now = new Date();
+		const rows = await this._conn.sql`
 			UPDATE post
 			SET
 				blog_id = ${post.blogID},
 				url = ${post.url.toString()},
 				title = ${post.title},
 				published_at = ${post.publishedAt},
-				content = ${post.content ?? null}
-			WHERE id = ${post.id};
+				content = ${post.content ?? null},
+				updated_at = ${now}
+			WHERE id = ${post.id}
+				AND updated_at = ${post.updatedAt}
+			RETURNING id;
 		`;
+
+		if (rows.length !== 1) {
+			throw new ConcurrentUpdateError("Post", post.id);
+		}
+
+		post.updatedAt = now;
 	}
 
 	async delete(post: Post): Promise<void> {

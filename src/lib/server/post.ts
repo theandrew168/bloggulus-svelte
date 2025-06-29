@@ -77,16 +77,16 @@ export class Post {
 		return this._publishedAt;
 	}
 
-	set publishedAt(value: Date) {
-		this._publishedAt = value;
+	set publishedAt(publishedAt: Date) {
+		this._publishedAt = publishedAt;
 	}
 
 	get content(): string | undefined {
 		return this._content;
 	}
 
-	set content(value: string) {
-		this._content = value;
+	set content(content: string) {
+		this._content = content;
 	}
 
 	get createdAt(): Date {
@@ -95,5 +95,9 @@ export class Post {
 
 	get updatedAt(): Date {
 		return this._updatedAt;
+	}
+
+	set updatedAt(updatedAt: Date) {
+		this._updatedAt = updatedAt;
 	}
 }

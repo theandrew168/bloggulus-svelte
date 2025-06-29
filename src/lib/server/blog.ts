@@ -90,24 +90,24 @@ export class Blog {
 		return this._etag;
 	}
 
-	set etag(value: string) {
-		this._etag = value;
+	set etag(etag: string) {
+		this._etag = etag;
 	}
 
 	get lastModified(): string | undefined {
 		return this._lastModified;
 	}
 
-	set lastModified(value: string) {
-		this._lastModified = value;
+	set lastModified(lastModified: string) {
+		this._lastModified = lastModified;
 	}
 
 	get syncedAt(): Date {
 		return this._syncedAt;
 	}
 
-	set syncedAt(value: Date) {
-		this._syncedAt = value;
+	set syncedAt(syncedAt: Date) {
+		this._syncedAt = syncedAt;
 	}
 
 	get createdAt(): Date {
@@ -116,6 +116,10 @@ export class Blog {
 
 	get updatedAt(): Date {
 		return this._updatedAt;
+	}
+
+	set updatedAt(updatedAt: Date) {
+		this._updatedAt = updatedAt;
 	}
 
 	canBeSynced(now: Date): boolean {

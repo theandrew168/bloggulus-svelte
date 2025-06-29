@@ -32,11 +32,13 @@ export class PostgresAccountRepository implements AccountRepository {
 	async create(account: Account): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO account
-                (id, username, is_admin)
+                (id, username, is_admin, created_at, updated_at)
             VALUES (
 				${account.id},
 				${account.username},
-				${account.isAdmin}
+				${account.isAdmin},
+				${account.createdAt},
+				${account.updatedAt}
 			);
 		`;
 	}
