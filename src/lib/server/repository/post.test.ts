@@ -4,11 +4,11 @@ import { describe, expect, test } from "vitest";
 import { Blog } from "$lib/server/blog";
 import { Post } from "$lib/server/post";
 
-import { PostgresRepository } from ".";
+import { Repository } from ".";
 
-describe("repository/postgres/post", () => {
+describe("repository/post", () => {
 	const chance = new Chance();
-	const repo = PostgresRepository.getInstance();
+	const repo = Repository.getInstance();
 
 	test("create", async () => {
 		const blog = new Blog({

@@ -1,6 +1,6 @@
 import postgres, { type Sql } from "postgres";
 
-import { EnvConfig } from "../config/env";
+import { EnvConfig } from "$lib/server/config/env";
 
 function connect(connectionString: string): Sql {
 	const sql = postgres(connectionString, {

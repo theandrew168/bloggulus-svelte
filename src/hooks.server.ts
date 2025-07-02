@@ -4,12 +4,12 @@ import { Cron } from "croner";
 import { Command } from "$lib/server/command";
 import { EnvConfig } from "$lib/server/config/env";
 import { Connection } from "$lib/server/postgres";
-import { PostgresWebQuery } from "$lib/server/query/web/postgres";
+import { WebQuery } from "$lib/server/query/web";
 import { SESSION_COOKIE_NAME } from "$lib/server/web/cookies";
 
 const config = EnvConfig.getInstance();
 const command = Command.getInstance();
-const query = PostgresWebQuery.getInstance();
+const query = WebQuery.getInstance();
 
 function jobErrorHandler(e: unknown) {
 	console.log(e);

@@ -1,10 +1,9 @@
 import { Blog } from "$lib/server/blog";
-import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "$lib/server/feed";
+import { EmptyFeedError } from "$lib/server/command/errors";
+import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "$lib/server/feed/fetch";
 import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
-import type { Repository } from "$lib/server/repository";
-
-import { EmptyFeedError } from "../errors";
+import { Repository } from "$lib/server/repository";
 
 export function updateCacheHeaders(blog: Blog, response: FetchFeedResponse): boolean {
 	let haveHeadersChanged = false;

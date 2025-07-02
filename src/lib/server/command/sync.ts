@@ -1,7 +1,8 @@
 import pLimit from "p-limit";
 
-import type { FeedFetcher } from "../feed";
-import type { Repository } from "../repository";
+import type { FeedFetcher } from "$lib/server/feed/fetch";
+import { Repository } from "$lib/server/repository";
+
 import { syncExistingBlog, syncNewBlog } from "./sync/utils";
 
 export class SyncCommand {

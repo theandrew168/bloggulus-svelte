@@ -1,11 +1,22 @@
-import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "..";
-import { UnreachableFeedError } from "../errors";
+import { UnreachableFeedError } from "$lib/server/feed/errors";
 
 const USER_AGENT = "Bloggulus/0.5.2 (+https://bloggulus.com)";
 const ETAG_HEADER = "ETag";
 const LAST_MODIFIED_HEADER = "Last-Modified";
 
-export class WebFeedFetcher implements FeedFetcher {
+export type FetchFeedRequest = {
+	url: URL;
+	etag?: string;
+	lastModified?: string;
+};
+
+export type FetchFeedResponse = {
+	feed?: string;
+	etag?: string;
+	lastModified?: string;
+};
+
+export class FeedFetcher {
 	async fetchFeed(req: FetchFeedRequest): Promise<FetchFeedResponse> {
 		try {
 			const response = await fetch(req.url, {

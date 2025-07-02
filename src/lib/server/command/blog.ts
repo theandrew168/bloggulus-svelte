@@ -1,6 +1,6 @@
+import { Repository } from "$lib/server/repository";
 import type { UUID } from "$lib/types";
 
-import type { Repository } from "../repository";
 import { BlogNotFoundError } from "./errors";
 
 export class BlogCommand {

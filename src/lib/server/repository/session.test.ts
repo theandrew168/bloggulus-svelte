@@ -4,11 +4,11 @@ import { describe, expect, test } from "vitest";
 import { Account } from "$lib/server/account";
 import { generateSessionToken, Session } from "$lib/server/session";
 
-import { PostgresRepository } from ".";
+import { Repository } from ".";
 
-describe("repository/postgres/session", () => {
+describe("repository/session", () => {
 	const chance = new Chance();
-	const repo = PostgresRepository.getInstance();
+	const repo = Repository.getInstance();
 
 	test("create", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });

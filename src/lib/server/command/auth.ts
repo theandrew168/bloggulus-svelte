@@ -1,6 +1,6 @@
-import { Account } from "../account";
-import type { Repository } from "../repository";
-import { generateSessionToken, Session } from "../session";
+import { Account } from "$lib/server/account";
+import { Repository } from "$lib/server/repository";
+import { generateSessionToken, Session } from "$lib/server/session";
 
 export const SESSION_EXPIRY_HOURS = 7 * 24;
 export const SESSION_EXPIRY_SECONDS = SESSION_EXPIRY_HOURS * 60 * 60;

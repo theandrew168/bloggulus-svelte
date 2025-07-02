@@ -2,14 +2,14 @@ import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
 import { Account } from "$lib/server/account";
+import { Repository } from "$lib/server/repository";
 import { generateSessionToken, Session } from "$lib/server/session";
 
-import { PostgresRepository } from "../repository/postgres";
 import { AuthCommand } from "./auth";
 
 describe("command/auth", () => {
 	const chance = new Chance();
-	const repo = PostgresRepository.getInstance();
+	const repo = Repository.getInstance();
 	const authCommand = new AuthCommand(repo);
 
 	test("deleteExpiredSessions", async () => {

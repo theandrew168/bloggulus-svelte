@@ -1,7 +1,6 @@
-import type { FeedFetcher } from "../feed";
-import { WebFeedFetcher } from "../feed/web";
-import type { Repository } from "../repository";
-import { PostgresRepository } from "../repository/postgres";
+import { FeedFetcher } from "$lib/server/feed/fetch";
+import { Repository } from "$lib/server/repository";
+
 import { AccountCommand } from "./account";
 import { AuthCommand } from "./auth";
 import { BlogCommand } from "./blog";
@@ -27,8 +26,8 @@ export class Command {
 
 	static getInstance(): Command {
 		if (!this._instance) {
-			const repo = PostgresRepository.getInstance();
-			const feedFetcher = new WebFeedFetcher();
+			const repo = Repository.getInstance();
+			const feedFetcher = new FeedFetcher();
 			this._instance = new Command(repo, feedFetcher);
 		}
 

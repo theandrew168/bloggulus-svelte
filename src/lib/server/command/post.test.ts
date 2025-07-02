@@ -1,14 +1,15 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Blog } from "../blog";
-import { Post } from "../post";
-import { PostgresRepository } from "../repository/postgres";
+import { Blog } from "$lib/server/blog";
+import { Post } from "$lib/server/post";
+import { Repository } from "$lib/server/repository";
+
 import { PostCommand } from "./post";
 
 describe("command/post", () => {
 	const chance = new Chance();
-	const repo = PostgresRepository.getInstance();
+	const repo = Repository.getInstance();
 	const postCommand = new PostCommand(repo);
 
 	test("deletePost", async () => {
