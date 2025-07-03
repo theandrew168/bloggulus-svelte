@@ -11,6 +11,7 @@ export type LoadAccountParams = {
 	followedBlogIDs: Set<UUID>;
 	createdAt: Date;
 	updatedAt: Date;
+	updateVersion: number;
 };
 
 export class Account {
@@ -20,6 +21,7 @@ export class Account {
 	private _followedBlogIDs: Set<UUID>;
 	private _createdAt: Date;
 	private _updatedAt: Date;
+	private _updateVersion: number;
 
 	constructor({ username }: NewAccountParams) {
 		this._id = crypto.randomUUID();
@@ -29,9 +31,18 @@ export class Account {
 		this._followedBlogIDs = new Set();
 		this._createdAt = new Date();
 		this._updatedAt = new Date();
+		this._updateVersion = 1;
 	}
 
-	static load({ id, username, isAdmin, followedBlogIDs, createdAt, updatedAt }: LoadAccountParams): Account {
+	static load({
+		id,
+		username,
+		isAdmin,
+		followedBlogIDs,
+		createdAt,
+		updatedAt,
+		updateVersion,
+	}: LoadAccountParams): Account {
 		const account = new Account({ username });
 		account._id = id;
 		account._username = username;
@@ -39,6 +50,7 @@ export class Account {
 		account._followedBlogIDs = followedBlogIDs;
 		account._createdAt = createdAt;
 		account._updatedAt = updatedAt;
+		account._updateVersion = updateVersion;
 		return account;
 	}
 
@@ -64,6 +76,14 @@ export class Account {
 
 	get updatedAt(): Date {
 		return this._updatedAt;
+	}
+
+	get updateVersion(): number {
+		return this._updateVersion;
+	}
+
+	set updateVersion(updateVersion: number) {
+		this._updateVersion = updateVersion;
 	}
 
 	followBlog(blogID: UUID): void {

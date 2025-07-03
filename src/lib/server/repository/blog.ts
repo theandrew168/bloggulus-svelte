@@ -14,6 +14,7 @@ type BlogRow = {
 	last_modified: string | null;
 	created_at: Date;
 	updated_at: Date;
+	update_version: number;
 };
 
 export class BlogRepository {
@@ -26,7 +27,7 @@ export class BlogRepository {
 	async create(blog: Blog): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO blog
-                (id, feed_url, site_url, title, synced_at, etag, last_modified, created_at, updated_at)
+                (id, feed_url, site_url, title, synced_at, etag, last_modified, created_at, updated_at, update_version)
             VALUES (
                 ${blog.id},
                 ${blog.feedURL.toString()},
@@ -36,7 +37,8 @@ export class BlogRepository {
                 ${blog.etag ?? null},
                 ${blog.lastModified ?? null},
 				${blog.createdAt},
-				${blog.updatedAt}
+				${blog.updatedAt},
+				${blog.updateVersion}
             );
 		`;
 	}
@@ -52,7 +54,8 @@ export class BlogRepository {
                 etag,
                 last_modified,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM blog
             WHERE id = ${id};
         `;
@@ -72,6 +75,7 @@ export class BlogRepository {
 			lastModified: row.last_modified ?? undefined,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
+			updateVersion: row.update_version,
 		});
 	}
 
@@ -86,7 +90,8 @@ export class BlogRepository {
                 etag,
                 last_modified,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM blog
             WHERE feed_url = ${feedURL.toString()};
         `;
@@ -106,6 +111,7 @@ export class BlogRepository {
 			lastModified: row.last_modified ?? undefined,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
+			updateVersion: row.update_version,
 		});
 	}
 
@@ -121,7 +127,8 @@ export class BlogRepository {
                 etag,
                 last_modified,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM blog;
         `;
 		return rows.map((row) =>
@@ -135,12 +142,15 @@ export class BlogRepository {
 				lastModified: row.last_modified ?? undefined,
 				createdAt: row.created_at,
 				updatedAt: row.updated_at,
+				updateVersion: row.update_version,
 			}),
 		);
 	}
 
 	async update(blog: Blog): Promise<void> {
-		const now = new Date();
+		const newUpdatedAt = new Date();
+		const newUpdateVersion = blog.updateVersion + 1;
+
 		const rows = await this._conn.sql`
 			UPDATE blog
 			SET
@@ -150,9 +160,10 @@ export class BlogRepository {
 				synced_at = ${blog.syncedAt},
 				etag = ${blog.etag ?? null},
 				last_modified = ${blog.lastModified ?? null},
-				updated_at = ${now}
+				updated_at = ${newUpdatedAt},
+				update_version = ${newUpdateVersion}
 			WHERE id = ${blog.id}
-				AND updated_at = ${blog.updatedAt}
+				AND update_version = ${blog.updateVersion}
 			RETURNING id;
 		`;
 
@@ -160,7 +171,8 @@ export class BlogRepository {
 			throw new ConcurrentUpdateError("Blog", blog.id);
 		}
 
-		blog.updatedAt = now;
+		blog.updatedAt = newUpdatedAt;
+		blog.updateVersion = newUpdateVersion;
 	}
 
 	async delete(blog: Blog): Promise<void> {

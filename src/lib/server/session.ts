@@ -2,13 +2,6 @@ import type { UUID } from "$lib/types";
 
 import { randomString } from "./utils";
 
-// TODO: Should session actually be nested under the account aggregate?
-// The fact that I want a "readAccountBySessionToken" method suggests that it should be.
-// Furthermore, sessions without accounts don't make sense. What about deleting expired
-// sessions? That shouldn't be any more complex that necessary. Otherwise, the auth
-// middleware will be required to perform TWO queries: one to get the session and
-// another to get the account.
-
 export type NewSessionParams = {
 	accountID: UUID;
 	expiresAt: Date;
@@ -20,6 +13,7 @@ export type LoadSessionParams = {
 	expiresAt: Date;
 	createdAt: Date;
 	updatedAt: Date;
+	updateVersion: number;
 };
 
 export class Session {
@@ -28,6 +22,7 @@ export class Session {
 	private _expiresAt: Date;
 	private _createdAt: Date;
 	private _updatedAt: Date;
+	private _updateVersion: number;
 
 	constructor({ accountID, expiresAt }: NewSessionParams) {
 		this._id = crypto.randomUUID();
@@ -35,15 +30,17 @@ export class Session {
 		this._expiresAt = expiresAt;
 		this._createdAt = new Date();
 		this._updatedAt = new Date();
+		this._updateVersion = 1;
 	}
 
-	static load({ id, accountID, expiresAt, createdAt, updatedAt }: LoadSessionParams): Session {
+	static load({ id, accountID, expiresAt, createdAt, updatedAt, updateVersion }: LoadSessionParams): Session {
 		const session = new Session({ accountID, expiresAt });
 		session._id = id;
 		session._accountID = accountID;
 		session._expiresAt = expiresAt;
 		session._createdAt = createdAt;
 		session._updatedAt = updatedAt;
+		session._updateVersion = updateVersion;
 		return session;
 	}
 
@@ -65,6 +62,10 @@ export class Session {
 
 	get updatedAt(): Date {
 		return this._updatedAt;
+	}
+
+	get updateVersion(): number {
+		return this._updateVersion;
 	}
 }
 

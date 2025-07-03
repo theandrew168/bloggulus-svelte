@@ -9,6 +9,7 @@ type SessionRow = {
 	expires_at: Date;
 	created_at: Date;
 	updated_at: Date;
+	update_version: number;
 };
 
 export class SessionRepository {
@@ -22,14 +23,15 @@ export class SessionRepository {
 		const tokenHash = await sha256(token);
 		await this._conn.sql`
 			INSERT INTO session
-                (id, account_id, expires_at, token_hash, created_at, updated_at)
+                (id, account_id, expires_at, token_hash, created_at, updated_at, update_version)
             VALUES (
 				${session.id},
 				${session.accountID},
 				${session.expiresAt},
 				${tokenHash},
 				${session.createdAt},
-				${session.updatedAt}
+				${session.updatedAt},
+				${session.updateVersion}
 			);
 		`;
 	}
@@ -41,7 +43,8 @@ export class SessionRepository {
                 account_id,
                 expires_at,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM session
             WHERE id = ${id};
         `;
@@ -57,6 +60,7 @@ export class SessionRepository {
 			expiresAt: row.expires_at,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
+			updateVersion: row.update_version,
 		});
 	}
 
@@ -68,7 +72,8 @@ export class SessionRepository {
                 account_id,
                 expires_at,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM session
             WHERE token_hash = ${tokenHash};
         `;
@@ -84,6 +89,7 @@ export class SessionRepository {
 			expiresAt: row.expires_at,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
+			updateVersion: row.update_version,
 		});
 	}
 
@@ -95,7 +101,8 @@ export class SessionRepository {
                 account_id,
                 expires_at,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM session
             WHERE expires_at <= ${now};
         `;
@@ -107,6 +114,7 @@ export class SessionRepository {
 				expiresAt: row.expires_at,
 				createdAt: row.created_at,
 				updatedAt: row.updated_at,
+				updateVersion: row.update_version,
 			}),
 		);
 	}

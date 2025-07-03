@@ -3,5 +3,6 @@ CREATE TABLE account_blog (
 	blog_id UUID NOT NULL REFERENCES blog(id) ON DELETE CASCADE,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	update_version INTEGER NOT NULL DEFAULT 1,
 	PRIMARY KEY (account_id, blog_id)
 );

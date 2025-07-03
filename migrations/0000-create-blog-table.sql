@@ -7,5 +7,6 @@ CREATE TABLE blog (
 	etag TEXT,
 	last_modified TEXT,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-	updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+	updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	update_version INTEGER NOT NULL DEFAULT 1
 );

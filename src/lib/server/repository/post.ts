@@ -13,6 +13,7 @@ type PostRow = {
 	content: string | null;
 	created_at: Date;
 	updated_at: Date;
+	update_version: number;
 };
 
 export class PostRepository {
@@ -25,7 +26,7 @@ export class PostRepository {
 	async create(post: Post): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO post
-                (id, blog_id, url, title, published_at, content, created_at, updated_at)
+                (id, blog_id, url, title, published_at, content, created_at, updated_at, update_version)
             VALUES (
                 ${post.id},
                 ${post.blogID},
@@ -34,7 +35,8 @@ export class PostRepository {
                 ${post.publishedAt},
                 ${post.content ?? null},
 				${post.createdAt},
-				${post.updatedAt}
+				${post.updatedAt},
+				${post.updateVersion}
             );
 		`;
 	}
@@ -49,7 +51,8 @@ export class PostRepository {
                 published_at,
                 content,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM post
             WHERE id = ${id};
         `;
@@ -68,6 +71,7 @@ export class PostRepository {
 			content: row.content ?? undefined,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
+			updateVersion: row.update_version,
 		});
 	}
 
@@ -82,7 +86,8 @@ export class PostRepository {
                 published_at,
                 content,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM post
             WHERE blog_id = ${blogID};
         `;
@@ -96,12 +101,15 @@ export class PostRepository {
 				content: row.content ?? undefined,
 				createdAt: row.created_at,
 				updatedAt: row.updated_at,
+				updateVersion: row.update_version,
 			}),
 		);
 	}
 
 	async update(post: Post): Promise<void> {
-		const now = new Date();
+		const newUpdatedAt = new Date();
+		const newUpdateVersion = post.updateVersion + 1;
+
 		const rows = await this._conn.sql`
 			UPDATE post
 			SET
@@ -110,9 +118,10 @@ export class PostRepository {
 				title = ${post.title},
 				published_at = ${post.publishedAt},
 				content = ${post.content ?? null},
-				updated_at = ${now}
+				updated_at = ${newUpdatedAt},
+				update_version = ${newUpdateVersion}
 			WHERE id = ${post.id}
-				AND updated_at = ${post.updatedAt}
+				AND update_version = ${post.updateVersion}
 			RETURNING id;
 		`;
 
@@ -120,7 +129,8 @@ export class PostRepository {
 			throw new ConcurrentUpdateError("Post", post.id);
 		}
 
-		post.updatedAt = now;
+		post.updatedAt = newUpdatedAt;
+		post.updateVersion = newUpdateVersion;
 	}
 
 	async delete(post: Post): Promise<void> {

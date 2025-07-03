@@ -7,6 +7,7 @@ type TagRow = {
 	name: string;
 	created_at: Date;
 	updated_at: Date;
+	update_version: number;
 };
 
 export class TagRepository {
@@ -19,12 +20,13 @@ export class TagRepository {
 	async create(tag: Tag): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO tag
-                (id, name, created_at, updated_at)
+                (id, name, created_at, updated_at, update_version)
             VALUES (
 				${tag.id},
 				${tag.name},
 				${tag.createdAt},
-				${tag.updatedAt}
+				${tag.updatedAt},
+				${tag.updateVersion}
 			);
 		`;
 	}
@@ -35,7 +37,8 @@ export class TagRepository {
                 id,
                 name,
 				created_at,
-				updated_at
+				updated_at,
+				update_version
             FROM tag
             WHERE id = ${id};
         `;
@@ -50,6 +53,7 @@ export class TagRepository {
 			name: row.name,
 			createdAt: row.created_at,
 			updatedAt: row.updated_at,
+			updateVersion: row.update_version,
 		});
 	}
 	async delete(tag: Tag): Promise<void> {

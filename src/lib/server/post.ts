@@ -17,6 +17,7 @@ export type LoadPostParams = {
 	content?: string;
 	createdAt: Date;
 	updatedAt: Date;
+	updateVersion: number;
 };
 
 export class Post {
@@ -28,6 +29,7 @@ export class Post {
 	private _content?: string;
 	private _createdAt: Date;
 	private _updatedAt: Date;
+	private _updateVersion: number;
 
 	constructor({ blogID, url, title, publishedAt, content }: NewPostParams) {
 		this._id = crypto.randomUUID();
@@ -38,9 +40,20 @@ export class Post {
 		this._content = content;
 		this._createdAt = new Date();
 		this._updatedAt = new Date();
+		this._updateVersion = 1;
 	}
 
-	static load({ id, blogID, url, title, publishedAt, content, createdAt, updatedAt }: LoadPostParams): Post {
+	static load({
+		id,
+		blogID,
+		url,
+		title,
+		publishedAt,
+		content,
+		createdAt,
+		updatedAt,
+		updateVersion,
+	}: LoadPostParams): Post {
 		const post = new Post({ blogID, url, title, publishedAt });
 		post._id = id;
 		post._blogID = blogID;
@@ -50,6 +63,7 @@ export class Post {
 		post._content = content;
 		post._createdAt = createdAt;
 		post._updatedAt = updatedAt;
+		post._updateVersion = updateVersion;
 		return post;
 	}
 
@@ -99,5 +113,13 @@ export class Post {
 
 	set updatedAt(updatedAt: Date) {
 		this._updatedAt = updatedAt;
+	}
+
+	get updateVersion(): number {
+		return this._updateVersion;
+	}
+
+	set updateVersion(updateVersion: number) {
+		this._updateVersion = updateVersion;
 	}
 }
