@@ -6,9 +6,9 @@ CREATE TABLE post (
 	published_at TIMESTAMPTZ NOT NULL,
 	content TEXT,
 	fts_data TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', title || ' ' || content)) STORED,
-	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-	updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-	update_version INTEGER NOT NULL DEFAULT 1
+	meta_created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	meta_updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	meta_version INTEGER NOT NULL DEFAULT 1
 );
 
 -- Used when querying for posts by blog.

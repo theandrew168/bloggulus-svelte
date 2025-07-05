@@ -11,36 +11,36 @@ export type LoadSessionParams = {
 	id: UUID;
 	accountID: UUID;
 	expiresAt: Date;
-	createdAt: Date;
-	updatedAt: Date;
-	updateVersion: number;
+	metaCreatedAt: Date;
+	metaUpdatedAt: Date;
+	metaVersion: number;
 };
 
 export class Session {
 	private _id: UUID;
 	private _accountID: UUID;
 	private _expiresAt: Date;
-	private _createdAt: Date;
-	private _updatedAt: Date;
-	private _updateVersion: number;
+	private _metaCreatedAt: Date;
+	private _metaUpdatedAt: Date;
+	private _metaVersion: number;
 
 	constructor({ accountID, expiresAt }: NewSessionParams) {
 		this._id = crypto.randomUUID();
 		this._accountID = accountID;
 		this._expiresAt = expiresAt;
-		this._createdAt = new Date();
-		this._updatedAt = new Date();
-		this._updateVersion = 1;
+		this._metaCreatedAt = new Date();
+		this._metaUpdatedAt = new Date();
+		this._metaVersion = 1;
 	}
 
-	static load({ id, accountID, expiresAt, createdAt, updatedAt, updateVersion }: LoadSessionParams): Session {
+	static load({ id, accountID, expiresAt, metaCreatedAt, metaUpdatedAt, metaVersion }: LoadSessionParams): Session {
 		const session = new Session({ accountID, expiresAt });
 		session._id = id;
 		session._accountID = accountID;
 		session._expiresAt = expiresAt;
-		session._createdAt = createdAt;
-		session._updatedAt = updatedAt;
-		session._updateVersion = updateVersion;
+		session._metaCreatedAt = metaCreatedAt;
+		session._metaUpdatedAt = metaUpdatedAt;
+		session._metaVersion = metaVersion;
 		return session;
 	}
 
@@ -56,16 +56,16 @@ export class Session {
 		return this._expiresAt;
 	}
 
-	get createdAt(): Date {
-		return this._createdAt;
+	get metaCreatedAt(): Date {
+		return this._metaCreatedAt;
 	}
 
-	get updatedAt(): Date {
-		return this._updatedAt;
+	get metaUpdatedAt(): Date {
+		return this._metaUpdatedAt;
 	}
 
-	get updateVersion(): number {
-		return this._updateVersion;
+	get metaVersion(): number {
+		return this._metaVersion;
 	}
 }
 

@@ -7,33 +7,33 @@ export type NewTagParams = {
 export type LoadTagParams = {
 	id: UUID;
 	name: string;
-	createdAt: Date;
-	updatedAt: Date;
-	updateVersion: number;
+	metaCreatedAt: Date;
+	metaUpdatedAt: Date;
+	metaVersion: number;
 };
 
 export class Tag {
 	private _id: UUID;
 	private _name: string;
-	private _createdAt: Date;
-	private _updatedAt: Date;
-	private _updateVersion: number;
+	private _metaCreatedAt: Date;
+	private _metaUpdatedAt: Date;
+	private _metaVersion: number;
 
 	constructor({ name }: NewTagParams) {
 		this._id = crypto.randomUUID();
 		this._name = name;
-		this._createdAt = new Date();
-		this._updatedAt = new Date();
-		this._updateVersion = 1;
+		this._metaCreatedAt = new Date();
+		this._metaUpdatedAt = new Date();
+		this._metaVersion = 1;
 	}
 
-	static load({ id, name, createdAt, updatedAt, updateVersion }: LoadTagParams): Tag {
+	static load({ id, name, metaCreatedAt, metaUpdatedAt, metaVersion }: LoadTagParams): Tag {
 		const tag = new Tag({ name });
 		tag._id = id;
 		tag._name = name;
-		tag._createdAt = createdAt;
-		tag._updatedAt = updatedAt;
-		tag._updateVersion = updateVersion;
+		tag._metaCreatedAt = metaCreatedAt;
+		tag._metaUpdatedAt = metaUpdatedAt;
+		tag._metaVersion = metaVersion;
 		return tag;
 	}
 
@@ -45,15 +45,15 @@ export class Tag {
 		return this._name;
 	}
 
-	get createdAt(): Date {
-		return this._createdAt;
+	get metaCreatedAt(): Date {
+		return this._metaCreatedAt;
 	}
 
-	get updatedAt(): Date {
-		return this._updatedAt;
+	get metaUpdatedAt(): Date {
+		return this._metaUpdatedAt;
 	}
 
-	get updateVersion(): number {
-		return this._updateVersion;
+	get metaVersion(): number {
+		return this._metaVersion;
 	}
 }

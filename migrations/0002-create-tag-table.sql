@@ -1,7 +1,7 @@
 CREATE TABLE tag (
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	name TEXT NOT NULL UNIQUE,
-	created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-	updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-	update_version INTEGER NOT NULL DEFAULT 1
+	meta_created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	meta_updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+	meta_version INTEGER NOT NULL DEFAULT 1
 );

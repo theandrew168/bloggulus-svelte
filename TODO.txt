@@ -3,26 +3,35 @@ Ensure test coverage is at parity
   Commands
   Queries
 
-Make deployment a bit nicer (mfd deploy <branch/tag>?)
-Also add an "mfd clean" command
+
 
 Align bloggulus-go's DB schema:
 
 -- Add update_number column to each table
 alter table blog
-  add column update_version INTEGER NOT NULL DEFAULT 1;
+  rename column created_at to meta_created_at,
+  rename column updated_at to meta_updated_at,
+  add column meta_version INTEGER NOT NULL DEFAULT 1;
 
 alter table post
-  add column update_version INTEGER NOT NULL DEFAULT 1;
+  rename column created_at to meta_created_at,
+  rename column updated_at to meta_updated_at,
+  add column meta_version INTEGER NOT NULL DEFAULT 1;
 
 alter table tag
-  add column update_version INTEGER NOT NULL DEFAULT 1;
+  rename column created_at to meta_created_at,
+  rename column updated_at to meta_updated_at,
+  add column meta_version INTEGER NOT NULL DEFAULT 1;
 
 alter table account
-  add column update_version INTEGER NOT NULL DEFAULT 1;
+  rename column created_at to meta_created_at,
+  rename column updated_at to meta_updated_at,
+  add column meta_version INTEGER NOT NULL DEFAULT 1;
 
 alter table account_blog
-  add column update_version INTEGER NOT NULL DEFAULT 1;
+  rename column created_at to meta_created_at,
+  rename column updated_at to meta_updated_at,
+  add column meta_version INTEGER NOT NULL DEFAULT 1;
 
 -- Make blog.etag and blog.last_modified nullable
 alter table blog

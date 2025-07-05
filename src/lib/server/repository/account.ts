@@ -6,9 +6,9 @@ type AccountRow = {
 	id: UUID;
 	username: string;
 	is_admin: boolean;
-	created_at: Date;
-	updated_at: Date;
-	update_version: number;
+	meta_created_at: Date;
+	meta_updated_at: Date;
+	meta_version: number;
 	followed_blog_ids: UUID[];
 };
 
@@ -22,14 +22,14 @@ export class AccountRepository {
 	async create(account: Account): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO account
-                (id, username, is_admin, created_at, updated_at, update_version)
+                (id, username, is_admin, meta_created_at, meta_updated_at, meta_version)
             VALUES (
 				${account.id},
 				${account.username},
 				${account.isAdmin},
-				${account.createdAt},
-				${account.updatedAt},
-				${account.updateVersion}
+				${account.metaCreatedAt},
+				${account.metaUpdatedAt},
+				${account.metaVersion}
 			);
 		`;
 	}
@@ -40,9 +40,9 @@ export class AccountRepository {
 				account.id,
 				account.username,
 				account.is_admin,
-				account.created_at,
-				account.updated_at,
-				account.update_version,
+				account.meta_created_at,
+				account.meta_updated_at,
+				account.meta_version,
 				ARRAY_REMOVE(ARRAY_AGG(account_blog.blog_id), NULL) AS followed_blog_ids
 			FROM account
 			LEFT JOIN account_blog
@@ -60,9 +60,9 @@ export class AccountRepository {
 			id: row.id,
 			username: row.username,
 			isAdmin: row.is_admin,
-			createdAt: row.created_at,
-			updatedAt: row.updated_at,
-			updateVersion: row.update_version,
+			metaCreatedAt: row.meta_created_at,
+			metaUpdatedAt: row.meta_updated_at,
+			metaVersion: row.meta_version,
 			followedBlogIDs: new Set(row.followed_blog_ids),
 		});
 	}
@@ -73,9 +73,9 @@ export class AccountRepository {
 				account.id,
 				account.username,
 				account.is_admin,
-				account.created_at,
-				account.updated_at,
-				account.update_version,
+				account.meta_created_at,
+				account.meta_updated_at,
+				account.meta_version,
 				ARRAY_REMOVE(ARRAY_AGG(account_blog.blog_id), NULL) AS followed_blog_ids
 			FROM account
 			LEFT JOIN account_blog
@@ -93,9 +93,9 @@ export class AccountRepository {
 			id: row.id,
 			username: row.username,
 			isAdmin: row.is_admin,
-			createdAt: row.created_at,
-			updatedAt: row.updated_at,
-			updateVersion: row.update_version,
+			metaCreatedAt: row.meta_created_at,
+			metaUpdatedAt: row.meta_updated_at,
+			metaVersion: row.meta_version,
 			followedBlogIDs: new Set(row.followed_blog_ids),
 		});
 	}

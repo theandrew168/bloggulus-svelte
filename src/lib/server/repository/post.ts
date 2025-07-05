@@ -11,9 +11,9 @@ type PostRow = {
 	title: string;
 	published_at: string;
 	content: string | null;
-	created_at: Date;
-	updated_at: Date;
-	update_version: number;
+	meta_created_at: Date;
+	meta_updated_at: Date;
+	meta_version: number;
 };
 
 export class PostRepository {
@@ -26,7 +26,7 @@ export class PostRepository {
 	async create(post: Post): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO post
-                (id, blog_id, url, title, published_at, content, created_at, updated_at, update_version)
+                (id, blog_id, url, title, published_at, content, meta_created_at, meta_updated_at, meta_version)
             VALUES (
                 ${post.id},
                 ${post.blogID},
@@ -34,9 +34,9 @@ export class PostRepository {
                 ${post.title},
                 ${post.publishedAt},
                 ${post.content ?? null},
-				${post.createdAt},
-				${post.updatedAt},
-				${post.updateVersion}
+				${post.metaCreatedAt},
+				${post.metaUpdatedAt},
+				${post.metaVersion}
             );
 		`;
 	}
@@ -50,9 +50,9 @@ export class PostRepository {
                 title,
                 published_at,
                 content,
-				created_at,
-				updated_at,
-				update_version
+				meta_created_at,
+				meta_updated_at,
+				meta_version
             FROM post
             WHERE id = ${id};
         `;
@@ -69,9 +69,9 @@ export class PostRepository {
 			title: row.title,
 			publishedAt: new Date(row.published_at),
 			content: row.content ?? undefined,
-			createdAt: row.created_at,
-			updatedAt: row.updated_at,
-			updateVersion: row.update_version,
+			metaCreatedAt: row.meta_created_at,
+			metaUpdatedAt: row.meta_updated_at,
+			metaVersion: row.meta_version,
 		});
 	}
 
@@ -85,9 +85,9 @@ export class PostRepository {
                 title,
                 published_at,
                 content,
-				created_at,
-				updated_at,
-				update_version
+				meta_created_at,
+				meta_updated_at,
+				meta_version
             FROM post
             WHERE blog_id = ${blogID};
         `;
@@ -99,16 +99,16 @@ export class PostRepository {
 				title: row.title,
 				publishedAt: new Date(row.published_at),
 				content: row.content ?? undefined,
-				createdAt: row.created_at,
-				updatedAt: row.updated_at,
-				updateVersion: row.update_version,
+				metaCreatedAt: row.meta_created_at,
+				metaUpdatedAt: row.meta_updated_at,
+				metaVersion: row.meta_version,
 			}),
 		);
 	}
 
 	async update(post: Post): Promise<void> {
 		const newUpdatedAt = new Date();
-		const newUpdateVersion = post.updateVersion + 1;
+		const newVersion = post.metaVersion + 1;
 
 		const rows = await this._conn.sql`
 			UPDATE post
@@ -118,10 +118,10 @@ export class PostRepository {
 				title = ${post.title},
 				published_at = ${post.publishedAt},
 				content = ${post.content ?? null},
-				updated_at = ${newUpdatedAt},
-				update_version = ${newUpdateVersion}
+				meta_updated_at = ${newUpdatedAt},
+				meta_version = ${newVersion}
 			WHERE id = ${post.id}
-				AND update_version = ${post.updateVersion}
+				AND meta_version = ${post.metaVersion}
 			RETURNING id;
 		`;
 
@@ -129,8 +129,8 @@ export class PostRepository {
 			throw new ConcurrentUpdateError("Post", post.id);
 		}
 
-		post.updatedAt = newUpdatedAt;
-		post.updateVersion = newUpdateVersion;
+		post.metaUpdatedAt = newUpdatedAt;
+		post.metaVersion = newVersion;
 	}
 
 	async delete(post: Post): Promise<void> {

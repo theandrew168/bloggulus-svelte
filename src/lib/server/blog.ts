@@ -19,9 +19,9 @@ export type LoadBlogParams = {
 	syncedAt: Date;
 	etag?: string;
 	lastModified?: string;
-	createdAt: Date;
-	updatedAt: Date;
-	updateVersion: number;
+	metaCreatedAt: Date;
+	metaUpdatedAt: Date;
+	metaVersion: number;
 };
 
 export class Blog {
@@ -32,9 +32,9 @@ export class Blog {
 	private _syncedAt: Date;
 	private _etag?: string;
 	private _lastModified?: string;
-	private _createdAt: Date;
-	private _updatedAt: Date;
-	private _updateVersion: number;
+	private _metaCreatedAt: Date;
+	private _metaUpdatedAt: Date;
+	private _metaVersion: number;
 
 	constructor({ feedURL, siteURL, title, syncedAt, etag, lastModified }: NewBlogParams) {
 		this._id = crypto.randomUUID();
@@ -44,9 +44,9 @@ export class Blog {
 		this._syncedAt = syncedAt;
 		this._etag = etag;
 		this._lastModified = lastModified;
-		this._createdAt = new Date();
-		this._updatedAt = new Date();
-		this._updateVersion = 1;
+		this._metaCreatedAt = new Date();
+		this._metaUpdatedAt = new Date();
+		this._metaVersion = 1;
 	}
 
 	static load({
@@ -57,9 +57,9 @@ export class Blog {
 		syncedAt,
 		etag,
 		lastModified,
-		createdAt,
-		updatedAt,
-		updateVersion,
+		metaCreatedAt,
+		metaUpdatedAt,
+		metaVersion,
 	}: LoadBlogParams): Blog {
 		const blog = new Blog({ feedURL, siteURL, title, syncedAt });
 		blog._id = id;
@@ -69,9 +69,9 @@ export class Blog {
 		blog._syncedAt = syncedAt;
 		blog._etag = etag;
 		blog._lastModified = lastModified;
-		blog._createdAt = createdAt;
-		blog._updatedAt = updatedAt;
-		blog._updateVersion = updateVersion;
+		blog._metaCreatedAt = metaCreatedAt;
+		blog._metaUpdatedAt = metaUpdatedAt;
+		blog._metaVersion = metaVersion;
 		return blog;
 	}
 
@@ -115,24 +115,24 @@ export class Blog {
 		this._syncedAt = syncedAt;
 	}
 
-	get createdAt(): Date {
-		return this._createdAt;
+	get metaCreatedAt(): Date {
+		return this._metaCreatedAt;
 	}
 
-	get updatedAt(): Date {
-		return this._updatedAt;
+	get metaUpdatedAt(): Date {
+		return this._metaUpdatedAt;
 	}
 
-	set updatedAt(updatedAt: Date) {
-		this._updatedAt = updatedAt;
+	set metaUpdatedAt(metaUpdatedAt: Date) {
+		this._metaUpdatedAt = metaUpdatedAt;
 	}
 
-	get updateVersion(): number {
-		return this._updateVersion;
+	get metaVersion(): number {
+		return this._metaVersion;
 	}
 
-	set updateVersion(updateVersion: number) {
-		this._updateVersion = updateVersion;
+	set metaVersion(metaVersion: number) {
+		this._metaVersion = metaVersion;
 	}
 
 	canBeSynced(now: Date): boolean {

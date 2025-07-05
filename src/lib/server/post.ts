@@ -15,9 +15,9 @@ export type LoadPostParams = {
 	title: string;
 	publishedAt: Date;
 	content?: string;
-	createdAt: Date;
-	updatedAt: Date;
-	updateVersion: number;
+	metaCreatedAt: Date;
+	metaUpdatedAt: Date;
+	metaVersion: number;
 };
 
 export class Post {
@@ -27,9 +27,9 @@ export class Post {
 	private _title: string;
 	private _publishedAt: Date;
 	private _content?: string;
-	private _createdAt: Date;
-	private _updatedAt: Date;
-	private _updateVersion: number;
+	private _metaCreatedAt: Date;
+	private _metaUpdatedAt: Date;
+	private _metaVersion: number;
 
 	constructor({ blogID, url, title, publishedAt, content }: NewPostParams) {
 		this._id = crypto.randomUUID();
@@ -38,9 +38,9 @@ export class Post {
 		this._title = title;
 		this._publishedAt = publishedAt;
 		this._content = content;
-		this._createdAt = new Date();
-		this._updatedAt = new Date();
-		this._updateVersion = 1;
+		this._metaCreatedAt = new Date();
+		this._metaUpdatedAt = new Date();
+		this._metaVersion = 1;
 	}
 
 	static load({
@@ -50,9 +50,9 @@ export class Post {
 		title,
 		publishedAt,
 		content,
-		createdAt,
-		updatedAt,
-		updateVersion,
+		metaCreatedAt,
+		metaUpdatedAt,
+		metaVersion,
 	}: LoadPostParams): Post {
 		const post = new Post({ blogID, url, title, publishedAt });
 		post._id = id;
@@ -61,9 +61,9 @@ export class Post {
 		post._title = title;
 		post._publishedAt = publishedAt;
 		post._content = content;
-		post._createdAt = createdAt;
-		post._updatedAt = updatedAt;
-		post._updateVersion = updateVersion;
+		post._metaCreatedAt = metaCreatedAt;
+		post._metaUpdatedAt = metaUpdatedAt;
+		post._metaVersion = metaVersion;
 		return post;
 	}
 
@@ -103,23 +103,23 @@ export class Post {
 		this._content = content;
 	}
 
-	get createdAt(): Date {
-		return this._createdAt;
+	get metaCreatedAt(): Date {
+		return this._metaCreatedAt;
 	}
 
-	get updatedAt(): Date {
-		return this._updatedAt;
+	get metaUpdatedAt(): Date {
+		return this._metaUpdatedAt;
 	}
 
-	set updatedAt(updatedAt: Date) {
-		this._updatedAt = updatedAt;
+	set metaUpdatedAt(metaUpdatedAt: Date) {
+		this._metaUpdatedAt = metaUpdatedAt;
 	}
 
-	get updateVersion(): number {
-		return this._updateVersion;
+	get metaVersion(): number {
+		return this._metaVersion;
 	}
 
-	set updateVersion(updateVersion: number) {
-		this._updateVersion = updateVersion;
+	set metaVersion(metaVersion: number) {
+		this._metaVersion = metaVersion;
 	}
 }

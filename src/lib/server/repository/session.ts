@@ -7,9 +7,9 @@ type SessionRow = {
 	id: UUID;
 	account_id: UUID;
 	expires_at: Date;
-	created_at: Date;
-	updated_at: Date;
-	update_version: number;
+	meta_created_at: Date;
+	meta_updated_at: Date;
+	meta_version: number;
 };
 
 export class SessionRepository {
@@ -23,15 +23,15 @@ export class SessionRepository {
 		const tokenHash = await sha256(token);
 		await this._conn.sql`
 			INSERT INTO session
-                (id, account_id, expires_at, token_hash, created_at, updated_at, update_version)
+                (id, account_id, expires_at, token_hash, meta_created_at, meta_updated_at, meta_version)
             VALUES (
 				${session.id},
 				${session.accountID},
 				${session.expiresAt},
 				${tokenHash},
-				${session.createdAt},
-				${session.updatedAt},
-				${session.updateVersion}
+				${session.metaCreatedAt},
+				${session.metaUpdatedAt},
+				${session.metaVersion}
 			);
 		`;
 	}
@@ -42,9 +42,9 @@ export class SessionRepository {
                 id,
                 account_id,
                 expires_at,
-				created_at,
-				updated_at,
-				update_version
+				meta_created_at,
+				meta_updated_at,
+				meta_version
             FROM session
             WHERE id = ${id};
         `;
@@ -58,9 +58,9 @@ export class SessionRepository {
 			id: row.id,
 			accountID: row.account_id,
 			expiresAt: row.expires_at,
-			createdAt: row.created_at,
-			updatedAt: row.updated_at,
-			updateVersion: row.update_version,
+			metaCreatedAt: row.meta_created_at,
+			metaUpdatedAt: row.meta_updated_at,
+			metaVersion: row.meta_version,
 		});
 	}
 
@@ -71,9 +71,9 @@ export class SessionRepository {
                 id,
                 account_id,
                 expires_at,
-				created_at,
-				updated_at,
-				update_version
+				meta_created_at,
+				meta_updated_at,
+				meta_version
             FROM session
             WHERE token_hash = ${tokenHash};
         `;
@@ -87,9 +87,9 @@ export class SessionRepository {
 			id: row.id,
 			accountID: row.account_id,
 			expiresAt: row.expires_at,
-			createdAt: row.created_at,
-			updatedAt: row.updated_at,
-			updateVersion: row.update_version,
+			metaCreatedAt: row.meta_created_at,
+			metaUpdatedAt: row.meta_updated_at,
+			metaVersion: row.meta_version,
 		});
 	}
 
@@ -100,9 +100,9 @@ export class SessionRepository {
                 id,
                 account_id,
                 expires_at,
-				created_at,
-				updated_at,
-				update_version
+				meta_created_at,
+				meta_updated_at,
+				meta_version
             FROM session
             WHERE expires_at <= ${now};
         `;
@@ -112,9 +112,9 @@ export class SessionRepository {
 				id: row.id,
 				accountID: row.account_id,
 				expiresAt: row.expires_at,
-				createdAt: row.created_at,
-				updatedAt: row.updated_at,
-				updateVersion: row.update_version,
+				metaCreatedAt: row.meta_created_at,
+				metaUpdatedAt: row.meta_updated_at,
+				metaVersion: row.meta_version,
 			}),
 		);
 	}

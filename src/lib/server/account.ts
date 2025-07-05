@@ -9,9 +9,9 @@ export type LoadAccountParams = {
 	username: string;
 	isAdmin: boolean;
 	followedBlogIDs: Set<UUID>;
-	createdAt: Date;
-	updatedAt: Date;
-	updateVersion: number;
+	metaCreatedAt: Date;
+	metaUpdatedAt: Date;
+	metaVersion: number;
 };
 
 export class Account {
@@ -19,9 +19,9 @@ export class Account {
 	private _username: string;
 	private _isAdmin: boolean;
 	private _followedBlogIDs: Set<UUID>;
-	private _createdAt: Date;
-	private _updatedAt: Date;
-	private _updateVersion: number;
+	private _metaCreatedAt: Date;
+	private _metaUpdatedAt: Date;
+	private _metaVersion: number;
 
 	constructor({ username }: NewAccountParams) {
 		this._id = crypto.randomUUID();
@@ -29,9 +29,9 @@ export class Account {
 		// TODO: Flip this back to false before production.
 		this._isAdmin = true;
 		this._followedBlogIDs = new Set();
-		this._createdAt = new Date();
-		this._updatedAt = new Date();
-		this._updateVersion = 1;
+		this._metaCreatedAt = new Date();
+		this._metaUpdatedAt = new Date();
+		this._metaVersion = 1;
 	}
 
 	static load({
@@ -39,18 +39,18 @@ export class Account {
 		username,
 		isAdmin,
 		followedBlogIDs,
-		createdAt,
-		updatedAt,
-		updateVersion,
+		metaCreatedAt,
+		metaUpdatedAt,
+		metaVersion,
 	}: LoadAccountParams): Account {
 		const account = new Account({ username });
 		account._id = id;
 		account._username = username;
 		account._isAdmin = isAdmin;
 		account._followedBlogIDs = followedBlogIDs;
-		account._createdAt = createdAt;
-		account._updatedAt = updatedAt;
-		account._updateVersion = updateVersion;
+		account._metaCreatedAt = metaCreatedAt;
+		account._metaUpdatedAt = metaUpdatedAt;
+		account._metaVersion = metaVersion;
 		return account;
 	}
 
@@ -70,20 +70,20 @@ export class Account {
 		return structuredClone(this._followedBlogIDs);
 	}
 
-	get createdAt(): Date {
-		return this._createdAt;
+	get metaCreatedAt(): Date {
+		return this._metaCreatedAt;
 	}
 
-	get updatedAt(): Date {
-		return this._updatedAt;
+	get metaUpdatedAt(): Date {
+		return this._metaUpdatedAt;
 	}
 
-	get updateVersion(): number {
-		return this._updateVersion;
+	get metaVersion(): number {
+		return this._metaVersion;
 	}
 
-	set updateVersion(updateVersion: number) {
-		this._updateVersion = updateVersion;
+	set metaVersion(metaVersion: number) {
+		this._metaVersion = metaVersion;
 	}
 
 	followBlog(blogID: UUID): void {

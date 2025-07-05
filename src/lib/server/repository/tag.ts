@@ -5,9 +5,9 @@ import type { UUID } from "$lib/types";
 type TagRow = {
 	id: UUID;
 	name: string;
-	created_at: Date;
-	updated_at: Date;
-	update_version: number;
+	meta_created_at: Date;
+	meta_updated_at: Date;
+	meta_version: number;
 };
 
 export class TagRepository {
@@ -20,13 +20,13 @@ export class TagRepository {
 	async create(tag: Tag): Promise<void> {
 		await this._conn.sql`
 			INSERT INTO tag
-                (id, name, created_at, updated_at, update_version)
+                (id, name, meta_created_at, meta_updated_at, meta_version)
             VALUES (
 				${tag.id},
 				${tag.name},
-				${tag.createdAt},
-				${tag.updatedAt},
-				${tag.updateVersion}
+				${tag.metaCreatedAt},
+				${tag.metaUpdatedAt},
+				${tag.metaVersion}
 			);
 		`;
 	}
@@ -36,9 +36,9 @@ export class TagRepository {
             SELECT
                 id,
                 name,
-				created_at,
-				updated_at,
-				update_version
+				meta_created_at,
+				meta_updated_at,
+				meta_version
             FROM tag
             WHERE id = ${id};
         `;
@@ -51,9 +51,9 @@ export class TagRepository {
 		return Tag.load({
 			id: row.id,
 			name: row.name,
-			createdAt: row.created_at,
-			updatedAt: row.updated_at,
-			updateVersion: row.update_version,
+			metaCreatedAt: row.meta_created_at,
+			metaUpdatedAt: row.meta_updated_at,
+			metaVersion: row.meta_version,
 		});
 	}
 	async delete(tag: Tag): Promise<void> {
