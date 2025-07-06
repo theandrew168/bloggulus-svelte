@@ -3,40 +3,52 @@ import type { Item } from "rss-parser";
 import { describe, expect, it } from "vitest";
 import xml2js from "xml2js";
 
-import { determinePostURL, determinePublishedAt, determineSiteURL, parseFeed, type FeedBlog } from "./parse";
+import {
+	determinePostURL,
+	determinePublishedAt,
+	determineSiteURL,
+	parseFeed,
+	type FeedBlog,
+	type FeedPost,
+} from "./parse";
 
-function generateAtomFeed(blog: FeedBlog): string {
+type PartialFeedPost = Partial<FeedPost>;
+type PartialFeedBlog = Omit<Partial<FeedBlog>, "posts"> & {
+	posts: PartialFeedPost[];
+};
+
+function generateAtomFeed(blog: PartialFeedBlog): string {
 	const builder = new xml2js.Builder();
 	const xml = builder.buildObject({
 		feed: {
 			title: blog.title,
 			link: [
-				{ $: { rel: "self", href: blog.feedURL.toString() } },
-				{ $: { rel: "alternate", href: blog.siteURL.toString() } },
+				{ $: { rel: "self", href: blog.feedURL?.toString() } },
+				{ $: { rel: "alternate", href: blog.siteURL?.toString() } },
 			],
 			entry: blog.posts.map((post) => ({
-				link: { $: { href: post.url.toString() } },
+				...(post.url ? { link: { $: { href: post.url?.toString() } } } : {}),
 				title: post.title,
 				content: post.content,
-				published: post.publishedAt.toISOString(),
+				published: post.publishedAt?.toISOString(),
 			})),
 		},
 	});
 	return xml;
 }
 
-function generateRSSFeed(blog: FeedBlog): string {
+function generateRSSFeed(blog: PartialFeedBlog): string {
 	const builder = new xml2js.Builder();
 	const xml = builder.buildObject({
 		rss: {
 			$: { version: "2.0" },
 			channel: {
 				title: blog.title,
-				link: blog.siteURL.toString(),
+				link: blog.siteURL?.toString(),
 				item: blog.posts.map((post) => ({
 					title: post.title,
-					link: post.url.toString(),
-					pubDate: post.publishedAt.toUTCString(),
+					link: post.url?.toString(),
+					pubDate: post.publishedAt?.toUTCString(),
 					description: post.content,
 				})),
 			},
@@ -123,8 +135,9 @@ describe("feed/parse", () => {
 
 	describe("parseFeed", () => {
 		it("should parse an Atom feed and return a FeedBlog object", async () => {
+			const feedURL = new URL(chance.url());
 			const blog: FeedBlog = {
-				feedURL: new URL(chance.url()),
+				feedURL,
 				siteURL: new URL(chance.url()),
 				title: chance.sentence(),
 				posts: [
@@ -143,7 +156,7 @@ describe("feed/parse", () => {
 			};
 
 			const feedXML = generateAtomFeed(blog);
-			const parsedFeed = await parseFeed(blog.feedURL, feedXML);
+			const parsedFeed = await parseFeed(feedURL, feedXML);
 
 			expect(parsedFeed.feedURL.toString()).toEqual(blog.feedURL.toString());
 			expect(parsedFeed.siteURL.toString()).toEqual(blog.siteURL.toString());
@@ -163,8 +176,9 @@ describe("feed/parse", () => {
 		});
 
 		it("should parse an RSS feed and return a FeedBlog object", async () => {
+			const feedURL = new URL(chance.url());
 			const blog: FeedBlog = {
-				feedURL: new URL(chance.url()),
+				feedURL,
 				siteURL: new URL(chance.url()),
 				title: chance.sentence(),
 				posts: [
@@ -183,7 +197,7 @@ describe("feed/parse", () => {
 			};
 
 			const feedXML = generateRSSFeed(blog);
-			const parsedFeed = await parseFeed(blog.feedURL, feedXML);
+			const parsedFeed = await parseFeed(feedURL, feedXML);
 
 			expect(parsedFeed.feedURL.toString()).toEqual(blog.feedURL.toString());
 			expect(parsedFeed.siteURL.toString()).toEqual(blog.siteURL.toString());
@@ -200,6 +214,76 @@ describe("feed/parse", () => {
 			expect(parsedFeed.posts[1].title).toEqual(blog.posts[1].title);
 			expect(parsedFeed.posts[1].publishedAt).toEqual(blog.posts[1].publishedAt);
 			expect(parsedFeed.posts[1].content).toBeUndefined();
+		});
+
+		it("should skip posts that are missing a link", async () => {
+			const feedURL = new URL(chance.url());
+			const blog: PartialFeedBlog = {
+				feedURL,
+				siteURL: new URL(chance.url()),
+				title: chance.sentence(),
+				posts: [
+					{
+						url: new URL(chance.url()),
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-01T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+					{
+						url: new URL(chance.url()),
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-02T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+					{
+						// This post is missing a link.
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-03T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+				],
+			};
+
+			const feedXML = generateAtomFeed(blog);
+			const parsedFeed = await parseFeed(feedURL, feedXML);
+
+			// The post without a link should be skipped.
+			expect(parsedFeed.posts.length).toEqual(2);
+		});
+
+		it("should skip posts that are missing a title", async () => {
+			const feedURL = new URL(chance.url());
+			const blog: PartialFeedBlog = {
+				feedURL,
+				siteURL: new URL(chance.url()),
+				title: chance.sentence(),
+				posts: [
+					{
+						url: new URL(chance.url()),
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-01T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+					{
+						url: new URL(chance.url()),
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-02T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+					{
+						// This post is missing a title.
+						url: new URL(chance.url()),
+						publishedAt: new Date("2023-01-03T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+				],
+			};
+
+			const feedXML = generateAtomFeed(blog);
+			const parsedFeed = await parseFeed(feedURL, feedXML);
+
+			// The post without a title should be skipped.
+			expect(parsedFeed.posts.length).toEqual(2);
 		});
 	});
 });
