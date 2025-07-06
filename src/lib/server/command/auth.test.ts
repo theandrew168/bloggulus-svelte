@@ -12,8 +12,32 @@ describe("command/auth", () => {
 	const repo = Repository.getInstance();
 	const authCommand = new AuthCommand(repo);
 
-	// TODO: Test for signIn.
-	// TODO: Test for signOut.
+	test("signIn", async () => {
+		const account = new Account({ username: chance.word({ length: 20 }) });
+		await repo.account.create(account);
+
+		const token = await authCommand.signIn(account.username);
+
+		const session = await repo.session.readByToken(token);
+		expect(session).toBeDefined();
+		expect(session?.accountID).toEqual(account.id);
+	});
+
+	test("signOut", async () => {
+		const account = new Account({ username: chance.word({ length: 20 }) });
+		await repo.account.create(account);
+
+		const token = await authCommand.signIn(account.username);
+
+		const session = await repo.session.readByToken(token);
+		expect(session).toBeDefined();
+		expect(session?.accountID).toEqual(account.id);
+
+		await authCommand.signOut(token);
+
+		const deletedSession = await repo.session.readByToken(token);
+		expect(deletedSession).toBeUndefined();
+	});
 
 	test("deleteExpiredSessions", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
