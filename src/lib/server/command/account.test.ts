@@ -1,5 +1,5 @@
 import Chance from "chance";
-import { describe, expect, test } from "vitest";
+import { describe, expect, it, test } from "vitest";
 
 import { Account } from "$lib/server/account";
 import { Repository } from "$lib/server/repository";
@@ -25,5 +25,21 @@ describe("command/account", () => {
 
 		const deletedAccount = await repo.account.readByID(account.id);
 		expect(deletedAccount).toBeUndefined();
+	});
+
+	it("should throw an error when trying to delete an admin account", async () => {
+		const adminAccount = new Account({ username: chance.word({ length: 20 }) });
+		adminAccount.isAdmin = true;
+		await repo.account.create(adminAccount);
+
+		const existingAccount = await repo.account.readByID(adminAccount.id);
+		expect(existingAccount).toBeDefined();
+
+		await expect(accountCommand.deleteAccount(adminAccount.id)).rejects.toThrowError(
+			new Error("Cannot delete admin account"),
+		);
+
+		const stillExistingAccount = await repo.account.readByID(adminAccount.id);
+		expect(stillExistingAccount).toBeDefined();
 	});
 });
