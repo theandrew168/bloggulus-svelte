@@ -30,13 +30,15 @@
 		"@types/chance": "^1.1.6",
 		"@types/lodash": "^4.17.17",
 		"chance": "^1.1.13",
+		"fetch-mock": "^12.5.3",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.4.0",
 		"svelte": "^5.33.10",
 		"svelte-check": "^4.2.1",
 		"typescript": "^5.8.3",
 		"vite": "^6.3.5",
-		"vitest": "^3.1.4"
+		"vitest": "^3.1.4",
+		"xml2js": "^0.6.2"
 	},
 	"prettier": {
 		"arrowParens": "always",
