@@ -87,7 +87,7 @@ export async function parseFeed(url: URL, feed: string): Promise<FeedBlog> {
 			url,
 			title,
 			publishedAt,
-			content: item.contentSnippet,
+			content: item.contentSnippet || undefined,
 		};
 		posts.push(post);
 	}
