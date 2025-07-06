@@ -26,8 +26,7 @@ export class Account {
 	constructor({ username }: NewAccountParams) {
 		this._id = crypto.randomUUID();
 		this._username = username;
-		// TODO: Flip this back to false before production.
-		this._isAdmin = true;
+		this._isAdmin = false;
 		this._followedBlogIDs = new Set();
 		this._metaCreatedAt = new Date();
 		this._metaUpdatedAt = new Date();
@@ -66,6 +65,10 @@ export class Account {
 		return this._isAdmin;
 	}
 
+	set isAdmin(isAdmin: boolean) {
+		this._isAdmin = isAdmin;
+	}
+
 	get followedBlogIDs(): Set<UUID> {
 		return structuredClone(this._followedBlogIDs);
 	}
@@ -76,6 +79,10 @@ export class Account {
 
 	get metaUpdatedAt(): Date {
 		return this._metaUpdatedAt;
+	}
+
+	set metaUpdatedAt(metaUpdatedAt: Date) {
+		this._metaUpdatedAt = metaUpdatedAt;
 	}
 
 	get metaVersion(): number {

@@ -12,6 +12,9 @@ describe("command/auth", () => {
 	const repo = Repository.getInstance();
 	const authCommand = new AuthCommand(repo);
 
+	// TODO: Test for signIn.
+	// TODO: Test for signOut.
+
 	test("deleteExpiredSessions", async () => {
 		const account = new Account({ username: chance.word({ length: 20 }) });
 		await repo.account.create(account);

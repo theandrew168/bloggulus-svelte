@@ -2,6 +2,8 @@ import { Account } from "$lib/server/account";
 import { Connection } from "$lib/server/postgres";
 import type { UUID } from "$lib/types";
 
+import { ConcurrentUpdateError } from "./errors";
+
 type AccountRow = {
 	id: UUID;
 	username: string;
@@ -101,6 +103,24 @@ export class AccountRepository {
 	}
 
 	async update(account: Account): Promise<void> {
+		const newUpdatedAt = new Date();
+		const newVersion = account.metaVersion + 1;
+
+		const rows = await this._conn.sql`
+			UPDATE account
+			SET
+				is_admin = ${account.isAdmin},
+				meta_updated_at = ${newUpdatedAt},
+				meta_version = ${newVersion}
+			WHERE id = ${account.id}
+				AND meta_version = ${account.metaVersion}
+			RETURNING id;
+		`;
+
+		if (rows.length !== 1) {
+			throw new ConcurrentUpdateError("Account", account.id);
+		}
+
 		const followedBlogIDRows = await this._conn.sql<{ blog_id: UUID }[]>`
 			SELECT blog_id
 			FROM account_blog
@@ -125,6 +145,9 @@ export class AccountRepository {
 				WHERE account_id = ${account.id} AND blog_id = ${blogID};
 			`;
 		}
+
+		account.metaUpdatedAt = newUpdatedAt;
+		account.metaVersion = newVersion;
 	}
 
 	async delete(account: Account): Promise<void> {
