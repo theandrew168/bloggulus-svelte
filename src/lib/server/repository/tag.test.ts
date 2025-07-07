@@ -1,21 +1,19 @@
-import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Tag } from "$lib/server/tag";
+import { newTag } from "$lib/server/test";
 
 import { Repository } from ".";
 
 describe("repository/tag", () => {
-	const chance = new Chance();
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const tag = new Tag({ name: chance.word({ length: 20 }) });
+		const tag = newTag();
 		await repo.tag.create(tag);
 	});
 
 	test("readByID", async () => {
-		const tag = new Tag({ name: chance.word({ length: 20 }) });
+		const tag = newTag();
 		await repo.tag.create(tag);
 
 		const tagByID = await repo.tag.readByID(tag.id);
@@ -23,7 +21,7 @@ describe("repository/tag", () => {
 	});
 
 	test("delete", async () => {
-		const tag = new Tag({ name: chance.word({ length: 20 }) });
+		const tag = newTag();
 		await repo.tag.create(tag);
 
 		await repo.tag.delete(tag);

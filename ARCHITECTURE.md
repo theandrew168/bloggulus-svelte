@@ -2,7 +2,7 @@
 
 This project is a web application written in [TypeScript](https://www.typescriptlang.org/) + [SvelteKit](https://svelte.dev/docs/kit/introduction).
 All of the critical application code / business logic lives in the `src/lib/server` directory (this is a SvelteKit convention).
-Overall, the project tries to embrace the good parts of DDD (domain-driven design: clear group and encapsulation of domain concepts) and CQRS (command query request segregation: clear separation of "reading" vs "writing").
+Overall, the project tries to embrace the good parts of DDD (domain-driven design: clear grouping and encapsulation of domain concepts) and CQRS (command query responsibility segregation: clear separation of "reading" vs "writing").
 
 ## Structure
 

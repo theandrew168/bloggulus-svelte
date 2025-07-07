@@ -1,4 +1,3 @@
-import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
 import { generateSessionToken } from "$lib/server/session";
@@ -7,7 +6,6 @@ import { newAccount, newSession } from "$lib/server/test";
 import { Repository } from ".";
 
 describe("repository/session", () => {
-	const chance = new Chance();
 	const repo = Repository.getInstance();
 
 	test("create", async () => {

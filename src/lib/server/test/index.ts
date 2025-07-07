@@ -7,6 +7,7 @@ import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import type { Repository } from "$lib/server/repository";
 import { generateSessionToken, Session } from "$lib/server/session";
+import { Tag } from "$lib/server/tag";
 
 const chance = new Chance();
 
@@ -56,6 +57,25 @@ export async function createNewPost(repo: Repository, blog: Blog): Promise<Post>
 	const post = newPost(blog);
 	await repo.post.create(post);
 	return post;
+}
+
+/**
+ * Generates a new tag instance with random data.
+ */
+export function newTag(): Tag {
+	const tag = new Tag({
+		name: chance.word({ length: 20 }),
+	});
+	return tag;
+}
+
+/**
+ * Generates a new tag and saves it to the repository.
+ */
+export async function createNewTag(repo: Repository): Promise<Tag> {
+	const tag = newTag();
+	await repo.tag.create(tag);
+	return tag;
 }
 
 /**
