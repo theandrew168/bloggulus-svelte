@@ -114,8 +114,6 @@ export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetche
 		return;
 	}
 
-	console.log(`Syncing blog: ${blog.id} (${blog.title})`);
-
 	// Update the blog's syncedAt time.
 	blog.syncedAt = now;
 	await repo.blog.update(blog);

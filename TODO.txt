@@ -1,5 +1,4 @@
 Ensure test coverage is at parity
-  Commands
   Queries
 
 

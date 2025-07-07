@@ -14,11 +14,14 @@ const chance = new Chance();
  * Generates a new blog instance with random data.
  */
 export function newBlog(): Blog {
+	const yesterday = new Date();
+	yesterday.setDate(yesterday.getDate() - 1);
+
 	const blog = new Blog({
 		feedURL: new URL(chance.url()),
 		siteURL: new URL(chance.url()),
 		title: chance.sentence({ words: 3 }),
-		syncedAt: new Date(),
+		syncedAt: yesterday,
 	});
 	return blog;
 }

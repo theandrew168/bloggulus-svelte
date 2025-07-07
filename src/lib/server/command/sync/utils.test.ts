@@ -1,16 +1,17 @@
 import Chance from "chance";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { Blog } from "$lib/server/blog";
-import type { FetchFeedResponse } from "$lib/server/feed/fetch";
-import type { FeedPost } from "$lib/server/feed/parse";
-import { Post } from "$lib/server/post";
-import { newBlog, newPost } from "$lib/server/test";
+import { FeedFetcher, type FetchFeedResponse } from "$lib/server/feed/fetch";
+import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
+import { Repository } from "$lib/server/repository";
+import { createNewBlog, createNewPost, generateAtomFeed, newBlog, newPost } from "$lib/server/test";
 
-import { comparePosts, updateCacheHeaders } from "./utils";
+import { EmptyFeedError } from "../errors";
+import { comparePosts, syncExistingBlog, syncNewBlog, updateCacheHeaders } from "./utils";
 
 describe("command/sync/utils", () => {
 	const chance = new Chance();
+	const repo = Repository.getInstance();
 
 	describe("updateCacheHeaders", () => {
 		it("should set etag and lastModified if the blog does not have them", () => {
@@ -234,6 +235,204 @@ describe("command/sync/utils", () => {
 		});
 	});
 
-	// describe("syncNewBlog", () => {});
-	// describe("syncExistingBlog", () => {});
+	describe("syncNewBlog", async () => {
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+
+		it("should fetch the feed and create the corresponding blog and posts", async () => {
+			const feedURL = new URL(chance.url());
+			const postURL1 = new URL(chance.url());
+			const postURL2 = new URL(chance.url());
+			const feedBlog: FeedBlog = {
+				feedURL,
+				siteURL: new URL(chance.url()),
+				title: chance.sentence(),
+				posts: [
+					{
+						url: postURL1,
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-01T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+					{
+						url: postURL2,
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-02T00:00:00Z"),
+					},
+				],
+			};
+
+			const feed = generateAtomFeed(feedBlog);
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
+				return {
+					feed,
+				};
+			});
+
+			await syncNewBlog(repo, feedFetcher, feedURL);
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: feedURL });
+
+			const createdBlog = await repo.blog.readByFeedURL(feedURL);
+			expect(createdBlog).toBeDefined();
+			expect(createdBlog?.feedURL.toString()).toEqual(feedURL.toString());
+			expect(createdBlog?.siteURL.toString()).toEqual(feedBlog.siteURL.toString());
+			expect(createdBlog?.title).toEqual(feedBlog.title);
+
+			const createdPosts = await repo.post.listByBlogID(createdBlog!.id);
+			expect(createdPosts).toHaveLength(2);
+
+			const createdPostURLs = createdPosts.map((post) => post.url.toString());
+			expect(createdPostURLs).toContain(postURL1.toString());
+			expect(createdPostURLs).toContain(postURL2.toString());
+		});
+
+		it("should throw an error if the feed is empty", async () => {
+			const feedURL = new URL(chance.url());
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
+				return {
+					feed: "",
+				};
+			});
+
+			await expect(syncNewBlog(repo, feedFetcher, feedURL)).rejects.toThrow(EmptyFeedError);
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: feedURL });
+
+			const createdBlog = await repo.blog.readByFeedURL(feedURL);
+			expect(createdBlog).toBeUndefined();
+		});
+	});
+
+	describe("syncExistingBlog", () => {
+		afterEach(() => {
+			vi.restoreAllMocks();
+		});
+
+		it("should not sync if the blog cannot be synced", async () => {
+			const blog = newBlog();
+			const now = new Date();
+			blog.syncedAt = now;
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed");
+
+			await syncExistingBlog(repo, feedFetcher, blog);
+			expect(fetchFeedSpy).not.toHaveBeenCalled();
+		});
+
+		it("should fetch the feed and update the blog and posts", async () => {
+			const blog = await createNewBlog(repo);
+			const post = await createNewPost(repo, blog);
+
+			const newPostURL = new URL(chance.url());
+			const feedBlog: FeedBlog = {
+				feedURL: blog.feedURL,
+				siteURL: blog.siteURL,
+				title: blog.title,
+				posts: [
+					{
+						url: post.url,
+						title: post.title,
+						publishedAt: post.publishedAt,
+						content: post.content,
+					},
+					{
+						url: newPostURL,
+						title: chance.sentence(),
+						publishedAt: new Date("2023-01-01T00:00:00Z"),
+						content: chance.paragraph(),
+					},
+				],
+			};
+
+			const feed = generateAtomFeed(feedBlog);
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
+				return {
+					feed,
+				};
+			});
+
+			await syncExistingBlog(repo, feedFetcher, blog);
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: blog.feedURL });
+
+			const updatedBlog = await repo.blog.readByFeedURL(blog.feedURL);
+			expect(updatedBlog).toBeDefined();
+
+			const updatedPosts = await repo.post.listByBlogID(updatedBlog!.id);
+			expect(updatedPosts).toHaveLength(2);
+
+			const updatedPostURLs = updatedPosts.map((p) => p.url.toString());
+			expect(updatedPostURLs).toContain(post.url.toString());
+			expect(updatedPostURLs).toContain(newPostURL.toString());
+		});
+
+		it("should include etag and lastModified headers when fetching the feed", async () => {
+			const blog = newBlog();
+			blog.etag = chance.string({ length: 10 });
+			blog.lastModified = chance.date().toISOString();
+			await repo.blog.create(blog);
+
+			const feedBlog: FeedBlog = {
+				feedURL: blog.feedURL,
+				siteURL: blog.siteURL,
+				title: blog.title,
+				posts: [],
+			};
+
+			const feed = generateAtomFeed(feedBlog);
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
+				return {
+					feed,
+				};
+			});
+
+			await syncExistingBlog(repo, feedFetcher, blog);
+			expect(fetchFeedSpy).toHaveBeenCalledWith({
+				url: blog.feedURL,
+				etag: blog.etag,
+				lastModified: blog.lastModified,
+			});
+		});
+
+		it("should update the blog's etag and lastModified if they change", async () => {
+			const blog = await createNewBlog(repo);
+
+			const feedBlog: FeedBlog = {
+				feedURL: blog.feedURL,
+				siteURL: blog.siteURL,
+				title: blog.title,
+				posts: [],
+			};
+
+			const feed = generateAtomFeed(feedBlog);
+
+			const etag = chance.string({ length: 10 });
+			const lastModified = chance.date().toISOString();
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
+				return {
+					feed,
+					etag,
+					lastModified,
+				};
+			});
+
+			await syncExistingBlog(repo, feedFetcher, blog);
+			expect(fetchFeedSpy).toHaveBeenCalled();
+
+			const updatedBlog = await repo.blog.readByFeedURL(blog.feedURL);
+			expect(updatedBlog).toBeDefined();
+			expect(updatedBlog?.etag).toEqual(etag);
+			expect(updatedBlog?.lastModified).toEqual(lastModified);
+		});
+	});
 });
