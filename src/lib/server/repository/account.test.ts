@@ -3,6 +3,7 @@ import { describe, expect, test } from "vitest";
 
 import { Account } from "$lib/server/account";
 import { Blog } from "$lib/server/blog";
+import { newAccount, newBlog } from "$lib/server/test";
 
 import { Repository } from ".";
 
@@ -11,12 +12,12 @@ describe("repository/account", () => {
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 	});
 
 	test("readByID", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
 		const accountByID = await repo.account.readByID(account.id);
@@ -27,7 +28,7 @@ describe("repository/account", () => {
 	});
 
 	test("readByUsername", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
 		const accountByUsername = await repo.account.readByUsername(account.username);
@@ -38,15 +39,10 @@ describe("repository/account", () => {
 	});
 
 	test("update", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
-		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
-			title: chance.sentence({ words: 3 }),
-			syncedAt: new Date(),
-		});
+		const blog = newBlog();
 		await repo.blog.create(blog);
 
 		account.followBlog(blog.id);
@@ -63,7 +59,7 @@ describe("repository/account", () => {
 	});
 
 	test("delete", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
 		await repo.account.delete(account);

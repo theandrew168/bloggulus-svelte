@@ -1,61 +1,10 @@
 import Chance from "chance";
 import type { Item } from "rss-parser";
 import { describe, expect, it } from "vitest";
-import xml2js from "xml2js";
 
-import {
-	determinePostURL,
-	determinePublishedAt,
-	determineSiteURL,
-	parseFeed,
-	type FeedBlog,
-	type FeedPost,
-} from "./parse";
+import { generateAtomFeed, generateRSSFeed, type PartialFeedBlog } from "$lib/server/test";
 
-type PartialFeedPost = Partial<FeedPost>;
-type PartialFeedBlog = Omit<Partial<FeedBlog>, "posts"> & {
-	posts: PartialFeedPost[];
-};
-
-function generateAtomFeed(blog: PartialFeedBlog): string {
-	const builder = new xml2js.Builder();
-	const xml = builder.buildObject({
-		feed: {
-			title: blog.title,
-			link: [
-				{ $: { rel: "self", href: blog.feedURL?.toString() } },
-				{ $: { rel: "alternate", href: blog.siteURL?.toString() } },
-			],
-			entry: blog.posts.map((post) => ({
-				...(post.url ? { link: { $: { href: post.url?.toString() } } } : {}),
-				title: post.title,
-				content: post.content,
-				published: post.publishedAt?.toISOString(),
-			})),
-		},
-	});
-	return xml;
-}
-
-function generateRSSFeed(blog: PartialFeedBlog): string {
-	const builder = new xml2js.Builder();
-	const xml = builder.buildObject({
-		rss: {
-			$: { version: "2.0" },
-			channel: {
-				title: blog.title,
-				link: blog.siteURL?.toString(),
-				item: blog.posts.map((post) => ({
-					title: post.title,
-					link: post.url?.toString(),
-					pubDate: post.publishedAt?.toUTCString(),
-					description: post.content,
-				})),
-			},
-		},
-	});
-	return xml;
-}
+import { determinePostURL, determinePublishedAt, determineSiteURL, parseFeed, type FeedBlog } from "./parse";
 
 describe("feed/parse", () => {
 	const chance = new Chance();

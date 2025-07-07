@@ -1,20 +1,17 @@
-import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Account } from "$lib/server/account";
 import { Repository } from "$lib/server/repository";
 import { generateSessionToken, Session } from "$lib/server/session";
+import { createNewAccount } from "$lib/server/test";
 
 import { AuthCommand } from "./auth";
 
 describe("command/auth", () => {
-	const chance = new Chance();
 	const repo = Repository.getInstance();
 	const authCommand = new AuthCommand(repo);
 
 	test("signIn", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
-		await repo.account.create(account);
+		const account = await createNewAccount(repo);
 
 		const token = await authCommand.signIn(account.username);
 
@@ -24,8 +21,7 @@ describe("command/auth", () => {
 	});
 
 	test("signOut", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
-		await repo.account.create(account);
+		const account = await createNewAccount(repo);
 
 		const token = await authCommand.signIn(account.username);
 
@@ -40,8 +36,7 @@ describe("command/auth", () => {
 	});
 
 	test("deleteExpiredSessions", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
-		await repo.account.create(account);
+		const account = await createNewAccount(repo);
 
 		const now = new Date();
 

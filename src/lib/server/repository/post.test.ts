@@ -1,8 +1,7 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Blog } from "$lib/server/blog";
-import { Post } from "$lib/server/post";
+import { newBlog, newPost } from "$lib/server/test";
 
 import { Repository } from ".";
 
@@ -11,40 +10,18 @@ describe("repository/post", () => {
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			syncedAt: new Date(),
-		});
+		const blog = newBlog();
 		await repo.blog.create(blog);
 
-		const post = new Post({
-			blogID: blog.id,
-			url: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			publishedAt: new Date(),
-			content: chance.paragraph({ sentences: 3 }),
-		});
+		const post = newPost(blog);
 		await repo.post.create(post);
 	});
 
 	test("readByID", async () => {
-		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			syncedAt: new Date(),
-		});
+		const blog = newBlog();
 		await repo.blog.create(blog);
 
-		const post = new Post({
-			blogID: blog.id,
-			url: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			publishedAt: new Date(),
-			content: chance.paragraph({ sentences: 3 }),
-		});
+		const post = newPost(blog);
 		await repo.post.create(post);
 
 		const postByID = await repo.post.readByID(post.id);
@@ -52,21 +29,10 @@ describe("repository/post", () => {
 	});
 
 	test("update", async () => {
-		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			syncedAt: new Date(),
-		});
+		const blog = newBlog();
 		await repo.blog.create(blog);
 
-		const post = new Post({
-			blogID: blog.id,
-			url: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			publishedAt: new Date(),
-			content: chance.paragraph({ sentences: 3 }),
-		});
+		const post = newPost(blog);
 		await repo.post.create(post);
 
 		post.title = chance.sentence({ words: 5 });
@@ -81,21 +47,10 @@ describe("repository/post", () => {
 	});
 
 	test("delete", async () => {
-		const blog = new Blog({
-			feedURL: new URL(chance.url()),
-			siteURL: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			syncedAt: new Date(),
-		});
+		const blog = newBlog();
 		await repo.blog.create(blog);
 
-		const post = new Post({
-			blogID: blog.id,
-			url: new URL(chance.url()),
-			title: chance.sentence({ words: 5 }),
-			publishedAt: new Date(),
-			content: chance.paragraph({ sentences: 3 }),
-		});
+		const post = newPost(blog);
 		await repo.post.create(post);
 
 		await repo.post.delete(post);

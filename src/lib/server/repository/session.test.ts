@@ -1,8 +1,8 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Account } from "$lib/server/account";
-import { generateSessionToken, Session } from "$lib/server/session";
+import { generateSessionToken } from "$lib/server/session";
+import { newAccount, newSession } from "$lib/server/test";
 
 import { Repository } from ".";
 
@@ -11,20 +11,20 @@ describe("repository/session", () => {
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
+		const session = newSession(account);
 		const token = generateSessionToken();
-		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 	});
 
 	test("readByID", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
+		const session = newSession(account);
 		const token = generateSessionToken();
-		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 
 		const sessionByID = await repo.session.readByID(session.id);
@@ -32,11 +32,11 @@ describe("repository/session", () => {
 	});
 
 	test("readByToken", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
+		const session = newSession(account);
 		const token = generateSessionToken();
-		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 
 		const sessionByToken = await repo.session.readByToken(token);
@@ -44,15 +44,15 @@ describe("repository/session", () => {
 	});
 
 	test("listExpired", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
 		const now = new Date();
 
-		const expiredSession = new Session({ accountID: account.id, expiresAt: new Date(now.getTime() - 1000) });
+		const expiredSession = newSession(account, new Date(now.getTime() - 1000));
 		await repo.session.create(expiredSession, generateSessionToken());
 
-		const validSession = new Session({ accountID: account.id, expiresAt: new Date(now.getTime() + 1000) });
+		const validSession = newSession(account, new Date(now.getTime() + 1000));
 		await repo.session.create(validSession, generateSessionToken());
 
 		const expiredSessions = await repo.session.listExpired(now);
@@ -62,11 +62,11 @@ describe("repository/session", () => {
 	});
 
 	test("delete", async () => {
-		const account = new Account({ username: chance.word({ length: 20 }) });
+		const account = newAccount();
 		await repo.account.create(account);
 
+		const session = newSession(account);
 		const token = generateSessionToken();
-		const session = new Session({ accountID: account.id, expiresAt: new Date() });
 		await repo.session.create(session, token);
 
 		await repo.session.delete(session);
