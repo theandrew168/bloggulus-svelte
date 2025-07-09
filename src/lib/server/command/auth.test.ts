@@ -1,8 +1,9 @@
 import { describe, expect, test } from "vitest";
 
+import { Account } from "$lib/server/account";
 import { Repository } from "$lib/server/repository";
 import { generateSessionToken, Session } from "$lib/server/session";
-import { createNewAccount } from "$lib/server/test";
+import { randomAccountParams } from "$lib/server/test";
 
 import { AuthCommand } from "./auth";
 
@@ -11,7 +12,8 @@ describe("command/auth", () => {
 	const authCommand = new AuthCommand(repo);
 
 	test("signIn", async () => {
-		const account = await createNewAccount(repo);
+		const account = new Account(randomAccountParams());
+		await repo.account.create(account);
 
 		const token = await authCommand.signIn(account.username);
 
@@ -21,7 +23,8 @@ describe("command/auth", () => {
 	});
 
 	test("signOut", async () => {
-		const account = await createNewAccount(repo);
+		const account = new Account(randomAccountParams());
+		await repo.account.create(account);
 
 		const token = await authCommand.signIn(account.username);
 
@@ -36,7 +39,8 @@ describe("command/auth", () => {
 	});
 
 	test("deleteExpiredSessions", async () => {
-		const account = await createNewAccount(repo);
+		const account = new Account(randomAccountParams());
+		await repo.account.create(account);
 
 		const now = new Date();
 

@@ -1,124 +1,74 @@
 import Chance from "chance";
 import xml2js from "xml2js";
 
-import { Account } from "$lib/server/account";
-import { Blog } from "$lib/server/blog";
+import { Account, type NewAccountParams } from "$lib/server/account";
+import { Blog, type NewBlogParams } from "$lib/server/blog";
 import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
-import { Post } from "$lib/server/post";
-import type { Repository } from "$lib/server/repository";
-import { generateSessionToken, Session } from "$lib/server/session";
-import { Tag } from "$lib/server/tag";
+import type { NewPostParams } from "$lib/server/post";
+import type { NewSessionParams } from "$lib/server/session";
+import type { NewTagParams } from "$lib/server/tag";
 
 const chance = new Chance();
 
 /**
- * Generates a new blog instance with random data.
+ * Generate random (but realistic) params for creating a new Blog.
  */
-export function newBlog(): Blog {
+export function randomBlogParams(): NewBlogParams {
 	const yesterday = new Date();
 	yesterday.setDate(yesterday.getDate() - 1);
 
-	const blog = new Blog({
+	const params: NewBlogParams = {
 		feedURL: new URL(chance.url()),
 		siteURL: new URL(chance.url()),
 		title: chance.sentence({ words: 3 }),
 		syncedAt: yesterday,
-	});
-	return blog;
+	};
+	return params;
 }
 
 /**
- * Generates a new blog and saves it to the repository.
+ * Generate random (but realistic) params for creating a new Post.
  */
-export async function createNewBlog(repo: Repository): Promise<Blog> {
-	const blog = newBlog();
-	await repo.blog.create(blog);
-	return blog;
-}
-
-/**
- * Generates a new post instance for the given blog with random data.
- */
-export function newPost(blog: Blog): Post {
-	const post = new Post({
+export function randomPostParams(blog: Blog): NewPostParams {
+	const params: NewPostParams = {
 		blogID: blog.id,
 		url: new URL(chance.url()),
 		title: chance.sentence({ words: 3 }),
 		publishedAt: new Date(),
 		content: chance.paragraph(),
-	});
-	return post;
+	};
+	return params;
 }
 
 /**
- * Generates a new post for the given blog and saves it to the repository.
+ * Generate random (but realistic) params for creating a new Tag.
  */
-export async function createNewPost(repo: Repository, blog: Blog): Promise<Post> {
-	const post = newPost(blog);
-	await repo.post.create(post);
-	return post;
-}
-
-/**
- * Generates a new tag instance with random data.
- */
-export function newTag(): Tag {
-	const tag = new Tag({
+export function randomTagParams(): NewTagParams {
+	const params: NewTagParams = {
 		name: chance.word({ length: 20 }),
-	});
-	return tag;
+	};
+	return params;
 }
 
 /**
- * Generates a new tag and saves it to the repository.
+ * Generate random (but realistic) params for creating a new Account.
  */
-export async function createNewTag(repo: Repository): Promise<Tag> {
-	const tag = newTag();
-	await repo.tag.create(tag);
-	return tag;
-}
-
-/**
- * Generates a new account instance with random data.
- */
-export function newAccount(): Account {
-	const account = new Account({
+export function randomAccountParams(): NewAccountParams {
+	const params: NewAccountParams = {
 		username: chance.word({ length: 20 }),
-	});
-	return account;
+	};
+	return params;
 }
 
 /**
- * Generates a new account and saves it to the repository.
+ * Generate random (but realistic) params for creating a new Session.
  */
-export async function createNewAccount(repo: Repository): Promise<Account> {
-	const account = newAccount();
-	await repo.account.create(account);
-	return account;
-}
-
-/**
- * Generates a new session instance for the given account.
- */
-export function newSession(account: Account, expiresAt: Date = new Date()): Session {
-	const session = new Session({
+export function randomSessionParams(account: Account): NewSessionParams {
+	const params: NewSessionParams = {
 		accountID: account.id,
-		expiresAt,
-	});
-	return session;
-}
-
-/**
- * Generates a new session for the given account and saves it to the repository.
- */
-export async function createNewSession(
-	repo: Repository,
-	account: Account,
-	expiresAt: Date = new Date(),
-): Promise<Session> {
-	const session = newSession(account, expiresAt);
-	await repo.session.create(session, generateSessionToken());
-	return session;
+		expiresAt: new Date(),
+	};
+	return params;
 }
 
 export type PartialFeedPost = Partial<FeedPost>;

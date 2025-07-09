@@ -1,7 +1,9 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { newBlog, newPost } from "$lib/server/test";
+import { Blog } from "$lib/server/blog";
+import { Post } from "$lib/server/post";
+import { randomBlogParams, randomPostParams } from "$lib/server/test";
 
 import { Repository } from ".";
 
@@ -10,18 +12,18 @@ describe("repository/post", () => {
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
-		const post = newPost(blog);
+		const post = new Post(randomPostParams(blog));
 		await repo.post.create(post);
 	});
 
 	test("readByID", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
-		const post = newPost(blog);
+		const post = new Post(randomPostParams(blog));
 		await repo.post.create(post);
 
 		const postByID = await repo.post.readByID(post.id);
@@ -29,10 +31,10 @@ describe("repository/post", () => {
 	});
 
 	test("update", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
-		const post = newPost(blog);
+		const post = new Post(randomPostParams(blog));
 		await repo.post.create(post);
 
 		post.title = chance.sentence({ words: 5 });
@@ -47,10 +49,10 @@ describe("repository/post", () => {
 	});
 
 	test("delete", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
-		const post = newPost(blog);
+		const post = new Post(randomPostParams(blog));
 		await repo.post.create(post);
 
 		await repo.post.delete(post);

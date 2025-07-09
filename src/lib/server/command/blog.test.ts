@@ -1,7 +1,8 @@
 import { describe, expect, test } from "vitest";
 
+import { Blog } from "$lib/server/blog";
 import { Repository } from "$lib/server/repository";
-import { createNewBlog } from "$lib/server/test";
+import { randomBlogParams } from "$lib/server/test";
 
 import { BlogCommand } from "./blog";
 
@@ -10,7 +11,8 @@ describe("command/blog", () => {
 	const blogCommand = new BlogCommand(repo);
 
 	test("deleteBlog", async () => {
-		const blog = await createNewBlog(repo);
+		const blog = new Blog(randomBlogParams());
+		await repo.blog.create(blog);
 
 		const existingBlog = await repo.blog.readByID(blog.id);
 		expect(existingBlog).toBeDefined();

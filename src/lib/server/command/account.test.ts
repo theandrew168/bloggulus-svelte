@@ -1,7 +1,9 @@
 import { describe, expect, it, test } from "vitest";
 
+import { Account } from "$lib/server/account";
+import { Blog } from "$lib/server/blog";
 import { Repository } from "$lib/server/repository";
-import { createNewAccount, createNewBlog, newAccount } from "$lib/server/test";
+import { randomAccountParams, randomBlogParams } from "$lib/server/test";
 
 import { AccountCommand } from "./account";
 import { AdminAccountDeletionError } from "./errors";
@@ -11,8 +13,11 @@ describe("command/account", () => {
 	const accountCommand = new AccountCommand(repo);
 
 	test("followBlog", async () => {
-		const account = await createNewAccount(repo);
-		const blog = await createNewBlog(repo);
+		const account = new Account(randomAccountParams());
+		await repo.account.create(account);
+
+		const blog = new Blog(randomBlogParams());
+		await repo.blog.create(blog);
 
 		await accountCommand.followBlog(account.id, blog.id);
 
@@ -21,8 +26,11 @@ describe("command/account", () => {
 	});
 
 	test("unfollowBlog", async () => {
-		const account = await createNewAccount(repo);
-		const blog = await createNewBlog(repo);
+		const account = new Account(randomAccountParams());
+		await repo.account.create(account);
+
+		const blog = new Blog(randomBlogParams());
+		await repo.blog.create(blog);
 
 		await accountCommand.followBlog(account.id, blog.id);
 
@@ -36,7 +44,8 @@ describe("command/account", () => {
 	});
 
 	test("deleteAccount", async () => {
-		const account = await createNewAccount(repo);
+		const account = new Account(randomAccountParams());
+		await repo.account.create(account);
 
 		const existingAccount = await repo.account.readByID(account.id);
 		expect(existingAccount).toBeDefined();
@@ -48,7 +57,7 @@ describe("command/account", () => {
 	});
 
 	it("should throw an error when trying to delete an admin account", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		account.isAdmin = true;
 		await repo.account.create(account);
 

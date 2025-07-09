@@ -1,14 +1,15 @@
-import Chance from "chance";
 import { describe, expect, it } from "vitest";
 
-import { newAccount } from "./test";
+import { Account } from "./account";
+import { Repository } from "./repository";
+import { randomAccountParams } from "./test";
 
 describe("account", () => {
-	const chance = new Chance();
+	const repo = Repository.getInstance();
 
 	describe("followBlog", () => {
 		it("should add a blog ID to followedBlogIDs", () => {
-			const account = newAccount();
+			const account = new Account(randomAccountParams());
 			const blogID = crypto.randomUUID();
 			account.followBlog(blogID);
 
@@ -17,7 +18,7 @@ describe("account", () => {
 		});
 
 		it("should idempotently follow the same blog multiple times", () => {
-			const account = newAccount();
+			const account = new Account(randomAccountParams());
 			const blogID = crypto.randomUUID();
 			account.followBlog(blogID);
 			account.followBlog(blogID);
@@ -29,7 +30,7 @@ describe("account", () => {
 
 	describe("unfollowBlog", () => {
 		it("should remove a blog ID from followedBlogIDs", () => {
-			const account = newAccount();
+			const account = new Account(randomAccountParams());
 			const blogID = crypto.randomUUID();
 			account.followBlog(blogID);
 
@@ -39,7 +40,7 @@ describe("account", () => {
 		});
 
 		it("should idempotently unfollow the same blog multiple times", () => {
-			const account = newAccount();
+			const account = new Account(randomAccountParams());
 			const blogID = crypto.randomUUID();
 			account.followBlog(blogID);
 

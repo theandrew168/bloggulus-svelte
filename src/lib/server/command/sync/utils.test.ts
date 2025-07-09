@@ -1,12 +1,14 @@
 import Chance from "chance";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import { Blog } from "$lib/server/blog";
+import { EmptyFeedError } from "$lib/server/command/errors";
 import { FeedFetcher, type FetchFeedResponse } from "$lib/server/feed/fetch";
 import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
+import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
-import { createNewBlog, createNewPost, generateAtomFeed, newBlog, newPost } from "$lib/server/test";
+import { generateAtomFeed, randomBlogParams, randomPostParams } from "$lib/server/test";
 
-import { EmptyFeedError } from "../errors";
 import { comparePosts, syncExistingBlog, syncNewBlog, updateCacheHeaders } from "./utils";
 
 describe("command/sync/utils", () => {
@@ -18,7 +20,7 @@ describe("command/sync/utils", () => {
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
-			const blog = newBlog();
+			const blog = new Blog(randomBlogParams());
 
 			const response: FetchFeedResponse = {
 				feed: "<feed>Test Feed</feed>",
@@ -37,9 +39,11 @@ describe("command/sync/utils", () => {
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
-			const blog = newBlog();
-			blog.etag = etag;
-			blog.lastModified = lastModified;
+			const blog = new Blog({
+				...randomBlogParams(),
+				etag,
+				lastModified,
+			});
 
 			const response: FetchFeedResponse = {
 				feed: "<feed>Test Feed</feed>",
@@ -58,9 +62,11 @@ describe("command/sync/utils", () => {
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
-			const blog = newBlog();
-			blog.etag = etag;
-			blog.lastModified = lastModified;
+			const blog = new Blog({
+				...randomBlogParams(),
+				etag,
+				lastModified,
+			});
 
 			const newEtag = chance.string({ length: 10 });
 			const newLastModified = chance.date().toISOString();
@@ -81,9 +87,11 @@ describe("command/sync/utils", () => {
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
-			const blog = newBlog();
-			blog.etag = etag;
-			blog.lastModified = lastModified;
+			const blog = new Blog({
+				...randomBlogParams(),
+				etag,
+				lastModified,
+			});
 
 			const response: FetchFeedResponse = {
 				feed: "<feed>Test Feed</feed>",
@@ -99,8 +107,8 @@ describe("command/sync/utils", () => {
 
 	describe("comparePosts", () => {
 		it("should return posts to create and update", () => {
-			const blog = newBlog();
-			const knownPost = newPost(blog);
+			const blog = new Blog(randomBlogParams());
+			const knownPost = new Post(randomPostParams(blog));
 			const knownPosts = [knownPost];
 
 			// This post has changed.
@@ -139,8 +147,8 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should update an existing post if its title changes", () => {
-			const blog = newBlog();
-			const knownPost = newPost(blog);
+			const blog = new Blog(randomBlogParams());
+			const knownPost = new Post(randomPostParams(blog));
 			const knownPosts = [knownPost];
 
 			// Only the title is different.
@@ -165,8 +173,8 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should update an existing post if its content changes", () => {
-			const blog = newBlog();
-			const knownPost = newPost(blog);
+			const blog = new Blog(randomBlogParams());
+			const knownPost = new Post(randomPostParams(blog));
 			const knownPosts = [knownPost];
 
 			// Only the content is different.
@@ -191,8 +199,8 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should update an existing post if its publishedAt changes", () => {
-			const blog = newBlog();
-			const knownPost = newPost(blog);
+			const blog = new Blog(randomBlogParams());
+			const knownPost = new Post(randomPostParams(blog));
 			const knownPosts = [knownPost];
 
 			// Only the publishedAt is different.
@@ -217,8 +225,8 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should not update an existing post if nothing changes", () => {
-			const blog = newBlog();
-			const knownPost = newPost(blog);
+			const blog = new Blog(randomBlogParams());
+			const knownPost = new Post(randomPostParams(blog));
 			const knownPosts = [knownPost];
 
 			const knownFeedPost: FeedPost = {
@@ -313,9 +321,10 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should not sync if the blog cannot be synced", async () => {
-			const blog = newBlog();
-			const now = new Date();
-			blog.syncedAt = now;
+			const blog = new Blog({
+				...randomBlogParams(),
+				syncedAt: new Date(),
+			});
 
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed");
@@ -325,8 +334,11 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should fetch the feed and update the blog and posts", async () => {
-			const blog = await createNewBlog(repo);
-			const post = await createNewPost(repo, blog);
+			const blog = new Blog(randomBlogParams());
+			await repo.blog.create(blog);
+
+			const post = new Post(randomPostParams(blog));
+			await repo.post.create(post);
 
 			const newPostURL = new URL(chance.url());
 			const feedBlog: FeedBlog = {
@@ -373,9 +385,11 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should include etag and lastModified headers when fetching the feed", async () => {
-			const blog = newBlog();
-			blog.etag = chance.string({ length: 10 });
-			blog.lastModified = chance.date().toISOString();
+			const blog = new Blog({
+				...randomBlogParams(),
+				etag: chance.string({ length: 10 }),
+				lastModified: chance.date().toISOString(),
+			});
 			await repo.blog.create(blog);
 
 			const feedBlog: FeedBlog = {
@@ -403,7 +417,8 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should update the blog's etag and lastModified if they change", async () => {
-			const blog = await createNewBlog(repo);
+			const blog = new Blog(randomBlogParams());
+			await repo.blog.create(blog);
 
 			const feedBlog: FeedBlog = {
 				feedURL: blog.feedURL,

@@ -1,7 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { generateSessionToken } from "$lib/server/session";
-import { newAccount, newSession } from "$lib/server/test";
+import { Account } from "$lib/server/account";
+import { generateSessionToken, Session } from "$lib/server/session";
+import { randomAccountParams, randomSessionParams } from "$lib/server/test";
 
 import { Repository } from ".";
 
@@ -9,19 +10,19 @@ describe("repository/session", () => {
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
-		const session = newSession(account);
+		const session = new Session(randomSessionParams(account));
 		const token = generateSessionToken();
 		await repo.session.create(session, token);
 	});
 
 	test("readByID", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
-		const session = newSession(account);
+		const session = new Session(randomSessionParams(account));
 		const token = generateSessionToken();
 		await repo.session.create(session, token);
 
@@ -30,10 +31,10 @@ describe("repository/session", () => {
 	});
 
 	test("readByToken", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
-		const session = newSession(account);
+		const session = new Session(randomSessionParams(account));
 		const token = generateSessionToken();
 		await repo.session.create(session, token);
 
@@ -42,15 +43,21 @@ describe("repository/session", () => {
 	});
 
 	test("listExpired", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
 		const now = new Date();
 
-		const expiredSession = newSession(account, new Date(now.getTime() - 1000));
+		const expiredSession = new Session({
+			...randomSessionParams(account),
+			expiresAt: new Date(now.getTime() - 1000),
+		});
 		await repo.session.create(expiredSession, generateSessionToken());
 
-		const validSession = newSession(account, new Date(now.getTime() + 1000));
+		const validSession = new Session({
+			...randomSessionParams(account),
+			expiresAt: new Date(now.getTime() + 1000),
+		});
 		await repo.session.create(validSession, generateSessionToken());
 
 		const expiredSessions = await repo.session.listExpired(now);
@@ -60,10 +67,10 @@ describe("repository/session", () => {
 	});
 
 	test("delete", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
-		const session = newSession(account);
+		const session = new Session(randomSessionParams(account));
 		const token = generateSessionToken();
 		await repo.session.create(session, token);
 

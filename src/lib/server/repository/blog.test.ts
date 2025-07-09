@@ -1,7 +1,8 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { newBlog } from "$lib/server/test";
+import { Blog } from "$lib/server/blog";
+import { randomBlogParams } from "$lib/server/test";
 
 import { Repository } from ".";
 
@@ -10,12 +11,12 @@ describe("repository/blog", () => {
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 	});
 
 	test("readByID", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
 		const blogByID = await repo.blog.readByID(blog.id);
@@ -23,7 +24,7 @@ describe("repository/blog", () => {
 	});
 
 	test("readByFeedURL", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
 		const blogByFeedURL = await repo.blog.readByFeedURL(blog.feedURL);
@@ -31,7 +32,7 @@ describe("repository/blog", () => {
 	});
 
 	test("update", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
 		blog.etag = chance.word();
@@ -46,7 +47,7 @@ describe("repository/blog", () => {
 	});
 
 	test("delete", async () => {
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
 		await repo.blog.delete(blog);

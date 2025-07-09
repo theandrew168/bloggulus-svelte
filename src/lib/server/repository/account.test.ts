@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 
 import { Account } from "$lib/server/account";
 import { Blog } from "$lib/server/blog";
-import { newAccount, newBlog } from "$lib/server/test";
+import { randomAccountParams, randomBlogParams } from "$lib/server/test";
 
 import { Repository } from ".";
 
@@ -12,12 +12,12 @@ describe("repository/account", () => {
 	const repo = Repository.getInstance();
 
 	test("create", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 	});
 
 	test("readByID", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
 		const accountByID = await repo.account.readByID(account.id);
@@ -28,7 +28,7 @@ describe("repository/account", () => {
 	});
 
 	test("readByUsername", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
 		const accountByUsername = await repo.account.readByUsername(account.username);
@@ -39,10 +39,10 @@ describe("repository/account", () => {
 	});
 
 	test("update", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
-		const blog = newBlog();
+		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
 		account.followBlog(blog.id);
@@ -59,7 +59,7 @@ describe("repository/account", () => {
 	});
 
 	test("delete", async () => {
-		const account = newAccount();
+		const account = new Account(randomAccountParams());
 		await repo.account.create(account);
 
 		await repo.account.delete(account);

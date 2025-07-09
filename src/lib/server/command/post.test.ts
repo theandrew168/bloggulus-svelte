@@ -1,7 +1,9 @@
 import { describe, expect, test } from "vitest";
 
+import { Blog } from "$lib/server/blog";
+import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
-import { createNewBlog, createNewPost } from "$lib/server/test";
+import { randomBlogParams, randomPostParams } from "$lib/server/test";
 
 import { PostCommand } from "./post";
 
@@ -10,8 +12,11 @@ describe("command/post", () => {
 	const postCommand = new PostCommand(repo);
 
 	test("deletePost", async () => {
-		const blog = await createNewBlog(repo);
-		const post = await createNewPost(repo, blog);
+		const blog = new Blog(randomBlogParams());
+		await repo.blog.create(blog);
+
+		const post = new Post(randomPostParams(blog));
+		await repo.post.create(post);
 
 		const existingPost = await repo.post.readByID(post.id);
 		expect(existingPost).toBeDefined();

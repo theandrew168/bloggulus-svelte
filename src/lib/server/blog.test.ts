@@ -1,8 +1,8 @@
 import Chance from "chance";
 import { describe, expect, it } from "vitest";
 
-import { SYNC_COOLDOWN_HOURS } from "./blog";
-import { newBlog } from "./test";
+import { Blog, SYNC_COOLDOWN_HOURS } from "./blog";
+import { randomBlogParams } from "./test";
 
 describe("blog", () => {
 	const chance = new Chance();
@@ -12,7 +12,7 @@ describe("blog", () => {
 			const now = new Date();
 			const syncCooldownMS = SYNC_COOLDOWN_HOURS * 60 * 60 * 1000;
 
-			const blog = newBlog();
+			const blog = new Blog(randomBlogParams());
 
 			const longBeforeSyncedAt = new Date(Date.now() - syncCooldownMS * 2);
 			blog.syncedAt = longBeforeSyncedAt;
