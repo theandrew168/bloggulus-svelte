@@ -13,9 +13,9 @@ Below is an outline of the application directory structure that exists under `sr
 - `/repository` - Provides a decoupled layer for loading and storing the application domain models. Under the hood, a PostgreSQL database is used for persisting data.
 - `/query` - Contains separate directories for each unique user interface (web, API, mobile, etc). These are separate because different UIs tend to show different shapes and quantities of data. This way, each set of queries can fetch only the necessary data needed to power their user interface.
 
-### Domain-Driven Design
+## Domain-Driven Design
 
-#### Domain Models
+### Domain Models
 
 Domain models are implemented as classes with private internal state.
 Any inspection or modification of a model's state is done through transparent `get` and `set` methods.
@@ -23,19 +23,19 @@ This way, enforcement of domain logic / business rules can occur whenever a mode
 The system should never be allowed to represent an invalid state and this starts at the very bottom with the core domain models.
 The goal is to make it "difficult to get things wrong" which is in opposition to many other codebases where it is "difficult to get things right".
 
-#### Domain Services
+### Domain Services
 
 This codebase doesn't actually make an explicit separation between "domain services" (operations that change the state of multiple domain models) and "application services" (process that load domain models from storage, update their state, and store them back atomically).
 
-#### Application Services
+### Application Services
 
 In this codebase, application services are implemented as CQRS "commands".
 They are essentially synonymous.
 More information about commands can be found in the CQRS section.
 
-### Command Query Responsibility Segregation
+## Command Query Responsibility Segregation
 
-#### Commands
+### Commands
 
 Commands are how the state of the system changes.
 In fact, they are the _only_ way that the system's state can change.
@@ -52,7 +52,7 @@ Commands typically follow a structure of:
 2. Validate the operation and make any necessary changes to the models
 3. Store the models back to persistent stroage using the `Repository` pattern once more
 
-#### Queries
+### Queries
 
 Queries are read-only operations that fetch information to render individual user interfaces.
 Different user interfaces tend to have different data requirements (shape, quantity, access, etc) so keeping them grouped by UI (web, mobile, API, etc) allows for greater design flexibility.
