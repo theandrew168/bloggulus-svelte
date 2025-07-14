@@ -1,4 +1,3 @@
-import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
 import { Account } from "$lib/server/account";
@@ -8,7 +7,6 @@ import { randomAccountParams, randomBlogParams } from "$lib/server/test";
 import { Repository } from ".";
 
 describe("repository/account", () => {
-	const chance = new Chance();
 	const repo = Repository.getInstance();
 
 	test("create", async () => {

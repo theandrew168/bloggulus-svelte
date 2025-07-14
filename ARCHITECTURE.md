@@ -18,7 +18,7 @@ Below is an outline of the application directory structure that exists under `sr
 ### Domain Models
 
 Domain models are implemented as classes with private internal state.
-Any inspection or modification of a model's state is done through transparent `get` and `set` methods.
+Any inspection or modification of a model's state is done through "getters" and "setters" (or equivalent `get` and `set` properties if the language supports it).
 This way, enforcement of domain logic / business rules can occur whenever a model is modified.
 The system should never be allowed to represent an invalid state and this starts at the very bottom with the core domain models.
 The goal is to make it "difficult to get things wrong" which is in opposition to many other codebases where it is "difficult to get things right".
