@@ -23,7 +23,7 @@ export class ArticleWebQuery {
 	async countRecent(): Promise<number> {
 		const rows = await this._conn.sql<CountRow[]>`
             SELECT
-                COUNT(post.id) AS count
+                COUNT(post.id)::INTEGER AS count
             FROM post;
         `;
 
@@ -72,7 +72,7 @@ export class ArticleWebQuery {
 	async countRecentByAccount(account: Account): Promise<number> {
 		const rows = await this._conn.sql<CountRow[]>`
             SELECT
-                COUNT(post.id) AS count
+                COUNT(post.id)::INTEGER AS count
             FROM post
             INNER JOIN blog
                 ON blog.id = post.blog_id
@@ -135,7 +135,7 @@ export class ArticleWebQuery {
 	async countRelevant(search: string): Promise<number> {
 		const rows = await this._conn.sql<CountRow[]>`
             SELECT
-                COUNT(post.id) AS count
+                COUNT(post.id)::INTEGER AS count
             FROM post
             WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search});
         `;
@@ -150,7 +150,7 @@ export class ArticleWebQuery {
                 SELECT
                     post.id
                 FROM post
-                ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC
+                ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC NULLS LAST
                 LIMIT ${limit} OFFSET ${offset}
             )
             SELECT
@@ -169,7 +169,7 @@ export class ArticleWebQuery {
                 ON plainto_tsquery('english', tag.name) @@ post.fts_data
             WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search})
             GROUP BY post.id
-            ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC;
+            ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC NULLS LAST;
         `;
 
 		return rows.map((row) => ({
@@ -186,7 +186,7 @@ export class ArticleWebQuery {
 	async countRelevantByAccount(account: Account, search: string): Promise<number> {
 		const rows = await this._conn.sql<CountRow[]>`
             SELECT
-                COUNT(post.id) AS count
+                COUNT(post.id)::INTEGER AS count
             FROM post
             INNER JOIN blog
                 ON blog.id = post.blog_id
@@ -215,7 +215,7 @@ export class ArticleWebQuery {
                 INNER JOIN account
                     ON account.id = account_blog.account_id
                 WHERE account.id = ${account.id}
-                ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC
+                ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC NULLS LAST
                 LIMIT ${limit} OFFSET ${offset}
             )
             SELECT
@@ -234,7 +234,7 @@ export class ArticleWebQuery {
                 ON plainto_tsquery('english', tag.name) @@ post.fts_data
             WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search})
             GROUP BY post.id
-            ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC;
+            ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC NULLS LAST;
         `;
 
 		return rows.map((row) => ({

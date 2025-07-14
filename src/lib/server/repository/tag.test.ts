@@ -21,6 +21,14 @@ describe("repository/tag", () => {
 		expect(tagByID?.id).toEqual(tag.id);
 	});
 
+	test("readByName", async () => {
+		const tag = new Tag(randomTagParams());
+		await repo.tag.create(tag);
+
+		const tagByName = await repo.tag.readByName(tag.name);
+		expect(tagByName?.id).toEqual(tag.id);
+	});
+
 	test("delete", async () => {
 		const tag = new Tag(randomTagParams());
 		await repo.tag.create(tag);

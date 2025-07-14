@@ -56,6 +56,33 @@ export class TagRepository {
 			metaVersion: row.meta_version,
 		});
 	}
+
+	async readByName(name: string): Promise<Tag | undefined> {
+		const rows = await this._conn.sql<TagRow[]>`
+            SELECT
+                id,
+                name,
+				meta_created_at,
+				meta_updated_at,
+				meta_version
+            FROM tag
+            WHERE name = ${name};
+        `;
+
+		const row = rows[0];
+		if (!row) {
+			return undefined;
+		}
+
+		return Tag.load({
+			id: row.id,
+			name: row.name,
+			metaCreatedAt: row.meta_created_at,
+			metaUpdatedAt: row.meta_updated_at,
+			metaVersion: row.meta_version,
+		});
+	}
+
 	async delete(tag: Tag): Promise<void> {
 		await this._conn.sql`
 			DELETE
