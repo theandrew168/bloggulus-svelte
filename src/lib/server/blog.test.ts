@@ -1,12 +1,9 @@
-import Chance from "chance";
 import { describe, expect, it } from "vitest";
 
 import { Blog, SYNC_COOLDOWN_HOURS } from "./blog";
 import { randomBlogParams } from "./test";
 
 describe("blog", () => {
-	const chance = new Chance();
-
 	describe("canBeSynced", () => {
 		it("should prevent syncing more often than the desired cooldown", () => {
 			const now = new Date();

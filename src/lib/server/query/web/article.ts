@@ -27,7 +27,7 @@ export class ArticleWebQuery {
             FROM post;
         `;
 
-		return rows[0].count;
+		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page.
@@ -83,7 +83,7 @@ export class ArticleWebQuery {
             WHERE account.id = ${account.id};
         `;
 
-		return rows[0].count;
+		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page.
@@ -140,7 +140,7 @@ export class ArticleWebQuery {
             WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search});
         `;
 
-		return rows[0].count;
+		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page (when searching).
@@ -198,7 +198,7 @@ export class ArticleWebQuery {
                 AND post.fts_data @@ websearch_to_tsquery('english',  ${search});
         `;
 
-		return rows[0].count;
+		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page (when searching).

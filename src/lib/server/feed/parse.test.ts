@@ -113,15 +113,15 @@ describe("feed/parse", () => {
 
 			expect(parsedFeed.posts.length).toEqual(blog.posts.length);
 
-			expect(parsedFeed.posts[0].url.toString()).toEqual(blog.posts[0].url.toString());
-			expect(parsedFeed.posts[0].title).toEqual(blog.posts[0].title);
-			expect(parsedFeed.posts[0].publishedAt).toEqual(blog.posts[0].publishedAt);
-			expect(parsedFeed.posts[0].content).toEqual(blog.posts[0].content);
+			expect(parsedFeed.posts[0]?.url.toString()).toEqual(blog.posts[0]?.url.toString());
+			expect(parsedFeed.posts[0]?.title).toEqual(blog.posts[0]?.title);
+			expect(parsedFeed.posts[0]?.publishedAt).toEqual(blog.posts[0]?.publishedAt);
+			expect(parsedFeed.posts[0]?.content).toEqual(blog.posts[0]?.content);
 
-			expect(parsedFeed.posts[1].url.toString()).toEqual(blog.posts[1].url.toString());
-			expect(parsedFeed.posts[1].title).toEqual(blog.posts[1].title);
-			expect(parsedFeed.posts[1].publishedAt).toEqual(blog.posts[1].publishedAt);
-			expect(parsedFeed.posts[1].content).toBeUndefined();
+			expect(parsedFeed.posts[1]?.url.toString()).toEqual(blog.posts[1]?.url.toString());
+			expect(parsedFeed.posts[1]?.title).toEqual(blog.posts[1]?.title);
+			expect(parsedFeed.posts[1]?.publishedAt).toEqual(blog.posts[1]?.publishedAt);
+			expect(parsedFeed.posts[1]?.content).toBeUndefined();
 		});
 
 		it("should parse an RSS feed and return a FeedBlog object", async () => {
@@ -154,15 +154,15 @@ describe("feed/parse", () => {
 
 			expect(parsedFeed.posts.length).toEqual(blog.posts.length);
 
-			expect(parsedFeed.posts[0].url.toString()).toEqual(blog.posts[0].url.toString());
-			expect(parsedFeed.posts[0].title).toEqual(blog.posts[0].title);
-			expect(parsedFeed.posts[0].publishedAt).toEqual(blog.posts[0].publishedAt);
-			expect(parsedFeed.posts[0].content).toEqual(blog.posts[0].content);
+			expect(parsedFeed.posts[0]?.url.toString()).toEqual(blog.posts[0]?.url.toString());
+			expect(parsedFeed.posts[0]?.title).toEqual(blog.posts[0]?.title);
+			expect(parsedFeed.posts[0]?.publishedAt).toEqual(blog.posts[0]?.publishedAt);
+			expect(parsedFeed.posts[0]?.content).toEqual(blog.posts[0]?.content);
 
-			expect(parsedFeed.posts[1].url.toString()).toEqual(blog.posts[1].url.toString());
-			expect(parsedFeed.posts[1].title).toEqual(blog.posts[1].title);
-			expect(parsedFeed.posts[1].publishedAt).toEqual(blog.posts[1].publishedAt);
-			expect(parsedFeed.posts[1].content).toBeUndefined();
+			expect(parsedFeed.posts[1]?.url.toString()).toEqual(blog.posts[1]?.url.toString());
+			expect(parsedFeed.posts[1]?.title).toEqual(blog.posts[1]?.title);
+			expect(parsedFeed.posts[1]?.publishedAt).toEqual(blog.posts[1]?.publishedAt);
+			expect(parsedFeed.posts[1]?.content).toBeUndefined();
 		});
 
 		it("should skip posts that are missing a link", async () => {

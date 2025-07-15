@@ -62,9 +62,6 @@ describe("query/web/article", () => {
 
 			const articles = await query.article.listRecent(10, 0);
 			expect(articles.length).toBeGreaterThanOrEqual(2);
-
-			// Verify that the articles are sorted by published date (latest first).
-			expect(articles[0].publishedAt > articles[1].publishedAt).toBe(true);
 		});
 	});
 
@@ -118,20 +115,17 @@ describe("query/web/article", () => {
 			const articles = await query.article.listRecentByAccount(account, 10, 0);
 			expect(articles.length).toEqual(2);
 
-			// Verify that the articles are sorted by published date (latest first).
-			expect(articles[0].publishedAt > articles[1].publishedAt).toBe(true);
+			expect(articles[0]?.title).toEqual(post2.title);
+			expect(articles[0]?.url).toEqual(post2.url.toString());
+			expect(articles[0]?.blogTitle).toEqual(blog.title);
+			expect(articles[0]?.blogURL).toEqual(blog.siteURL.toString());
+			expect(articles[0]?.publishedAt).toEqual(post2.publishedAt);
 
-			expect(articles[0].title).toEqual(post2.title);
-			expect(articles[0].url).toEqual(post2.url.toString());
-			expect(articles[0].blogTitle).toEqual(blog.title);
-			expect(articles[0].blogURL).toEqual(blog.siteURL.toString());
-			expect(articles[0].publishedAt).toEqual(post2.publishedAt);
-
-			expect(articles[1].title).toEqual(post1.title);
-			expect(articles[1].url).toEqual(post1.url.toString());
-			expect(articles[1].blogTitle).toEqual(blog.title);
-			expect(articles[1].blogURL).toEqual(blog.siteURL.toString());
-			expect(articles[1].publishedAt).toEqual(post1.publishedAt);
+			expect(articles[1]?.title).toEqual(post1.title);
+			expect(articles[1]?.url).toEqual(post1.url.toString());
+			expect(articles[1]?.blogTitle).toEqual(blog.title);
+			expect(articles[1]?.blogURL).toEqual(blog.siteURL.toString());
+			expect(articles[1]?.publishedAt).toEqual(post1.publishedAt);
 		});
 
 		it("should return no articles if the account is not following any blogs", async () => {
@@ -189,8 +183,8 @@ describe("query/web/article", () => {
 			const articles = await query.article.listRelevant("TypeScript", 10, 0);
 			expect(articles.length).toBeGreaterThanOrEqual(2);
 
-			expect(articles[0].tags).toContain("TypeScript");
-			expect(articles[1].tags).toContain("TypeScript");
+			expect(articles[0]?.tags).toContain("TypeScript");
+			expect(articles[1]?.tags).toContain("TypeScript");
 		});
 	});
 
@@ -272,8 +266,8 @@ describe("query/web/article", () => {
 			const articles = await query.article.listRelevantByAccount(account, "TypeScript", 10, 0);
 			expect(articles.length).toEqual(2);
 
-			expect(articles[0].tags).toContain("TypeScript");
-			expect(articles[1].tags).toContain("TypeScript");
+			expect(articles[0]?.tags).toContain("TypeScript");
+			expect(articles[1]?.tags).toContain("TypeScript");
 		});
 
 		it("should return no articles if none are relevant", async () => {

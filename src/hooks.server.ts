@@ -2,12 +2,12 @@ import type { Handle } from "@sveltejs/kit";
 import { Cron } from "croner";
 
 import { Command } from "$lib/server/command";
-import { EnvConfig } from "$lib/server/config/env";
+import { TOMLConfig } from "$lib/server/config/toml";
 import { Connection } from "$lib/server/postgres";
 import { WebQuery } from "$lib/server/query/web";
 import { SESSION_COOKIE_NAME } from "$lib/server/web/cookies";
 
-const config = EnvConfig.getInstance();
+const config = TOMLConfig.getInstance();
 const command = Command.getInstance();
 const query = WebQuery.getInstance();
 

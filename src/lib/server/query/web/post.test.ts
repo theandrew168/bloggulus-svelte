@@ -52,8 +52,8 @@ describe("query/web/post", () => {
 			const postDetailsList = await query.post.listDetailsByBlogID(blog.id);
 			expect(postDetailsList).toHaveLength(2);
 
-			expect(postDetailsList[0].blogID).toEqual(blog.id);
-			expect(postDetailsList[1].blogID).toEqual(blog.id);
+			expect(postDetailsList[0]?.blogID).toEqual(blog.id);
+			expect(postDetailsList[1]?.blogID).toEqual(blog.id);
 		});
 	});
 });

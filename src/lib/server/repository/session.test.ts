@@ -63,7 +63,7 @@ describe("repository/session", () => {
 		const expiredSessions = await repo.session.listExpired(now);
 		const expiredSessionsForAccount = expiredSessions.filter((session) => session.accountID === account.id);
 		expect(expiredSessionsForAccount.length).toBe(1);
-		expect(expiredSessionsForAccount[0].id).toEqual(expiredSession.id);
+		expect(expiredSessionsForAccount[0]?.id).toEqual(expiredSession.id);
 	});
 
 	test("delete", async () => {

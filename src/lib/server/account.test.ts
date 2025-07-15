@@ -1,12 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import { Account } from "./account";
-import { Repository } from "./repository";
 import { randomAccountParams } from "./test";
 
 describe("account", () => {
-	const repo = Repository.getInstance();
-
 	describe("followBlog", () => {
 		it("should add a blog ID to followedBlogIDs", () => {
 			const account = new Account(randomAccountParams());

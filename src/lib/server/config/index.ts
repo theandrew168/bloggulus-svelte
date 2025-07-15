@@ -6,7 +6,7 @@ export type OAuthConfig = {
 
 export type Config = {
 	secretKey: string;
-	databaseURL: string;
+	databaseURI: string;
 	enableDebugAuth: boolean;
 
 	githubOAuth?: OAuthConfig;

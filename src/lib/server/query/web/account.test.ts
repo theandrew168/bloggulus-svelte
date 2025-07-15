@@ -1,4 +1,3 @@
-import Chance from "chance";
 import { describe, expect, it } from "vitest";
 
 import { Account } from "$lib/server/account";
@@ -9,7 +8,6 @@ import { randomAccountParams, randomSessionParams } from "$lib/server/test";
 import { WebQuery } from ".";
 
 describe("query/web/account", () => {
-	const chance = new Chance();
 	const repo = Repository.getInstance();
 
 	const query = WebQuery.getInstance();

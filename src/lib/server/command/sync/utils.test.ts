@@ -132,18 +132,18 @@ describe("command/sync/utils", () => {
 			expect(postsToUpdate.length).toEqual(1);
 
 			const postToCreate = postsToCreate[0];
-			expect(postToCreate.blogID).toEqual(blog.id);
-			expect(postToCreate.url.toString()).toEqual(newFeedPost.url.toString());
-			expect(postToCreate.title).toEqual(newFeedPost.title);
-			expect(postToCreate.publishedAt).toEqual(newFeedPost.publishedAt);
-			expect(postToCreate.content).toEqual(newFeedPost.content);
+			expect(postToCreate?.blogID).toEqual(blog.id);
+			expect(postToCreate?.url.toString()).toEqual(newFeedPost.url.toString());
+			expect(postToCreate?.title).toEqual(newFeedPost.title);
+			expect(postToCreate?.publishedAt).toEqual(newFeedPost.publishedAt);
+			expect(postToCreate?.content).toEqual(newFeedPost.content);
 
 			const postToUpdate = postsToUpdate[0];
-			expect(postToUpdate.blogID).toEqual(blog.id);
-			expect(postToUpdate.url.toString()).toEqual(knownFeedPost.url.toString());
-			expect(postToUpdate.title).toEqual(knownFeedPost.title);
-			expect(postToUpdate.publishedAt).toEqual(knownFeedPost.publishedAt);
-			expect(postToUpdate.content).toEqual(knownFeedPost.content);
+			expect(postToUpdate?.blogID).toEqual(blog.id);
+			expect(postToUpdate?.url.toString()).toEqual(knownFeedPost.url.toString());
+			expect(postToUpdate?.title).toEqual(knownFeedPost.title);
+			expect(postToUpdate?.publishedAt).toEqual(knownFeedPost.publishedAt);
+			expect(postToUpdate?.content).toEqual(knownFeedPost.content);
 		});
 
 		it("should update an existing post if its title changes", () => {
@@ -165,11 +165,11 @@ describe("command/sync/utils", () => {
 			expect(postsToUpdate.length).toEqual(1);
 
 			const postToUpdate = postsToUpdate[0];
-			expect(postToUpdate.blogID).toEqual(blog.id);
-			expect(postToUpdate.url.toString()).toEqual(knownFeedPost.url.toString());
-			expect(postToUpdate.title).toEqual(knownFeedPost.title);
-			expect(postToUpdate.publishedAt).toEqual(knownFeedPost.publishedAt);
-			expect(postToUpdate.content).toEqual(knownFeedPost.content);
+			expect(postToUpdate?.blogID).toEqual(blog.id);
+			expect(postToUpdate?.url.toString()).toEqual(knownFeedPost.url.toString());
+			expect(postToUpdate?.title).toEqual(knownFeedPost.title);
+			expect(postToUpdate?.publishedAt).toEqual(knownFeedPost.publishedAt);
+			expect(postToUpdate?.content).toEqual(knownFeedPost.content);
 		});
 
 		it("should update an existing post if its content changes", () => {
@@ -191,11 +191,11 @@ describe("command/sync/utils", () => {
 			expect(postsToUpdate.length).toEqual(1);
 
 			const postToUpdate = postsToUpdate[0];
-			expect(postToUpdate.blogID).toEqual(blog.id);
-			expect(postToUpdate.url.toString()).toEqual(knownFeedPost.url.toString());
-			expect(postToUpdate.title).toEqual(knownFeedPost.title);
-			expect(postToUpdate.publishedAt).toEqual(knownFeedPost.publishedAt);
-			expect(postToUpdate.content).toEqual(knownFeedPost.content);
+			expect(postToUpdate?.blogID).toEqual(blog.id);
+			expect(postToUpdate?.url.toString()).toEqual(knownFeedPost.url.toString());
+			expect(postToUpdate?.title).toEqual(knownFeedPost.title);
+			expect(postToUpdate?.publishedAt).toEqual(knownFeedPost.publishedAt);
+			expect(postToUpdate?.content).toEqual(knownFeedPost.content);
 		});
 
 		it("should update an existing post if its publishedAt changes", () => {
@@ -217,11 +217,11 @@ describe("command/sync/utils", () => {
 			expect(postsToUpdate.length).toEqual(1);
 
 			const postToUpdate = postsToUpdate[0];
-			expect(postToUpdate.blogID).toEqual(blog.id);
-			expect(postToUpdate.url.toString()).toEqual(knownFeedPost.url.toString());
-			expect(postToUpdate.title).toEqual(knownFeedPost.title);
-			expect(postToUpdate.publishedAt).toEqual(knownFeedPost.publishedAt);
-			expect(postToUpdate.content).toEqual(knownFeedPost.content);
+			expect(postToUpdate?.blogID).toEqual(blog.id);
+			expect(postToUpdate?.url.toString()).toEqual(knownFeedPost.url.toString());
+			expect(postToUpdate?.title).toEqual(knownFeedPost.title);
+			expect(postToUpdate?.publishedAt).toEqual(knownFeedPost.publishedAt);
+			expect(postToUpdate?.content).toEqual(knownFeedPost.content);
 		});
 
 		it("should not update an existing post if nothing changes", () => {

@@ -1,6 +1,6 @@
 import postgres, { type Sql } from "postgres";
 
-import { EnvConfig } from "$lib/server/config/env";
+import { TOMLConfig } from "$lib/server/config/toml";
 
 function connect(connectionString: string): Sql {
 	const sql = postgres(connectionString, {
@@ -19,8 +19,8 @@ export class Connection {
 
 	static getInstance(): Connection {
 		if (!this._instance) {
-			const config = EnvConfig.getInstance();
-			const sql = connect(config.databaseURL);
+			const config = TOMLConfig.getInstance();
+			const sql = connect(config.databaseURI);
 			this._instance = new Connection(sql);
 		}
 
