@@ -38,9 +38,16 @@ export class FeedFetcher {
 			}
 
 			const response = await this._fetch(req.url, { headers });
+			const etag = response.headers.get(ETAG_HEADER) ?? undefined;
+			const lastModified = response.headers.get(LAST_MODIFIED_HEADER) ?? undefined;
 
+			// If the feed has no new content (304 Not Modified), return headers w/ no feed content.
+			if (response.status === 304) {
+				return { etag, lastModified };
+			}
+
+			// Otherwise, throw a custom error for non-2xx HTTP responses.
 			if (!response.ok) {
-				// Throw a custom error for non-2xx HTTP responses.
 				throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
 			}
 

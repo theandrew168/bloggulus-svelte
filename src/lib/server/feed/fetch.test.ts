@@ -18,13 +18,13 @@ describe("feed/fetch", () => {
 
 				const fetch = fetchMock.createInstance();
 				fetch.get(url, {
+					status: 200,
 					body: feed,
 					headers: {
 						"Content-Type": "application/xml",
 						ETag: etag,
 						"Last-Modified": lastModified,
 					},
-					status: 200,
 				});
 
 				const fetcher = new FeedFetcher(fetch.fetchHandler);
@@ -41,8 +41,8 @@ describe("feed/fetch", () => {
 
 				const fetch = fetchMock.createInstance();
 				fetch.get(url, {
-					body: feed,
 					status: 200,
+					body: feed,
 				});
 
 				const etag = chance.word();
@@ -54,6 +54,28 @@ describe("feed/fetch", () => {
 				const reqHeaders = (fetch.callHistory.lastCall()?.options?.headers ?? {}) as Record<string, string>;
 				expect(reqHeaders["if-none-match"]).to.equal(etag);
 				expect(reqHeaders["if-modified-since"]).to.equal(lastModified);
+			});
+
+			it("should return an empty feed for 304 Not Modified responses", async () => {
+				const url = new URL(chance.url());
+				const etag = chance.word();
+				const lastModified = chance.date().toISOString();
+
+				const fetch = fetchMock.createInstance();
+				fetch.get(url, {
+					status: 304,
+					headers: {
+						ETag: etag,
+						"Last-Modified": lastModified,
+					},
+				});
+
+				const fetcher = new FeedFetcher(fetch.fetchHandler);
+				const response = await fetcher.fetchFeed({ url });
+
+				expect(response.feed).to.be.undefined;
+				expect(response.etag).to.equal(etag);
+				expect(response.lastModified).to.equal(lastModified);
 			});
 
 			it("should throw an UnreachableFeedError for network errors", async () => {
@@ -68,7 +90,7 @@ describe("feed/fetch", () => {
 				await expect(fetcher.fetchFeed({ url })).rejects.toThrow(UnreachableFeedError);
 			});
 
-			it("should throw an UnreachableFeedError for non-2xx responses", async () => {
+			it("should throw an UnreachableFeedError for non-2xx, non-304 responses", async () => {
 				const url = new URL(chance.url());
 
 				const fetch = fetchMock.createInstance();
