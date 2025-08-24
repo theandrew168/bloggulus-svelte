@@ -1,6 +1,6 @@
 import { UnreachableFeedError } from "$lib/server/feed/errors";
 
-const USER_AGENT = "Bloggulus/0.5.2 (+https://bloggulus.com)";
+const USER_AGENT = "Bloggulus/0.6.0 (+https://bloggulus.com)";
 const ETAG_HEADER = "ETag";
 const LAST_MODIFIED_HEADER = "Last-Modified";
 
