@@ -1,7 +1,6 @@
 import { readFileSync, statSync } from "node:fs";
 
 import TOML from "@iarna/toml";
-import minimist from "minimist";
 
 export class MissingConfigError extends Error {
 	constructor(name: string) {
@@ -129,8 +128,7 @@ export class Config {
 				fallbackPath = "bloggulus.test.conf";
 			}
 
-			const argv = minimist(process.argv.slice(2));
-			const path = parseString(argv["conf"]) ? argv["conf"] : fallbackPath;
+			const path = process.env["BLOGGULUS_CONF"] ?? fallbackPath;
 			const body = readFileSync(path, "utf-8");
 
 			this._instance = new Config(body);
