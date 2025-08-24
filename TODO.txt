@@ -36,6 +36,13 @@ alter table account_blog
 alter table account_blog
   add column meta_version INTEGER NOT NULL DEFAULT 1;
 
+alter table session
+  rename column created_at to meta_created_at;
+alter table session
+  rename column updated_at to meta_updated_at;
+alter table session
+  add column meta_version INTEGER NOT NULL DEFAULT 1;
+
 -- Make blog.etag and blog.last_modified nullable
 alter table blog
   alter column etag drop not null,
