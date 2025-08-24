@@ -55,7 +55,8 @@ export class PostWebQuery {
                 post.title,
                 post.published_at
             FROM post
-            WHERE post.blog_id = ${blogID};
+            WHERE post.blog_id = ${blogID}
+            ORDER BY post.published_at DESC;
         `;
 
 		return rows.map((row) => ({
