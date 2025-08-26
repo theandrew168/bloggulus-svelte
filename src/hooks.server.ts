@@ -1,4 +1,5 @@
-import type { Handle } from "@sveltejs/kit";
+import type { Handle, ServerInit } from "@sveltejs/kit";
+import { building } from "$app/environment";
 import { Cron } from "croner";
 
 import { Command } from "$lib/server/command";
@@ -15,18 +16,30 @@ function jobErrorHandler(e: unknown) {
 	console.log(e);
 }
 
-// Delete expired sessions every minute.
-const deleteExpiredSessionsJob = new Cron("* * * * *", { catch: jobErrorHandler }, async () => {
-	const now = new Date();
-	await command.auth.deleteExpiredSessions(now);
-});
-deleteExpiredSessionsJob.trigger();
+let deleteExpiredSessionsJob: Cron;
+let syncAllBlogsJob: Cron;
 
-// Sync all blogs every 30 minutes.
-const syncAllBlogsJob = new Cron("*/30 * * * *", { catch: jobErrorHandler }, async () => {
-	await command.sync.syncAllBlogs();
-});
-syncAllBlogsJob.trigger();
+// Perform any necessary initialization at application startup.
+export const init: ServerInit = async () => {
+	// Avoid running initialization steps during the build process.
+	// https://svelte.dev/docs/kit/building-your-app#During-the-build
+	if (building) {
+		return;
+	}
+
+	// Delete expired sessions every minute.
+	deleteExpiredSessionsJob = new Cron("* * * * *", { catch: jobErrorHandler }, async () => {
+		const now = new Date();
+		await command.auth.deleteExpiredSessions(now);
+	});
+	deleteExpiredSessionsJob.trigger();
+
+	// Sync all blogs every 30 minutes.
+	syncAllBlogsJob = new Cron("*/30 * * * *", { catch: jobErrorHandler }, async () => {
+		await command.sync.syncAllBlogs();
+	});
+	syncAllBlogsJob.trigger();
+};
 
 // Be sure to close the database connection when the server shuts down.
 // Otherwise, the NodeJS process will hang indefinitely.
