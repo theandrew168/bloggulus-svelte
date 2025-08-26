@@ -36,7 +36,13 @@ export class SyncCommand {
 
 		const limit = pLimit(4);
 		const syncBlogPromises = syncableBlogs.map((blog) =>
-			limit(() => syncExistingBlog(this._repo, this._feedFetcher, blog)),
+			limit(async () => {
+				try {
+					await syncExistingBlog(this._repo, this._feedFetcher, blog);
+				} catch (error) {
+					console.log(error);
+				}
+			}),
 		);
 		await Promise.all(syncBlogPromises);
 	}
