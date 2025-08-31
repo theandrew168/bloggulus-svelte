@@ -17,9 +17,15 @@ describe("feed/parse", () => {
 			expect(determinedSiteURL.toString()).toEqual("https://example.com/blog");
 		});
 
-		it("should use the feedURL's origin if not siteURL is provided", () => {
+		it("should use the feedURL's origin if siteURL is not provided", () => {
 			const feedURL = new URL("https://example.com/atom.xml");
 			const determinedSiteURL = determineSiteURL(feedURL);
+			expect(determinedSiteURL.toString()).toEqual("https://example.com/");
+		});
+
+		it("should use the feedURL's origin if siteURL is not a valid URL", () => {
+			const feedURL = new URL("https://example.com/atom.xml");
+			const determinedSiteURL = determineSiteURL(feedURL, "/");
 			expect(determinedSiteURL.toString()).toEqual("https://example.com/");
 		});
 	});

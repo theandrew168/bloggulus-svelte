@@ -137,17 +137,8 @@ export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetche
 		return;
 	}
 
-	try {
-		const feedBlog = await parseFeed(blog.feedURL, resp.feed);
-		await syncPosts(repo, blog, feedBlog.posts);
-	} catch (error) {
-		// TODO: Fix this error inside of parseFeed -> determineSiteURL once tracked down.
-		console.log(`Error syncing blog ${blog.id} (${blog.title}):`, {
-			error,
-			feedURL: blog.feedURL,
-			siteURL: blog.siteURL,
-		});
-	}
+	const feedBlog = await parseFeed(blog.feedURL, resp.feed);
+	await syncPosts(repo, blog, feedBlog.posts);
 }
 
 export async function syncPosts(repo: Repository, blog: Blog, feedPosts: FeedPost[]): Promise<void> {

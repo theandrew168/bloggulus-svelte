@@ -18,7 +18,7 @@ export type FeedPost = {
 
 export function determineSiteURL(feedURL: URL, siteURL?: string): URL {
 	// If the site URL is provided, use it.
-	if (siteURL) {
+	if (siteURL && URL.canParse(siteURL)) {
 		return new URL(siteURL);
 	}
 
