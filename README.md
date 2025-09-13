@@ -20,7 +20,7 @@ brew install node
 ### Database
 
 This project uses [PostgreSQL](https://www.postgresql.org/) for persistent storage.
-To develop locally, you'll an instance of the database running somehow or another.
+To develop locally, you'll need an instance of the database running.
 
 ### Containers
 
