@@ -24,7 +24,7 @@ To develop locally, you'll need an instance of the database running.
 
 ### Containers
 
-I find [Docker](https://www.docker.com/) to be a nice tool for this but you can do whatever works best.
+I find [Docker](https://www.docker.com/) to be a nice tool for this but you can use whatever works best.
 
 The following command starts the necessary containers:
 
