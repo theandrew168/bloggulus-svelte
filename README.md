@@ -21,6 +21,9 @@ brew install node
 
 This project uses [PostgreSQL](https://www.postgresql.org/) for persistent storage.
 To develop locally, you'll an instance of the database running somehow or another.
+
+### Containers
+
 I find [Docker](https://www.docker.com/) to be a nice tool for this but you can do whatever works best.
 
 The following command starts the necessary containers:
