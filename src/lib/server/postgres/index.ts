@@ -5,11 +5,19 @@ import { Config } from "$lib/server/config";
 
 function connect(connectionString: string): Sql {
 	const options = parse(connectionString);
-	const host = options.host ?? "";
+
+	const rawHost = options.host ?? undefined;
+	const port = parseInt(options.port ?? "5432", 10);
+
+	// If the host starts with a slash, we assume it's a Unix socket.
+	// In that case, we don't set the `host` option and instead set the `path` option.
+	const host = rawHost?.startsWith("/") ? undefined : rawHost;
+	const path = rawHost?.startsWith("/") ? `${rawHost}/.s.PGSQL.${port}` : undefined;
+
 	const sql = postgres({
-		host: host.startsWith("/") ? undefined : host,
-		path: host.startsWith("/") ? host : undefined,
-		port: parseInt(options.port ?? "5432", 10),
+		host,
+		path,
+		port,
 		database: options.database ?? undefined,
 		username: options.user,
 		password: options.password,
