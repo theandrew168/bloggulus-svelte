@@ -1,9 +1,18 @@
+import { parse } from "pg-connection-string";
 import postgres, { type Sql } from "postgres";
 
 import { Config } from "$lib/server/config";
 
 function connect(connectionString: string): Sql {
-	const sql = postgres(connectionString, {
+	const options = parse(connectionString);
+	const host = options.host ?? "";
+	const sql = postgres({
+		host: host.startsWith("/") ? undefined : host,
+		path: host.startsWith("/") ? host : undefined,
+		port: parseInt(options.port ?? "5432", 10),
+		database: options.database ?? undefined,
+		username: options.user,
+		password: options.password,
 		onnotice: () => {},
 	});
 	return sql;
