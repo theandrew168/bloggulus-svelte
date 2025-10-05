@@ -6,8 +6,8 @@ import { Config } from "$lib/server/config";
 function connect(connectionString: string): Sql {
 	const options = parse(connectionString);
 
-	const rawHost = options.host ?? undefined;
-	const port = parseInt(options.port ?? "5432", 10);
+	const rawHost = options.host || undefined;
+	const port = parseInt(options.port || "5432", 10);
 
 	// If the host starts with a slash, we assume it's a Unix socket.
 	// In that case, we don't set the `host` option and instead set the `path` option.
@@ -18,7 +18,7 @@ function connect(connectionString: string): Sql {
 		host,
 		path,
 		port,
-		database: options.database ?? undefined,
+		database: options.database || undefined,
 		username: options.user,
 		password: options.password,
 		onnotice: () => {},
