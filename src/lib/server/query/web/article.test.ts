@@ -36,6 +36,7 @@ describe("query/web/article", () => {
 	describe("countRecent", () => {
 		it("should count recent articles", async () => {
 			const blog = new Blog(randomBlogParams());
+			blog.isPublic = true;
 			await repo.blog.create(blog);
 
 			const post1 = new Post(randomPostParams(blog));
@@ -52,6 +53,7 @@ describe("query/web/article", () => {
 	describe("listRecent", () => {
 		it("should list recent articles", async () => {
 			const blog = new Blog(randomBlogParams());
+			blog.isPublic = true;
 			await repo.blog.create(blog);
 
 			const post1 = new Post(randomPostParams(blog));
@@ -140,6 +142,7 @@ describe("query/web/article", () => {
 	describe("countRelevant", () => {
 		it("should count relevant articles", async () => {
 			const blog = new Blog(randomBlogParams());
+			blog.isPublic = true;
 			await repo.blog.create(blog);
 
 			const post1 = new Post({
@@ -164,6 +167,7 @@ describe("query/web/article", () => {
 	describe("listRelevant", () => {
 		it("should list relevant articles", async () => {
 			const blog = new Blog(randomBlogParams());
+			blog.isPublic = true;
 			await repo.blog.create(blog);
 
 			const post1 = new Post({

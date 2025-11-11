@@ -24,7 +24,10 @@ export class ArticleWebQuery {
 		const rows = await this._conn.sql<CountRow[]>`
             SELECT
                 COUNT(post.id)::INTEGER AS count
-            FROM post;
+            FROM post
+            INNER JOIN blog
+                ON blog.id = post.blog_id
+            WHERE blog.is_public = true;
         `;
 
 		return rows[0]?.count ?? -1;
@@ -37,6 +40,9 @@ export class ArticleWebQuery {
                 SELECT
                     post.id
                 FROM post
+                INNER JOIN blog
+                    ON blog.id = post.blog_id
+                WHERE blog.is_public = true
                 ORDER BY post.published_at DESC
                 LIMIT ${limit} OFFSET ${offset}
             )
@@ -137,7 +143,10 @@ export class ArticleWebQuery {
             SELECT
                 COUNT(post.id)::INTEGER AS count
             FROM post
-            WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search});
+            INNER JOIN blog
+                ON blog.id = post.blog_id
+            WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search})
+              AND blog.is_public = true;
         `;
 
 		return rows[0]?.count ?? -1;
@@ -150,6 +159,9 @@ export class ArticleWebQuery {
                 SELECT
                     post.id
                 FROM post
+                INNER JOIN blog
+                    ON blog.id = post.blog_id
+                WHERE blog.is_public = true
                 ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC NULLS LAST
                 LIMIT ${limit} OFFSET ${offset}
             )

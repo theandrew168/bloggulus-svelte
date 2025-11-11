@@ -1,86 +1,86 @@
 {
-  "name": "bloggulus",
-  "version": "0.0.1",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "dev": "vite dev",
-    "build": "svelte-kit sync && vite build",
-    "preview": "vite preview",
-    "migrate": "tsx ./src/lib/server/tools/migrate.ts",
-    "test": "NODE_ENV=test npm run migrate && vitest run",
-    "check": "tsc && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "format": "prettier --write .",
-    "update": "npm-check-updates -u"
-  },
-  "dependencies": {
-    "@iarna/toml": "^2.2.5",
-    "arctic": "^3.7.0",
-    "croner": "^9.1.0",
-    "lodash": "^4.17.21",
-    "p-limit": "^7.2.0",
-    "pg-connection-string": "^2.9.1",
-    "postgres": "^3.4.7",
-    "prom-client": "^15.1.3",
-    "rss-parser": "^3.13.0",
-    "tsx": "^4.20.6"
-  },
-  "devDependencies": {
-    "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
-    "@sveltejs/adapter-node": "^5.4.0",
-    "@sveltejs/kit": "^2.48.4",
-    "@sveltejs/vite-plugin-svelte": "^6.2.1",
-    "@types/chance": "^1.1.7",
-    "@types/lodash": "^4.17.20",
-    "@types/minimist": "^1.2.5",
-    "@types/xml2js": "^0.4.14",
-    "chance": "^1.1.13",
-    "fetch-mock": "^12.6.0",
-    "npm-check-updates": "^19.1.2",
-    "prettier": "^3.6.2",
-    "prettier-plugin-svelte": "^3.4.0",
-    "svelte": "^5.43.6",
-    "svelte-check": "^4.3.4",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.2",
-    "vitest": "^4.0.8",
-    "xml2js": "^0.6.2"
-  },
-  "prettier": {
-    "arrowParens": "always",
-    "bracketSameLine": false,
-    "bracketSpacing": true,
-    "jsxSingleQuote": false,
-    "printWidth": 120,
-    "semi": true,
-    "singleQuote": false,
-    "trailingComma": "all",
-    "useTabs": true,
-    "importOrder": [
-      "<BUILTIN_MODULES>",
-      "",
-      "<THIRD_PARTY_MODULES>",
-      "",
-      "^\\$lib/(.*)$",
-      "",
-      "^[.]"
-    ],
-    "importOrderCaseSensitive": false,
-    "importOrderTypeScriptVersion": "5.0.0",
-    "importOrderParserPlugins": [
-      "typescript"
-    ],
-    "plugins": [
-      "@ianvs/prettier-plugin-sort-imports",
-      "prettier-plugin-svelte"
-    ],
-    "overrides": [
-      {
-        "files": "*.svelte",
-        "options": {
-          "parser": "svelte"
-        }
-      }
-    ]
-  }
+	"name": "bloggulus",
+	"version": "0.0.1",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "svelte-kit sync && vite build",
+		"preview": "vite preview",
+		"migrate": "tsx ./src/lib/server/tools/migrate.ts",
+		"test": "NODE_ENV=test npm run migrate && vitest run",
+		"check": "tsc && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"format": "prettier --write .",
+		"update": "npm-check-updates -u"
+	},
+	"dependencies": {
+		"@iarna/toml": "^2.2.5",
+		"arctic": "^3.7.0",
+		"croner": "^9.1.0",
+		"lodash": "^4.17.21",
+		"p-limit": "^7.2.0",
+		"pg-connection-string": "^2.9.1",
+		"postgres": "^3.4.7",
+		"prom-client": "^15.1.3",
+		"rss-parser": "^3.13.0",
+		"tsx": "^4.20.6"
+	},
+	"devDependencies": {
+		"@ianvs/prettier-plugin-sort-imports": "^4.7.0",
+		"@sveltejs/adapter-node": "^5.4.0",
+		"@sveltejs/kit": "^2.48.4",
+		"@sveltejs/vite-plugin-svelte": "^6.2.1",
+		"@types/chance": "^1.1.7",
+		"@types/lodash": "^4.17.20",
+		"@types/minimist": "^1.2.5",
+		"@types/xml2js": "^0.4.14",
+		"chance": "^1.1.13",
+		"fetch-mock": "^12.6.0",
+		"npm-check-updates": "^19.1.2",
+		"prettier": "^3.6.2",
+		"prettier-plugin-svelte": "^3.4.0",
+		"svelte": "^5.43.6",
+		"svelte-check": "^4.3.4",
+		"typescript": "^5.9.3",
+		"vite": "^7.2.2",
+		"vitest": "^4.0.8",
+		"xml2js": "^0.6.2"
+	},
+	"prettier": {
+		"arrowParens": "always",
+		"bracketSameLine": false,
+		"bracketSpacing": true,
+		"jsxSingleQuote": false,
+		"printWidth": 120,
+		"semi": true,
+		"singleQuote": false,
+		"trailingComma": "all",
+		"useTabs": true,
+		"importOrder": [
+			"<BUILTIN_MODULES>",
+			"",
+			"<THIRD_PARTY_MODULES>",
+			"",
+			"^\\$lib/(.*)$",
+			"",
+			"^[.]"
+		],
+		"importOrderCaseSensitive": false,
+		"importOrderTypeScriptVersion": "5.0.0",
+		"importOrderParserPlugins": [
+			"typescript"
+		],
+		"plugins": [
+			"@ianvs/prettier-plugin-sort-imports",
+			"prettier-plugin-svelte"
+		],
+		"overrides": [
+			{
+				"files": "*.svelte",
+				"options": {
+					"parser": "svelte"
+				}
+			}
+		]
+	}
 }

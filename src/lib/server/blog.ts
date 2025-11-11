@@ -17,6 +17,7 @@ export type LoadBlogParams = {
 	siteURL: URL;
 	title: string;
 	syncedAt: Date;
+	isPublic: boolean;
 	etag?: string;
 	lastModified?: string;
 	metaCreatedAt: Date;
@@ -30,6 +31,7 @@ export class Blog {
 	private _siteURL: URL;
 	private _title: string;
 	private _syncedAt: Date;
+	private _isPublic: boolean;
 	private _etag?: string;
 	private _lastModified?: string;
 	private _metaCreatedAt: Date;
@@ -42,6 +44,7 @@ export class Blog {
 		this._siteURL = siteURL;
 		this._title = title;
 		this._syncedAt = syncedAt;
+		this._isPublic = false;
 		this._etag = etag;
 		this._lastModified = lastModified;
 		this._metaCreatedAt = new Date();
@@ -55,6 +58,7 @@ export class Blog {
 		siteURL,
 		title,
 		syncedAt,
+		isPublic,
 		etag,
 		lastModified,
 		metaCreatedAt,
@@ -67,6 +71,7 @@ export class Blog {
 		blog._siteURL = siteURL;
 		blog._title = title;
 		blog._syncedAt = syncedAt;
+		blog._isPublic = isPublic;
 		blog._etag = etag;
 		blog._lastModified = lastModified;
 		blog._metaCreatedAt = metaCreatedAt;
@@ -89,6 +94,14 @@ export class Blog {
 
 	get title(): string {
 		return this._title;
+	}
+
+	get isPublic(): boolean {
+		return this._isPublic;
+	}
+
+	set isPublic(isPublic: boolean) {
+		this._isPublic = isPublic;
 	}
 
 	get etag(): string | undefined {

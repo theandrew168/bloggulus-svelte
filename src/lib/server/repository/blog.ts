@@ -10,6 +10,7 @@ type BlogRow = {
 	site_url: string;
 	title: string;
 	synced_at: Date;
+	is_public: boolean;
 	etag: string | null;
 	last_modified: string | null;
 	meta_created_at: Date;
@@ -26,14 +27,25 @@ export class BlogRepository {
 
 	async create(blog: Blog): Promise<void> {
 		await this._conn.sql`
-			INSERT INTO blog
-                (id, feed_url, site_url, title, synced_at, etag, last_modified, meta_created_at, meta_updated_at, meta_version)
-            VALUES (
+			INSERT INTO blog (
+				id,
+				feed_url,
+				site_url,
+				title,
+				synced_at,
+				is_public,
+				etag,
+				last_modified,
+				meta_created_at,
+				meta_updated_at,
+				meta_version
+			) VALUES (
                 ${blog.id},
                 ${blog.feedURL.toString()},
                 ${blog.siteURL.toString()},
                 ${blog.title},
                 ${blog.syncedAt},
+				${blog.isPublic},
                 ${blog.etag ?? null},
                 ${blog.lastModified ?? null},
 				${blog.metaCreatedAt},
@@ -51,6 +63,7 @@ export class BlogRepository {
                 site_url,
                 title,
                 synced_at,
+				is_public,
                 etag,
                 last_modified,
 				meta_created_at,
@@ -71,6 +84,7 @@ export class BlogRepository {
 			siteURL: new URL(row.site_url),
 			title: row.title,
 			syncedAt: row.synced_at,
+			isPublic: row.is_public,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
 			metaCreatedAt: row.meta_created_at,
@@ -87,6 +101,7 @@ export class BlogRepository {
                 site_url,
                 title,
                 synced_at,
+				is_public,
                 etag,
                 last_modified,
 				meta_created_at,
@@ -107,6 +122,7 @@ export class BlogRepository {
 			siteURL: new URL(row.site_url),
 			title: row.title,
 			syncedAt: row.synced_at,
+			isPublic: row.is_public,
 			etag: row.etag ?? undefined,
 			lastModified: row.last_modified ?? undefined,
 			metaCreatedAt: row.meta_created_at,
@@ -124,6 +140,7 @@ export class BlogRepository {
                 site_url,
                 title,
                 synced_at,
+				is_public,
                 etag,
                 last_modified,
 				meta_created_at,
@@ -138,6 +155,7 @@ export class BlogRepository {
 				siteURL: new URL(row.site_url),
 				title: row.title,
 				syncedAt: row.synced_at,
+				isPublic: row.is_public,
 				etag: row.etag ?? undefined,
 				lastModified: row.last_modified ?? undefined,
 				metaCreatedAt: row.meta_created_at,
@@ -158,6 +176,7 @@ export class BlogRepository {
 				site_url = ${blog.siteURL.toString()},
 				title = ${blog.title},
 				synced_at = ${blog.syncedAt},
+				is_public = ${blog.isPublic},
 				etag = ${blog.etag ?? null},
 				last_modified = ${blog.lastModified ?? null},
 				meta_updated_at = ${newUpdatedAt},
