@@ -28,6 +28,13 @@ describe("feed/parse", () => {
 			const determinedSiteURL = determineSiteURL(feedURL, "/");
 			expect(determinedSiteURL.toString()).toEqual("https://example.com/");
 		});
+
+		it("should trim whitespace from the siteURL before using it", () => {
+			const feedURL = new URL("https://example.com/atom.xml");
+			const siteURL = " https://example.com/blog ";
+			const determinedSiteURL = determineSiteURL(feedURL, siteURL);
+			expect(determinedSiteURL.toString()).toEqual("https://example.com/blog");
+		});
 	});
 
 	describe("determinePostURL", () => {
@@ -54,6 +61,13 @@ describe("feed/parse", () => {
 
 		it("should default to https if no protocol is provided", () => {
 			const postURL = "example.com/posts/1";
+			const siteURL = new URL("https://example.com");
+			const determinedPostURL = determinePostURL(postURL, siteURL);
+			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
+		});
+
+		it("should trim whitespace from the postURL before processing it", () => {
+			const postURL = " https://example.com/posts/1 ";
 			const siteURL = new URL("https://example.com");
 			const determinedPostURL = determinePostURL(postURL, siteURL);
 			expect(determinedPostURL.toString()).toEqual("https://example.com/posts/1");
