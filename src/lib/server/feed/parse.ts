@@ -17,9 +17,11 @@ export type FeedPost = {
 };
 
 export function determineSiteURL(feedURL: URL, siteURL?: string): URL {
+	const url = siteURL?.trim();
+
 	// If the site URL is provided, use it.
-	if (siteURL && URL.canParse(siteURL)) {
-		return new URL(siteURL);
+	if (url && URL.canParse(url)) {
+		return new URL(url);
 	}
 
 	// Otherwise, extract the origin from the feed URL.
@@ -27,7 +29,7 @@ export function determineSiteURL(feedURL: URL, siteURL?: string): URL {
 }
 
 export function determinePostURL(postURL: string, siteURL: URL): URL {
-	let url = postURL;
+	let url = postURL.trim();
 
 	// If the post URL is relative, make it absolute.
 	if (url.startsWith("/")) {
