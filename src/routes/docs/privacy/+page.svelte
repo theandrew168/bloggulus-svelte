@@ -141,10 +141,10 @@
 	</p>
 	<ul>
 		<li>
-			<strong>Cookies or Browser Cookies.</strong> A cookie is a small file placed on Your Device. You can instruct Your
-			browser to refuse all Cookies or to indicate when a Cookie is being sent. However, if You do not accept Cookies, You
-			may not be able to use some parts of our Service. Unless you have adjusted Your browser setting so that it will refuse
-			Cookies, our Service may use Cookies.
+			<strong>Cookies or Browser Cookies.</strong> A cookie is a small file placed on Your Device. You can instruct Your browser
+			to refuse all Cookies or to indicate when a Cookie is being sent. However, if You do not accept Cookies, You may not
+			be able to use some parts of our Service. Unless you have adjusted Your browser setting so that it will refuse Cookies,
+			our Service may use Cookies.
 		</li>
 	</ul>
 	<p>
@@ -191,8 +191,8 @@
 		</li>
 		<li>
 			<p>
-				<strong>To manage Your Account:</strong> to manage Your registration as a user of the Service. The Personal Data
-				You provide can give You access to different functionalities of the Service that are available to You as a registered
+				<strong>To manage Your Account:</strong> to manage Your registration as a user of the Service. The Personal Data You
+				provide can give You access to different functionalities of the Service that are available to You as a registered
 				user.
 			</p>
 		</li>
