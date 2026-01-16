@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 };
 
 export const actions = {
-	default: async ({ locals, request }) => {
+	delete: async ({ locals, request }) => {
 		const account = locals.account;
 		if (!account) {
 			redirect(303, "/signin");
@@ -56,5 +56,49 @@ export const actions = {
 		await locals.command.blog.deleteBlog(blogID);
 
 		redirect(303, "/blogs");
+	},
+	hide: async ({ locals, request }) => {
+		const account = locals.account;
+		if (!account) {
+			redirect(303, "/signin");
+		}
+
+		if (!account.isAdmin) {
+			errorUnauthorized();
+		}
+
+		const data = await request.formData();
+		const blogID = data.get("blogID")?.toString();
+		if (!blogID) {
+			errorBadRequest();
+		}
+
+		if (!isValidUUID(blogID)) {
+			errorBadRequest();
+		}
+
+		await locals.command.blog.hideBlog(blogID);
+	},
+	show: async ({ locals, request }) => {
+		const account = locals.account;
+		if (!account) {
+			redirect(303, "/signin");
+		}
+
+		if (!account.isAdmin) {
+			errorUnauthorized();
+		}
+
+		const data = await request.formData();
+		const blogID = data.get("blogID")?.toString();
+		if (!blogID) {
+			errorBadRequest();
+		}
+
+		if (!isValidUUID(blogID)) {
+			errorBadRequest();
+		}
+
+		await locals.command.blog.showBlog(blogID);
 	},
 } satisfies Actions;

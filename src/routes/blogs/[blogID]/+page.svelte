@@ -21,12 +21,39 @@
 		<h2>Synced at:</h2>
 		<time datetime={data.blog.syncedAt.toISOString()}>{data.blog.syncedAt.toLocaleString()}</time>
 	</article>
+	<article class="visibility">
+		<h2>Visibility:</h2>
+		{#if data.blog.isPublic}
+			<span>Public</span>
+		{:else}
+			<span>Private</span>
+		{/if}
+	</article>
 	<article class="actions">
 		<h2>Actions</h2>
-		<form method="POST" use:enhance>
-			<Input type="hidden" name="blogID" value={data.blog.id} />
-			<Button>Delete</Button>
-		</form>
+		<ul>
+			<li>
+				<form method="POST" action="?/delete" use:enhance>
+					<Input type="hidden" name="blogID" value={data.blog.id} />
+					<Button>Delete</Button>
+				</form>
+			</li>
+			{#if data.blog.isPublic}
+				<li>
+					<form method="POST" action="?/hide" use:enhance>
+						<Input type="hidden" name="blogID" value={data.blog.id} />
+						<Button>Hide</Button>
+					</form>
+				</li>
+			{:else}
+				<li>
+					<form method="POST" action="?/show" use:enhance>
+						<Input type="hidden" name="blogID" value={data.blog.id} />
+						<Button>Show</Button>
+					</form>
+				</li>
+			{/if}
+		</ul>
 	</article>
 	<article class="posts">
 		<h2>{data.posts.length} Posts</h2>
@@ -76,9 +103,19 @@
 		margin-bottom: 0.5em;
 	}
 
+	.visibility h2 {
+		font-size: 1.5rem;
+		margin-bottom: 0.5em;
+	}
+
 	.actions h2 {
 		font-size: 1.5rem;
 		margin-bottom: 0.5em;
+	}
+
+	.actions ul {
+		display: flex;
+		gap: 0.5em;
 	}
 
 	.posts h2 {

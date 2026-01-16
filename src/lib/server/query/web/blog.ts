@@ -16,6 +16,7 @@ type BlogDetailsRow = {
 	site_url: string;
 	title: string;
 	synced_at: Date;
+	is_public: boolean;
 };
 
 export class BlogWebQuery {
@@ -33,7 +34,8 @@ export class BlogWebQuery {
                 blog.feed_url,
                 blog.site_url,
                 blog.title,
-                blog.synced_at
+                blog.synced_at,
+				blog.is_public
             FROM blog
             WHERE blog.id = ${blogID};
         `;
@@ -49,6 +51,7 @@ export class BlogWebQuery {
 			siteURL: row.site_url,
 			title: row.title,
 			syncedAt: row.synced_at,
+			isPublic: row.is_public,
 		};
 	}
 
@@ -60,7 +63,8 @@ export class BlogWebQuery {
                 blog.feed_url,
                 blog.site_url,
                 blog.title,
-                blog.synced_at
+                blog.synced_at,
+				blog.is_public
             FROM blog
             WHERE blog.feed_url = ${feedURL};
         `;
@@ -76,6 +80,7 @@ export class BlogWebQuery {
 			siteURL: row.site_url,
 			title: row.title,
 			syncedAt: row.synced_at,
+			isPublic: row.is_public,
 		};
 	}
 
@@ -90,7 +95,8 @@ export class BlogWebQuery {
             FROM blog
             LEFT JOIN account_blog
                 ON account_blog.blog_id = blog.id
-                AND account_blog.account_id = ${account.id};
+                AND account_blog.account_id = ${account.id}
+			ORDER BY blog.title ASC;
         `;
 
 		return rows.map((row) => ({

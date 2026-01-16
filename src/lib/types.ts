@@ -32,6 +32,7 @@ export type BlogDetails = {
 	siteURL: string;
 	title: string;
 	syncedAt: Date;
+	isPublic: boolean;
 };
 
 export type PostDetails = {
