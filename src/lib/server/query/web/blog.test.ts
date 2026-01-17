@@ -60,30 +60,102 @@ describe("query/web/blog", () => {
 		});
 	});
 
-	describe("list", () => {
+	describe("listAll", () => {
 		it("should list all blogs", async () => {
 			const account = new Account(randomAccountParams());
 			await repo.account.create(account);
 
+			// public, not followed
 			const blog1 = new Blog(randomBlogParams());
+			blog1.isPublic = true;
 			await repo.blog.create(blog1);
 
+			// private, not followed
 			const blog2 = new Blog(randomBlogParams());
+			blog2.isPublic = false;
 			await repo.blog.create(blog2);
 
-			// Follow one of the blogs.
-			account.followBlog(blog1.id);
+			// public, followed
+			const blog3 = new Blog(randomBlogParams());
+			blog3.isPublic = true;
+			await repo.blog.create(blog3);
+			account.followBlog(blog3.id);
+
+			// private, followed
+			const blog4 = new Blog(randomBlogParams());
+			blog4.isPublic = false;
+			await repo.blog.create(blog4);
+			account.followBlog(blog4.id);
+
+			// update to save the follows
 			await repo.account.update(account);
 
-			const blogs = await query.blog.list(account);
+			const blogs = await query.blog.listAll(account);
 
 			const listedBlog1 = blogs.find((blog) => blog.id === blog1.id);
 			expect(listedBlog1).toBeDefined();
-			expect(listedBlog1?.isFollowed).toEqual(true);
+			expect(listedBlog1?.isFollowed).toEqual(false);
 
 			const listedBlog2 = blogs.find((blog) => blog.id === blog2.id);
 			expect(listedBlog2).toBeDefined();
 			expect(listedBlog2?.isFollowed).toEqual(false);
+
+			const listedBlog3 = blogs.find((blog) => blog.id === blog3.id);
+			expect(listedBlog3).toBeDefined();
+			expect(listedBlog3?.isFollowed).toEqual(true);
+
+			const listedBlog4 = blogs.find((blog) => blog.id === blog4.id);
+			expect(listedBlog4).toBeDefined();
+			expect(listedBlog4?.isFollowed).toEqual(true);
+		});
+	});
+
+	describe("listVisible", () => {
+		it("should list only public or followed blogs", async () => {
+			const account = new Account(randomAccountParams());
+			await repo.account.create(account);
+
+			// public, not followed
+			const blog1 = new Blog(randomBlogParams());
+			blog1.isPublic = true;
+			await repo.blog.create(blog1);
+
+			// private, not followed
+			const blog2 = new Blog(randomBlogParams());
+			blog2.isPublic = false;
+			await repo.blog.create(blog2);
+
+			// public, followed
+			const blog3 = new Blog(randomBlogParams());
+			blog3.isPublic = true;
+			await repo.blog.create(blog3);
+			account.followBlog(blog3.id);
+
+			// private, followed
+			const blog4 = new Blog(randomBlogParams());
+			blog4.isPublic = false;
+			await repo.blog.create(blog4);
+			account.followBlog(blog4.id);
+
+			// update to save the follows
+			await repo.account.update(account);
+
+			const blogs = await query.blog.listVisible(account);
+
+			const listedBlog1 = blogs.find((blog) => blog.id === blog1.id);
+			expect(listedBlog1).toBeDefined();
+			expect(listedBlog1?.isFollowed).toEqual(false);
+
+			const listedBlog2 = blogs.find((blog) => blog.id === blog2.id);
+			expect(listedBlog2).toBeUndefined();
+
+			const listedBlog3 = blogs.find((blog) => blog.id === blog3.id);
+			expect(listedBlog3).toBeDefined();
+			expect(listedBlog3?.isFollowed).toEqual(true);
+
+			const listedBlog4 = blogs.find((blog) => blog.id === blog4.id);
+			expect(listedBlog4).toBeDefined();
+			expect(listedBlog4?.isFollowed).toEqual(true);
 		});
 	});
 });

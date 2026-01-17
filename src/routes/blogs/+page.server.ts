@@ -12,7 +12,9 @@ export const load: PageServerLoad = async ({ locals }) => {
 		redirect(303, "/signin");
 	}
 
-	const blogs = await locals.query.blog.list(account);
+	const blogs = account.isAdmin
+		? await locals.query.blog.listAll(account)
+		: await locals.query.blog.listVisible(account);
 	return { blogs };
 };
 

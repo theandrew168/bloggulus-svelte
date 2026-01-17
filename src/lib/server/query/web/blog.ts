@@ -84,8 +84,8 @@ export class BlogWebQuery {
 		};
 	}
 
-	// Powers the add / follow blogs page.
-	async list(account: Account): Promise<Blog[]> {
+	// Powers the add / follow blogs page (admins only).
+	async listAll(account: Account): Promise<Blog[]> {
 		const rows = await this._conn.sql<BlogRow[]>`
             SELECT
                 blog.id,
@@ -96,6 +96,30 @@ export class BlogWebQuery {
             LEFT JOIN account_blog
                 ON account_blog.blog_id = blog.id
                 AND account_blog.account_id = ${account.id}
+			ORDER BY blog.title ASC;
+        `;
+
+		return rows.map((row) => ({
+			id: row.id,
+			title: row.title,
+			siteURL: row.site_url,
+			isFollowed: row.is_followed,
+		}));
+	}
+
+	// Powers the add / follow blogs page (non-admins, public and / or followed only).
+	async listVisible(account: Account): Promise<Blog[]> {
+		const rows = await this._conn.sql<BlogRow[]>`
+            SELECT
+                blog.id,
+                blog.title,
+                blog.site_url,
+                account_blog.account_id IS NOT NULL AS is_followed
+            FROM blog
+            LEFT JOIN account_blog
+                ON account_blog.blog_id = blog.id
+                AND account_blog.account_id = ${account.id}
+			WHERE (blog.is_public = TRUE OR account_blog.blog_id IS NOT NULL)
 			ORDER BY blog.title ASC;
         `;
 
