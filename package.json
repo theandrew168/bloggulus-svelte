@@ -18,7 +18,7 @@
 		"@iarna/toml": "^2.2.5",
 		"arctic": "^3.7.0",
 		"croner": "^9.1.0",
-		"lodash": "^4.17.21",
+		"lodash": "^4.17.23",
 		"p-limit": "^7.2.0",
 		"pg-connection-string": "^2.10.0",
 		"postgres": "^3.4.8",
