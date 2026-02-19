@@ -1,5 +1,7 @@
 import type { UUID } from "crypto";
 
+import { SQL } from "sql-template-strings";
+
 import { Connection } from "$lib/server/postgres";
 import type { PostDetails } from "$lib/types";
 
@@ -20,7 +22,7 @@ export class PostWebQuery {
 
 	// Powers the post details page (admin only).
 	async readDetailsByID(postID: UUID): Promise<PostDetails | undefined> {
-		const rows = await this._conn.sql<PostDetailsRow[]>`
+		const { rows } = await this._conn.query<PostDetailsRow>(SQL`
             SELECT
                 post.id,
                 post.blog_id,
@@ -29,7 +31,7 @@ export class PostWebQuery {
                 post.published_at
             FROM post
             WHERE post.id = ${postID};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -47,7 +49,7 @@ export class PostWebQuery {
 
 	// Powers the blog details page (admin only).
 	async listDetailsByBlogID(blogID: UUID): Promise<PostDetails[]> {
-		const rows = await this._conn.sql<PostDetailsRow[]>`
+		const { rows } = await this._conn.query<PostDetailsRow>(SQL`
             SELECT
                 post.id,
                 post.blog_id,
@@ -57,7 +59,7 @@ export class PostWebQuery {
             FROM post
             WHERE post.blog_id = ${blogID}
             ORDER BY post.published_at DESC;
-        `;
+        `);
 
 		return rows.map((row) => ({
 			id: row.id,

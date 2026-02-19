@@ -1,3 +1,5 @@
+import { SQL } from "sql-template-strings";
+
 import { Connection } from "$lib/server/postgres";
 import type { Account, Article } from "$lib/types";
 
@@ -21,21 +23,21 @@ export class ArticleWebQuery {
 
 	// Powers the index page.
 	async countRecent(): Promise<number> {
-		const rows = await this._conn.sql<CountRow[]>`
+		const { rows } = await this._conn.query<CountRow>(SQL`
             SELECT
                 COUNT(post.id)::INTEGER AS count
             FROM post
             INNER JOIN blog
                 ON blog.id = post.blog_id
             WHERE blog.is_public = true;
-        `;
+        `);
 
 		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page.
 	async listRecent(limit: number, offset: number): Promise<Article[]> {
-		const rows = await this._conn.sql<ArticleRow[]>`
+		const { rows } = await this._conn.query<ArticleRow>(SQL`
             WITH latest AS (
                 SELECT
                     post.id
@@ -62,7 +64,7 @@ export class ArticleWebQuery {
                 ON plainto_tsquery('english', tag.name) @@ post.fts_data
             GROUP BY post.id
             ORDER BY post.published_at DESC;
-        `;
+        `);
 
 		return rows.map((row) => ({
 			title: row.title,
@@ -76,7 +78,7 @@ export class ArticleWebQuery {
 
 	// Powers the index page.
 	async countRecentByAccount(account: Account): Promise<number> {
-		const rows = await this._conn.sql<CountRow[]>`
+		const { rows } = await this._conn.query<CountRow>(SQL`
             SELECT
                 COUNT(post.id)::INTEGER AS count
             FROM post
@@ -87,14 +89,14 @@ export class ArticleWebQuery {
             INNER JOIN account
                 ON account.id = account_blog.account_id
             WHERE account.id = ${account.id};
-        `;
+        `);
 
 		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page.
 	async listRecentByAccount(account: Account, limit: number, offset: number): Promise<Article[]> {
-		const rows = await this._conn.sql<ArticleRow[]>`
+		const { rows } = await this._conn.query<ArticleRow>(SQL`
             WITH latest AS (
                 SELECT
                     post.id
@@ -125,7 +127,7 @@ export class ArticleWebQuery {
                 ON plainto_tsquery('english', tag.name) @@ post.fts_data
             GROUP BY post.id
             ORDER BY post.published_at DESC;
-        `;
+        `);
 
 		return rows.map((row) => ({
 			title: row.title,
@@ -139,7 +141,7 @@ export class ArticleWebQuery {
 
 	// Powers the index page (when searching).
 	async countRelevant(search: string): Promise<number> {
-		const rows = await this._conn.sql<CountRow[]>`
+		const { rows } = await this._conn.query<CountRow>(SQL`
             SELECT
                 COUNT(post.id)::INTEGER AS count
             FROM post
@@ -147,14 +149,14 @@ export class ArticleWebQuery {
                 ON blog.id = post.blog_id
             WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search})
               AND blog.is_public = true;
-        `;
+        `);
 
 		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page (when searching).
 	async listRelevant(search: string, limit: number, offset: number): Promise<Article[]> {
-		const rows = await this._conn.sql<ArticleRow[]>`
+		const { rows } = await this._conn.query<ArticleRow>(SQL`
             WITH relevant AS (
                 SELECT
                     post.id
@@ -182,7 +184,7 @@ export class ArticleWebQuery {
             WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search})
             GROUP BY post.id
             ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC NULLS LAST;
-        `;
+        `);
 
 		return rows.map((row) => ({
 			title: row.title,
@@ -196,7 +198,7 @@ export class ArticleWebQuery {
 
 	// Powers the index page (when searching).
 	async countRelevantByAccount(account: Account, search: string): Promise<number> {
-		const rows = await this._conn.sql<CountRow[]>`
+		const { rows } = await this._conn.query<CountRow>(SQL`
             SELECT
                 COUNT(post.id)::INTEGER AS count
             FROM post
@@ -208,14 +210,14 @@ export class ArticleWebQuery {
                 ON account.id = account_blog.account_id
             WHERE account.id = ${account.id}
                 AND post.fts_data @@ websearch_to_tsquery('english',  ${search});
-        `;
+        `);
 
 		return rows[0]?.count ?? -1;
 	}
 
 	// Powers the index page (when searching).
 	async listRelevantByAccount(account: Account, search: string, limit: number, offset: number): Promise<Article[]> {
-		const rows = await this._conn.sql<ArticleRow[]>`
+		const { rows } = await this._conn.query<ArticleRow>(SQL`
             WITH relevant AS (
                 SELECT
                     post.id
@@ -247,7 +249,7 @@ export class ArticleWebQuery {
             WHERE post.fts_data @@ websearch_to_tsquery('english',  ${search})
             GROUP BY post.id
             ORDER BY ts_rank_cd(post.fts_data, websearch_to_tsquery('english',  ${search})) DESC NULLS LAST;
-        `;
+        `);
 
 		return rows.map((row) => ({
 			title: row.title,

@@ -1,5 +1,7 @@
 import type { UUID } from "crypto";
 
+import { SQL } from "sql-template-strings";
+
 import { Connection } from "$lib/server/postgres";
 import type { Account, Blog, BlogDetails } from "$lib/types";
 
@@ -28,7 +30,7 @@ export class BlogWebQuery {
 
 	// Powers the blog details page (admin only).
 	async readDetailsByID(blogID: UUID): Promise<BlogDetails | undefined> {
-		const rows = await this._conn.sql<BlogDetailsRow[]>`
+		const { rows } = await this._conn.query<BlogDetailsRow>(SQL`
             SELECT
                 blog.id,
                 blog.feed_url,
@@ -38,7 +40,7 @@ export class BlogWebQuery {
 				blog.is_public
             FROM blog
             WHERE blog.id = ${blogID};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -57,7 +59,7 @@ export class BlogWebQuery {
 
 	// Powers the add / follow blogs page.
 	async readDetailsByFeedURL(feedURL: string): Promise<BlogDetails | undefined> {
-		const rows = await this._conn.sql<BlogDetailsRow[]>`
+		const { rows } = await this._conn.query<BlogDetailsRow>(SQL`
             SELECT
                 blog.id,
                 blog.feed_url,
@@ -67,7 +69,7 @@ export class BlogWebQuery {
 				blog.is_public
             FROM blog
             WHERE blog.feed_url = ${feedURL};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -86,7 +88,7 @@ export class BlogWebQuery {
 
 	// Powers the add / follow blogs page (admins only).
 	async listAll(account: Account): Promise<Blog[]> {
-		const rows = await this._conn.sql<BlogRow[]>`
+		const { rows } = await this._conn.query<BlogRow>(SQL`
             SELECT
                 blog.id,
                 blog.title,
@@ -97,7 +99,7 @@ export class BlogWebQuery {
                 ON account_blog.blog_id = blog.id
                 AND account_blog.account_id = ${account.id}
 			ORDER BY blog.title ASC;
-        `;
+        `);
 
 		return rows.map((row) => ({
 			id: row.id,
@@ -109,7 +111,7 @@ export class BlogWebQuery {
 
 	// Powers the add / follow blogs page (non-admins, public and / or followed only).
 	async listVisible(account: Account): Promise<Blog[]> {
-		const rows = await this._conn.sql<BlogRow[]>`
+		const { rows } = await this._conn.query<BlogRow>(SQL`
             SELECT
                 blog.id,
                 blog.title,
@@ -121,7 +123,7 @@ export class BlogWebQuery {
                 AND account_blog.account_id = ${account.id}
 			WHERE (blog.is_public = TRUE OR account_blog.blog_id IS NOT NULL)
 			ORDER BY blog.title ASC;
-        `;
+        `);
 
 		return rows.map((row) => ({
 			id: row.id,

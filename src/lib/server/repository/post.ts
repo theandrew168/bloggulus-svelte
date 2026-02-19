@@ -1,3 +1,5 @@
+import { SQL } from "sql-template-strings";
+
 import { Post } from "$lib/server/post";
 import { Connection } from "$lib/server/postgres";
 import type { UUID } from "$lib/types";
@@ -24,7 +26,7 @@ export class PostRepository {
 	}
 
 	async create(post: Post): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			INSERT INTO post
                 (id, blog_id, url, title, published_at, content, meta_created_at, meta_updated_at, meta_version)
             VALUES (
@@ -38,11 +40,11 @@ export class PostRepository {
 				${post.metaUpdatedAt},
 				${post.metaVersion}
             );
-		`;
+		`);
 	}
 
 	async readByID(id: UUID): Promise<Post | undefined> {
-		const rows = await this._conn.sql<PostRow[]>`
+		const { rows } = await this._conn.query<PostRow>(SQL`
             SELECT
                 id,
                 blog_id,
@@ -55,7 +57,7 @@ export class PostRepository {
 				meta_version
             FROM post
             WHERE id = ${id};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -77,7 +79,7 @@ export class PostRepository {
 
 	// Used for syncing a blog's posts.
 	async listByBlogID(blogID: UUID): Promise<Post[]> {
-		const rows = await this._conn.sql<PostRow[]>`
+		const { rows } = await this._conn.query<PostRow>(SQL`
             SELECT
                 id,
                 blog_id,
@@ -90,7 +92,7 @@ export class PostRepository {
 				meta_version
             FROM post
             WHERE blog_id = ${blogID};
-        `;
+        `);
 		return rows.map((row) =>
 			Post.load({
 				id: row.id,
@@ -110,7 +112,7 @@ export class PostRepository {
 		const newUpdatedAt = new Date();
 		const newVersion = post.metaVersion + 1;
 
-		const rows = await this._conn.sql`
+		const { rows } = await this._conn.query(SQL`
 			UPDATE post
 			SET
 				blog_id = ${post.blogID},
@@ -123,7 +125,7 @@ export class PostRepository {
 			WHERE id = ${post.id}
 				AND meta_version = ${post.metaVersion}
 			RETURNING id;
-		`;
+		`);
 
 		if (rows.length !== 1) {
 			throw new ConcurrentUpdateError("Post", post.id);
@@ -134,10 +136,10 @@ export class PostRepository {
 	}
 
 	async delete(post: Post): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			DELETE
 			FROM post
 			WHERE id = ${post.id};
-		`;
+		`);
 	}
 }

@@ -1,3 +1,5 @@
+import { SQL } from "sql-template-strings";
+
 import { Connection } from "$lib/server/postgres";
 import { Session } from "$lib/server/session";
 import { sha256 } from "$lib/server/utils";
@@ -21,7 +23,7 @@ export class SessionRepository {
 
 	async create(session: Session, token: string): Promise<void> {
 		const tokenHash = await sha256(token);
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			INSERT INTO session
                 (id, account_id, expires_at, token_hash, meta_created_at, meta_updated_at, meta_version)
             VALUES (
@@ -33,11 +35,11 @@ export class SessionRepository {
 				${session.metaUpdatedAt},
 				${session.metaVersion}
 			);
-		`;
+		`);
 	}
 
 	async readByID(id: UUID): Promise<Session | undefined> {
-		const rows = await this._conn.sql<SessionRow[]>`
+		const { rows } = await this._conn.query<SessionRow>(SQL`
             SELECT
                 id,
                 account_id,
@@ -47,7 +49,7 @@ export class SessionRepository {
 				meta_version
             FROM session
             WHERE id = ${id};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -66,7 +68,7 @@ export class SessionRepository {
 
 	async readByToken(token: string): Promise<Session | undefined> {
 		const tokenHash = await sha256(token);
-		const rows = await this._conn.sql<SessionRow[]>`
+		const { rows } = await this._conn.query<SessionRow>(SQL`
             SELECT
                 id,
                 account_id,
@@ -76,7 +78,7 @@ export class SessionRepository {
 				meta_version
             FROM session
             WHERE token_hash = ${tokenHash};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -95,7 +97,7 @@ export class SessionRepository {
 
 	// Used for deleting expired sessions.
 	async listExpired(now: Date): Promise<Session[]> {
-		const rows = await this._conn.sql<SessionRow[]>`
+		const { rows } = await this._conn.query<SessionRow>(SQL`
             SELECT
                 id,
                 account_id,
@@ -105,7 +107,7 @@ export class SessionRepository {
 				meta_version
             FROM session
             WHERE expires_at <= ${now};
-        `;
+        `);
 
 		return rows.map((row) =>
 			Session.load({
@@ -120,10 +122,10 @@ export class SessionRepository {
 	}
 
 	async delete(session: Session): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			DELETE
 			FROM session
 			WHERE id = ${session.id};
-		`;
+		`);
 	}
 }

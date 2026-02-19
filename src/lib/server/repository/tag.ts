@@ -1,3 +1,5 @@
+import { SQL } from "sql-template-strings";
+
 import { Connection } from "$lib/server/postgres";
 import { Tag } from "$lib/server/tag";
 import type { UUID } from "$lib/types";
@@ -18,7 +20,7 @@ export class TagRepository {
 	}
 
 	async create(tag: Tag): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			INSERT INTO tag
                 (id, name, meta_created_at, meta_updated_at, meta_version)
             VALUES (
@@ -28,11 +30,11 @@ export class TagRepository {
 				${tag.metaUpdatedAt},
 				${tag.metaVersion}
 			);
-		`;
+		`);
 	}
 
 	async readByID(id: UUID): Promise<Tag | undefined> {
-		const rows = await this._conn.sql<TagRow[]>`
+		const { rows } = await this._conn.query<TagRow>(SQL`
             SELECT
                 id,
                 name,
@@ -41,7 +43,7 @@ export class TagRepository {
 				meta_version
             FROM tag
             WHERE id = ${id};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -58,7 +60,7 @@ export class TagRepository {
 	}
 
 	async readByName(name: string): Promise<Tag | undefined> {
-		const rows = await this._conn.sql<TagRow[]>`
+		const { rows } = await this._conn.query<TagRow>(SQL`
             SELECT
                 id,
                 name,
@@ -67,7 +69,7 @@ export class TagRepository {
 				meta_version
             FROM tag
             WHERE name = ${name};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -84,10 +86,10 @@ export class TagRepository {
 	}
 
 	async delete(tag: Tag): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			DELETE
 			FROM tag
 			WHERE id = ${tag.id};
-		`;
+		`);
 	}
 }

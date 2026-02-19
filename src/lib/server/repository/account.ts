@@ -1,3 +1,5 @@
+import { SQL } from "sql-template-strings";
+
 import { Account } from "$lib/server/account";
 import { Connection } from "$lib/server/postgres";
 import type { UUID } from "$lib/types";
@@ -22,7 +24,7 @@ export class AccountRepository {
 	}
 
 	async create(account: Account): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			INSERT INTO account
                 (id, username, is_admin, meta_created_at, meta_updated_at, meta_version)
             VALUES (
@@ -33,11 +35,11 @@ export class AccountRepository {
 				${account.metaUpdatedAt},
 				${account.metaVersion}
 			);
-		`;
+		`);
 	}
 
 	async readByID(id: UUID): Promise<Account | undefined> {
-		const rows = await this._conn.sql<AccountRow[]>`
+		const { rows } = await this._conn.query<AccountRow>(SQL`
 			SELECT
 				account.id,
 				account.username,
@@ -51,7 +53,7 @@ export class AccountRepository {
 				ON account_blog.account_id = account.id
 			WHERE account.id = ${id}
 			GROUP BY account.id;
-		`;
+		`);
 
 		const row = rows[0];
 		if (!row) {
@@ -70,7 +72,7 @@ export class AccountRepository {
 	}
 
 	async readByUsername(username: string): Promise<Account | undefined> {
-		const rows = await this._conn.sql<AccountRow[]>`
+		const { rows } = await this._conn.query<AccountRow>(SQL`
 			SELECT
 				account.id,
 				account.username,
@@ -84,7 +86,7 @@ export class AccountRepository {
 				ON account_blog.account_id = account.id
 			WHERE account.username = ${username}
 			GROUP BY account.id;
-		`;
+		`);
 
 		const row = rows[0];
 		if (!row) {
@@ -106,7 +108,7 @@ export class AccountRepository {
 		const newUpdatedAt = new Date();
 		const newVersion = account.metaVersion + 1;
 
-		const rows = await this._conn.sql`
+		const { rows } = await this._conn.query(SQL`
 			UPDATE account
 			SET
 				is_admin = ${account.isAdmin},
@@ -115,35 +117,35 @@ export class AccountRepository {
 			WHERE id = ${account.id}
 				AND meta_version = ${account.metaVersion}
 			RETURNING id;
-		`;
+		`);
 
 		if (rows.length !== 1) {
 			throw new ConcurrentUpdateError("Account", account.id);
 		}
 
-		const followedBlogIDRows = await this._conn.sql<{ blog_id: UUID }[]>`
+		const { rows: followedBlogIDRows } = await this._conn.query<{ blog_id: UUID }>(SQL`
 			SELECT blog_id
 			FROM account_blog
 			WHERE account_id = ${account.id};
-		`;
+		`);
 		const followedBlogIDs = new Set(followedBlogIDRows.map((row) => row.blog_id));
 
 		const blogsToFollow = account.followedBlogIDs.difference(followedBlogIDs);
 		for (const blogID of blogsToFollow) {
-			await this._conn.sql`
+			await this._conn.query(SQL`
 				INSERT INTO account_blog
 					(account_id, blog_id)
 				VALUES
 					(${account.id}, ${blogID});
-			`;
+			`);
 		}
 
 		const blogsToUnfollow = followedBlogIDs.difference(account.followedBlogIDs);
 		for (const blogID of blogsToUnfollow) {
-			await this._conn.sql`
+			await this._conn.query(SQL`
 				DELETE FROM account_blog
 				WHERE account_id = ${account.id} AND blog_id = ${blogID};
-			`;
+			`);
 		}
 
 		account.metaUpdatedAt = newUpdatedAt;
@@ -151,10 +153,10 @@ export class AccountRepository {
 	}
 
 	async delete(account: Account): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			DELETE
 			FROM account
 			WHERE id = ${account.id};
-		`;
+		`);
 	}
 }

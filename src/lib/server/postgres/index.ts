@@ -1,66 +1,64 @@
-import { parse } from "pg-connection-string";
-import postgres, { type Sql } from "postgres";
+import { Pool, type PoolClient, type QueryConfig, type QueryResult, type QueryResultRow } from "pg";
 
 import { Config } from "$lib/server/config";
 
-function connect(connectionString: string): Sql {
-	const options = parse(connectionString);
-
-	const rawHost = options.host || undefined;
-	const port = parseInt(options.port || "5432", 10);
-
-	// If the host starts with a slash, we assume it's a Unix socket.
-	// In that case, we don't set the `host` option and instead set the `path` option.
-	const host = rawHost?.startsWith("/") ? undefined : rawHost;
-	const path = rawHost?.startsWith("/") ? `${rawHost}/.s.PGSQL.${port}` : undefined;
-
-	const sql = postgres({
-		host,
-		path,
-		port,
-		database: options.database || undefined,
-		username: options.user,
-		password: options.password,
-		onnotice: () => {},
-	});
-	return sql;
+function connectPool(connectionString: string): Pool {
+	return new Pool({ connectionString });
 }
 
 export class Connection {
 	private static _instance?: Connection;
-	readonly sql: Sql;
+	private _db: Pool | PoolClient;
 
-	constructor(sql: Sql) {
-		this.sql = sql;
+	constructor(db: Pool | PoolClient) {
+		this._db = db;
 	}
 
 	static getInstance(): Connection {
 		if (!this._instance) {
 			const config = Config.getInstance();
-			const sql = connect(config.databaseURI);
-			this._instance = new Connection(sql);
+			const pool = connectPool(config.databaseURI);
+			this._instance = new Connection(pool);
 		}
 
 		return this._instance;
 	}
 
 	async close(): Promise<void> {
-		if (!this.sql) {
-			return;
+		if (!(this._db instanceof Pool)) {
+			throw new Error("Only pools (not individual connections) can be closed.");
 		}
 
-		await this.sql.end();
+		await this._db.end();
 		Connection._instance = undefined;
 	}
 
-	async withTransaction(callback: (conn: Connection) => Promise<void>): Promise<void> {
-		await this.sql.begin(async (tx) => {
-			const txConn = new Connection(tx);
+	async query<T extends QueryResultRow>(config: QueryConfig): Promise<QueryResult<T>> {
+		return this._db.query<T>(config);
+	}
 
-			// Await this here to ensure the transaction is completed before returning.
-			// Otherwise, the transaction might not be committed or rolled back properly
-			// due to errors being missed from unawaited promises.
-			await callback(txConn);
-		});
+	async withTransaction<T>(callback: (conn: Connection) => Promise<T>): Promise<T> {
+		if (!(this._db instanceof Pool)) {
+			throw new Error("Transactions cannot be nested.");
+		}
+
+		const client = await this._db.connect();
+		try {
+			await client.query("BEGIN;");
+
+			// Await the callback here to ensure the transaction is completed before returning.
+			// Otherwise, the transaction might not be committed or rolled back properly due to
+			// errors being missed from unawaited promises.
+			const txConn = new Connection(client);
+			const result = await callback(txConn);
+
+			await client.query("COMMIT;");
+			return result;
+		} catch (error) {
+			await client.query("ROLLBACK;");
+			throw error;
+		} finally {
+			client.release();
+		}
 	}
 }

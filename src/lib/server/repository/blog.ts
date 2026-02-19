@@ -1,3 +1,5 @@
+import { SQL } from "sql-template-strings";
+
 import { Blog } from "$lib/server/blog";
 import { Connection } from "$lib/server/postgres";
 import type { UUID } from "$lib/types";
@@ -26,7 +28,7 @@ export class BlogRepository {
 	}
 
 	async create(blog: Blog): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			INSERT INTO blog (
 				id,
 				feed_url,
@@ -52,11 +54,11 @@ export class BlogRepository {
 				${blog.metaUpdatedAt},
 				${blog.metaVersion}
             );
-		`;
+		`);
 	}
 
 	async readByID(id: UUID): Promise<Blog | undefined> {
-		const rows = await this._conn.sql<BlogRow[]>`
+		const { rows } = await this._conn.query<BlogRow>(SQL`
             SELECT
                 id,
                 feed_url,
@@ -71,7 +73,7 @@ export class BlogRepository {
 				meta_version
             FROM blog
             WHERE id = ${id};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -94,7 +96,7 @@ export class BlogRepository {
 	}
 
 	async readByFeedURL(feedURL: URL): Promise<Blog | undefined> {
-		const rows = await this._conn.sql<BlogRow[]>`
+		const { rows } = await this._conn.query<BlogRow>(SQL`
             SELECT
                 id,
                 feed_url,
@@ -109,7 +111,7 @@ export class BlogRepository {
 				meta_version
             FROM blog
             WHERE feed_url = ${feedURL.toString()};
-        `;
+        `);
 
 		const row = rows[0];
 		if (!row) {
@@ -133,7 +135,7 @@ export class BlogRepository {
 
 	// Used for syncing blogs.
 	async list(): Promise<Blog[]> {
-		const rows = await this._conn.sql<BlogRow[]>`
+		const { rows } = await this._conn.query<BlogRow>(SQL`
             SELECT
                 id,
                 feed_url,
@@ -147,7 +149,7 @@ export class BlogRepository {
 				meta_updated_at,
 				meta_version
             FROM blog;
-        `;
+        `);
 		return rows.map((row) =>
 			Blog.load({
 				id: row.id,
@@ -169,7 +171,7 @@ export class BlogRepository {
 		const newUpdatedAt = new Date();
 		const newVersion = blog.metaVersion + 1;
 
-		const rows = await this._conn.sql`
+		const { rows } = await this._conn.query(SQL`
 			UPDATE blog
 			SET
 				feed_url = ${blog.feedURL.toString()},
@@ -184,7 +186,7 @@ export class BlogRepository {
 			WHERE id = ${blog.id}
 				AND meta_version = ${blog.metaVersion}
 			RETURNING id;
-		`;
+		`);
 
 		if (rows.length !== 1) {
 			throw new ConcurrentUpdateError("Blog", blog.id);
@@ -195,10 +197,10 @@ export class BlogRepository {
 	}
 
 	async delete(blog: Blog): Promise<void> {
-		await this._conn.sql`
+		await this._conn.query(SQL`
 			DELETE
 			FROM blog
 			WHERE id = ${blog.id};
-		`;
+		`);
 	}
 }
