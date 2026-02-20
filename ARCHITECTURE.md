@@ -45,6 +45,8 @@ By enforcing this, the application becomes decoupled from any specific user inte
 As a general rule, commands only mutate the system: they don't return any data back to the caller (except in very specific circumstances).
 Commands also tend to be "resource-based" and concern themselves with the modification of a small number of domain models at a time.
 "Small number" here refers to the different model types themselves and not their actual instance quantities.
+Additionally, arguments passed to commands should be primitives (strings, IDs, etc) and not rich domain models.
+The models will be loaded, modified, and stored as necessary when the command performs its duties.
 
 Commands typically follow a structure of:
 
@@ -63,3 +65,20 @@ Instead, they obtain data directly via whatever strategy best fits the situation
 This could range from writing raw SQL queries to cached in-memory stores to eventually-consistent "change data capture".
 Queries have much more flexibility in _how_ they access the data because read-only operations are inherently safer and less complex than mutations.
 To put things another way: getting "reads" wrong is less dangerous than getting "writes" wrong.
+
+## Frontend
+
+The frontend is written with a "mobile-first" mindset.
+Since most users are likely to visit this app on a mobile device, the priority should be ensuring that everything works and looks nice there.
+Wider desktop views are also support but are typically built _after_ the mobile-friendly view.
+
+The frontend code here makes uses vanilla CSS with no extra frameworks.
+Because SvelteKit already handles scoping and isolation, class names need only be unique per-component and not globally unique.
+The guidelines of semantic HTML are followed as closely as possible.
+That being said, CSS is still based on clear and informative class names.
+For example, even if a component contains a single, semantic `ul` list element, prefer to give it a meaningful class and write any CSS to target that instead of the `ul` element directly.
+
+Default browser styles are reset using [minireset](https://jgthms.com/minireset.css/) vendored at `src/lib/assets/css/reset.css`.
+When it comes to fonts, a prioritized list of [system fonts](https://systemfontstack.com/) (defined in `src/lib/assets/css/font.css`) are used and no extra fonts are loaded.
+Some commonly-used and shared CSS values (like colors) live in `src/lib/assets/css/global.css`.
+Note that, despite not using [Tailwind CSS](https://tailwindcss.com/) directly, some of its colors are copied for convenience.
