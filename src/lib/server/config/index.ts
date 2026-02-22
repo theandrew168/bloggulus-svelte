@@ -2,16 +2,14 @@ import { readFileSync, statSync } from "node:fs";
 
 import TOML from "@iarna/toml";
 
-import { InternalError } from "$lib/server/types/errors";
-
-export class MissingConfigError extends InternalError {
+export class MissingConfigError extends Error {
 	constructor(name: string) {
 		super(`Missing configuration: ${name}`);
 		this.name = "MissingConfigError";
 	}
 }
 
-export class InvalidConfigError extends InternalError {
+export class InvalidConfigError extends Error {
 	constructor(name: string, value: unknown) {
 		super(`Invalid configuration: ${name} = ${value}`);
 		this.name = "InvalidConfigError";

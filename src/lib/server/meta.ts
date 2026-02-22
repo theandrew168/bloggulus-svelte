@@ -4,6 +4,12 @@ export type LoadMetaParams = {
 	version: number;
 };
 
+/**
+ * Meta class to handle metadata for entities:
+ * - createdAt: Date when the entity was created (immutable)
+ * - updatedAt: Date when the entity was last updated
+ * - version: Increasing integer version of the entity (used for optimistic concurrency control)
+ */
 export class Meta {
 	private _createdAt: Date;
 	private _updatedAt: Date;
