@@ -19,8 +19,8 @@
 			{/each}
 		</ul>
 	</header>
-	<p><a class="title" href={article.url}>{article.title}</a></p>
-	<p><a class="blogTitle" href={article.blogURL}>{article.blogTitle}</a></p>
+	<p><a class="title" href={article.url.href}>{article.title}</a></p>
+	<p><a class="blogTitle" href={article.blogURL.href}>{article.blogTitle}</a></p>
 </article>
 
 <style>

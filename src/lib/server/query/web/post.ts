@@ -41,7 +41,7 @@ export class PostWebQuery {
 		return {
 			id: row.id,
 			blogID: row.blog_id,
-			url: row.url,
+			url: new URL(row.url),
 			title: row.title,
 			publishedAt: row.published_at,
 		};
@@ -64,7 +64,7 @@ export class PostWebQuery {
 		return rows.map((row) => ({
 			id: row.id,
 			blogID: row.blog_id,
-			url: row.url,
+			url: new URL(row.url),
 			title: row.title,
 			publishedAt: row.published_at,
 		}));

@@ -68,9 +68,9 @@ export class ArticleWebQuery {
 
 		return rows.map((row) => ({
 			title: row.title,
-			url: row.url,
+			url: new URL(row.url),
 			blogTitle: row.blog_title,
-			blogURL: row.blog_url,
+			blogURL: new URL(row.blog_url),
 			publishedAt: row.published_at,
 			tags: row.tags,
 		}));
@@ -131,9 +131,9 @@ export class ArticleWebQuery {
 
 		return rows.map((row) => ({
 			title: row.title,
-			url: row.url,
+			url: new URL(row.url),
 			blogTitle: row.blog_title,
-			blogURL: row.blog_url,
+			blogURL: new URL(row.blog_url),
 			publishedAt: row.published_at,
 			tags: row.tags,
 		}));
@@ -188,9 +188,9 @@ export class ArticleWebQuery {
 
 		return rows.map((row) => ({
 			title: row.title,
-			url: row.url,
+			url: new URL(row.url),
 			blogTitle: row.blog_title,
-			blogURL: row.blog_url,
+			blogURL: new URL(row.blog_url),
 			publishedAt: row.published_at,
 			tags: row.tags,
 		}));
@@ -253,9 +253,9 @@ export class ArticleWebQuery {
 
 		return rows.map((row) => ({
 			title: row.title,
-			url: row.url,
+			url: new URL(row.url),
 			blogTitle: row.blog_title,
-			blogURL: row.blog_url,
+			blogURL: new URL(row.blog_url),
 			publishedAt: row.published_at,
 			tags: row.tags,
 		}));

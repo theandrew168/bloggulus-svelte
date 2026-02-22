@@ -13,8 +13,8 @@
 	<article class="links">
 		<h1>{data.blog.title}</h1>
 		<ul>
-			<li><a href={data.blog.siteURL}>(Site URL)</a></li>
-			<li><a href={data.blog.feedURL}>(Feed URL)</a></li>
+			<li><a href={data.blog.siteURL.href}>(Site URL)</a></li>
+			<li><a href={data.blog.feedURL.href}>(Feed URL)</a></li>
 		</ul>
 	</article>
 	<article class="synced">

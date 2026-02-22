@@ -1,7 +1,3 @@
-// NOTE: The URLs in the types below could be replaced with full `URL`s once
-// devalue supports it (can properly serialize / deserialize them):
-// https://github.com/Rich-Harris/devalue/pull/92
-
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 export type Account = {
@@ -12,9 +8,9 @@ export type Account = {
 
 export type Article = {
 	title: string;
-	url: string;
+	url: URL;
 	blogTitle: string;
-	blogURL: string;
+	blogURL: URL;
 	publishedAt: Date;
 	tags: string[];
 };
@@ -22,14 +18,14 @@ export type Article = {
 export type Blog = {
 	id: UUID;
 	title: string;
-	siteURL: string;
+	siteURL: URL;
 	isFollowed: boolean;
 };
 
 export type BlogDetails = {
 	id: UUID;
-	feedURL: string;
-	siteURL: string;
+	feedURL: URL;
+	siteURL: URL;
 	title: string;
 	syncedAt: Date;
 	isPublic: boolean;
@@ -38,7 +34,7 @@ export type BlogDetails = {
 export type PostDetails = {
 	id: UUID;
 	blogID: UUID;
-	url: string;
+	url: URL;
 	title: string;
 	publishedAt: Date;
 };

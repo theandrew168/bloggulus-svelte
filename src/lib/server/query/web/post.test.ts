@@ -25,7 +25,7 @@ describe("query/web/post", () => {
 
 			expect(postDetails?.id).toEqual(post.id);
 			expect(postDetails?.blogID).toEqual(blog.id);
-			expect(postDetails?.url).toEqual(post.url.toString());
+			expect(postDetails?.url).toEqual(post.url);
 			expect(postDetails?.title).toEqual(post.title);
 			expect(postDetails?.publishedAt).toEqual(post.publishedAt);
 		});

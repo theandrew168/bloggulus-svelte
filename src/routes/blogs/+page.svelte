@@ -25,7 +25,7 @@
 				{#if data.account?.isAdmin}
 					<a href="/blogs/{blog.id}">{blog.title}</a>
 				{:else}
-					<a href={blog.siteURL}>{blog.title}</a>
+					<a href={blog.siteURL.href}>{blog.title}</a>
 				{/if}
 
 				{#if blog.isFollowed}

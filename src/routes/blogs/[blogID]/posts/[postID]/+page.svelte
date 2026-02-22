@@ -13,7 +13,7 @@
 	<article class="links">
 		<h1>{data.post.title}</h1>
 		<ul>
-			<li><a href={data.post.url}>(URL)</a></li>
+			<li><a href={data.post.url.href}>(URL)</a></li>
 			<li><a href={`/blogs/${data.post.blogID}`}>(Blog)</a></li>
 		</ul>
 	</article>
