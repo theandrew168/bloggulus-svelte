@@ -6,7 +6,7 @@ import { Command } from "$lib/server/command";
 import { Config } from "$lib/server/config";
 import { Connection } from "$lib/server/postgres";
 import { WebQuery } from "$lib/server/query/web";
-import { SESSION_COOKIE_NAME } from "$lib/server/web/cookies";
+import { SESSION_COOKIE_NAME } from "$lib/server/web/cookie";
 
 const config = Config.getInstance();
 const command = Command.getInstance();

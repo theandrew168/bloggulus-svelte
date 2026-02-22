@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 
-import { SESSION_COOKIE_NAME } from "$lib/server/web/cookies";
+import { SESSION_COOKIE_NAME } from "$lib/server/web/cookie";
 
 import type { Actions } from "./$types";
 

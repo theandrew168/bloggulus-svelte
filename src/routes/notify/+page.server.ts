@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 
-import { NOTIFICATION_COOKIE_NAME, sessionCookieOptions } from "$lib/server/web/cookies";
+import { NOTIFICATION_COOKIE_NAME, sessionCookieOptions } from "$lib/server/web/cookie";
 
 import type { PageServerLoad } from "./$types";
 

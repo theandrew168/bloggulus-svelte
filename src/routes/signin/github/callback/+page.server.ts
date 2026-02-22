@@ -8,7 +8,7 @@ import {
 	permanentCookieOptions,
 	SESSION_COOKIE_NAME,
 	sessionCookieOptions,
-} from "$lib/server/web/cookies";
+} from "$lib/server/web/cookie";
 import { errorBadRequest } from "$lib/server/web/errors";
 
 import type { PageServerLoad } from "./$types";
