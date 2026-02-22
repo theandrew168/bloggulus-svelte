@@ -1,6 +1,7 @@
 import { SQL } from "sql-template-strings";
 
 import { Blog } from "$lib/server/blog";
+import { Meta } from "$lib/server/meta";
 import { Connection } from "$lib/server/postgres";
 import type { UUID } from "$lib/types";
 
@@ -19,6 +20,26 @@ type BlogRow = {
 	meta_updated_at: Date;
 	meta_version: number;
 };
+
+function rowToBlog(row: BlogRow): Blog {
+	const meta = Meta.load({
+		createdAt: row.meta_created_at,
+		updatedAt: row.meta_updated_at,
+		version: row.meta_version,
+	});
+
+	return Blog.load({
+		id: row.id,
+		feedURL: new URL(row.feed_url),
+		siteURL: new URL(row.site_url),
+		title: row.title,
+		syncedAt: row.synced_at,
+		isPublic: row.is_public,
+		etag: row.etag ?? undefined,
+		lastModified: row.last_modified ?? undefined,
+		meta,
+	});
+}
 
 export class BlogRepository {
 	private _conn: Connection;
@@ -50,9 +71,9 @@ export class BlogRepository {
 				${blog.isPublic},
                 ${blog.etag ?? null},
                 ${blog.lastModified ?? null},
-				${blog.metaCreatedAt},
-				${blog.metaUpdatedAt},
-				${blog.metaVersion}
+				${blog.meta.createdAt},
+				${blog.meta.updatedAt},
+				${blog.meta.version}
             );
 		`);
 	}
@@ -80,19 +101,7 @@ export class BlogRepository {
 			return undefined;
 		}
 
-		return Blog.load({
-			id: row.id,
-			feedURL: new URL(row.feed_url),
-			siteURL: new URL(row.site_url),
-			title: row.title,
-			syncedAt: row.synced_at,
-			isPublic: row.is_public,
-			etag: row.etag ?? undefined,
-			lastModified: row.last_modified ?? undefined,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-		});
+		return rowToBlog(row);
 	}
 
 	async readByFeedURL(feedURL: URL): Promise<Blog | undefined> {
@@ -118,19 +127,7 @@ export class BlogRepository {
 			return undefined;
 		}
 
-		return Blog.load({
-			id: row.id,
-			feedURL: new URL(row.feed_url),
-			siteURL: new URL(row.site_url),
-			title: row.title,
-			syncedAt: row.synced_at,
-			isPublic: row.is_public,
-			etag: row.etag ?? undefined,
-			lastModified: row.last_modified ?? undefined,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-		});
+		return rowToBlog(row);
 	}
 
 	// Used for syncing blogs.
@@ -150,26 +147,12 @@ export class BlogRepository {
 				meta_version
             FROM blog;
         `);
-		return rows.map((row) =>
-			Blog.load({
-				id: row.id,
-				feedURL: new URL(row.feed_url),
-				siteURL: new URL(row.site_url),
-				title: row.title,
-				syncedAt: row.synced_at,
-				isPublic: row.is_public,
-				etag: row.etag ?? undefined,
-				lastModified: row.last_modified ?? undefined,
-				metaCreatedAt: row.meta_created_at,
-				metaUpdatedAt: row.meta_updated_at,
-				metaVersion: row.meta_version,
-			}),
-		);
+		return rows.map(rowToBlog);
 	}
 
 	async update(blog: Blog): Promise<void> {
 		const newUpdatedAt = new Date();
-		const newVersion = blog.metaVersion + 1;
+		const newVersion = blog.meta.version + 1;
 
 		const { rows } = await this._conn.query(SQL`
 			UPDATE blog
@@ -184,7 +167,7 @@ export class BlogRepository {
 				meta_updated_at = ${newUpdatedAt},
 				meta_version = ${newVersion}
 			WHERE id = ${blog.id}
-				AND meta_version = ${blog.metaVersion}
+				AND meta_version = ${blog.meta.version}
 			RETURNING id;
 		`);
 
@@ -192,8 +175,8 @@ export class BlogRepository {
 			throw new ConcurrentUpdateError("Blog", blog.id);
 		}
 
-		blog.metaUpdatedAt = newUpdatedAt;
-		blog.metaVersion = newVersion;
+		blog.meta.updatedAt = newUpdatedAt;
+		blog.meta.version = newVersion;
 	}
 
 	async delete(blog: Blog): Promise<void> {

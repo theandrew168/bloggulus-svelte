@@ -1,5 +1,6 @@
 import { SQL } from "sql-template-strings";
 
+import { Meta } from "$lib/server/meta";
 import { Post } from "$lib/server/post";
 import { Connection } from "$lib/server/postgres";
 import type { UUID } from "$lib/types";
@@ -17,6 +18,24 @@ type PostRow = {
 	meta_updated_at: Date;
 	meta_version: number;
 };
+
+function rowToPost(row: PostRow): Post {
+	const meta = Meta.load({
+		createdAt: row.meta_created_at,
+		updatedAt: row.meta_updated_at,
+		version: row.meta_version,
+	});
+
+	return Post.load({
+		id: row.id,
+		blogID: row.blog_id,
+		url: new URL(row.url),
+		title: row.title,
+		publishedAt: new Date(row.published_at),
+		content: row.content ?? undefined,
+		meta,
+	});
+}
 
 export class PostRepository {
 	private _conn: Connection;
@@ -36,9 +55,9 @@ export class PostRepository {
                 ${post.title},
                 ${post.publishedAt},
                 ${post.content ?? null},
-				${post.metaCreatedAt},
-				${post.metaUpdatedAt},
-				${post.metaVersion}
+				${post.meta.createdAt},
+				${post.meta.updatedAt},
+				${post.meta.version}
             );
 		`);
 	}
@@ -64,17 +83,7 @@ export class PostRepository {
 			return undefined;
 		}
 
-		return Post.load({
-			id: row.id,
-			blogID: row.blog_id,
-			url: new URL(row.url),
-			title: row.title,
-			publishedAt: new Date(row.published_at),
-			content: row.content ?? undefined,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-		});
+		return rowToPost(row);
 	}
 
 	// Used for syncing a blog's posts.
@@ -93,24 +102,12 @@ export class PostRepository {
             FROM post
             WHERE blog_id = ${blogID};
         `);
-		return rows.map((row) =>
-			Post.load({
-				id: row.id,
-				blogID: row.blog_id,
-				url: new URL(row.url),
-				title: row.title,
-				publishedAt: new Date(row.published_at),
-				content: row.content ?? undefined,
-				metaCreatedAt: row.meta_created_at,
-				metaUpdatedAt: row.meta_updated_at,
-				metaVersion: row.meta_version,
-			}),
-		);
+		return rows.map(rowToPost);
 	}
 
 	async update(post: Post): Promise<void> {
 		const newUpdatedAt = new Date();
-		const newVersion = post.metaVersion + 1;
+		const newVersion = post.meta.version + 1;
 
 		const { rows } = await this._conn.query(SQL`
 			UPDATE post
@@ -123,7 +120,7 @@ export class PostRepository {
 				meta_updated_at = ${newUpdatedAt},
 				meta_version = ${newVersion}
 			WHERE id = ${post.id}
-				AND meta_version = ${post.metaVersion}
+				AND meta_version = ${post.meta.version}
 			RETURNING id;
 		`);
 
@@ -131,8 +128,8 @@ export class PostRepository {
 			throw new ConcurrentUpdateError("Post", post.id);
 		}
 
-		post.metaUpdatedAt = newUpdatedAt;
-		post.metaVersion = newVersion;
+		post.meta.updatedAt = newUpdatedAt;
+		post.meta.version = newVersion;
 	}
 
 	async delete(post: Post): Promise<void> {

@@ -1,5 +1,7 @@
 import type { UUID } from "$lib/types";
 
+import { Meta } from "./meta";
+
 export type NewPostParams = {
 	blogID: UUID;
 	url: URL;
@@ -15,9 +17,7 @@ export type LoadPostParams = {
 	title: string;
 	publishedAt: Date;
 	content?: string;
-	metaCreatedAt: Date;
-	metaUpdatedAt: Date;
-	metaVersion: number;
+	meta: Meta;
 };
 
 export class Post {
@@ -27,9 +27,7 @@ export class Post {
 	private _title: string;
 	private _publishedAt: Date;
 	private _content?: string;
-	private _metaCreatedAt: Date;
-	private _metaUpdatedAt: Date;
-	private _metaVersion: number;
+	private _meta: Meta;
 
 	constructor({ blogID, url, title, publishedAt, content }: NewPostParams) {
 		this._id = crypto.randomUUID();
@@ -38,22 +36,10 @@ export class Post {
 		this._title = title;
 		this._publishedAt = publishedAt;
 		this._content = content;
-		this._metaCreatedAt = new Date();
-		this._metaUpdatedAt = new Date();
-		this._metaVersion = 1;
+		this._meta = new Meta();
 	}
 
-	static load({
-		id,
-		blogID,
-		url,
-		title,
-		publishedAt,
-		content,
-		metaCreatedAt,
-		metaUpdatedAt,
-		metaVersion,
-	}: LoadPostParams): Post {
+	static load({ id, blogID, url, title, publishedAt, content, meta }: LoadPostParams): Post {
 		const post = new Post({ blogID, url, title, publishedAt });
 		post._id = id;
 		post._blogID = blogID;
@@ -61,9 +47,7 @@ export class Post {
 		post._title = title;
 		post._publishedAt = publishedAt;
 		post._content = content;
-		post._metaCreatedAt = metaCreatedAt;
-		post._metaUpdatedAt = metaUpdatedAt;
-		post._metaVersion = metaVersion;
+		post._meta = meta;
 		return post;
 	}
 
@@ -103,23 +87,7 @@ export class Post {
 		this._content = content;
 	}
 
-	get metaCreatedAt(): Date {
-		return this._metaCreatedAt;
-	}
-
-	get metaUpdatedAt(): Date {
-		return this._metaUpdatedAt;
-	}
-
-	set metaUpdatedAt(metaUpdatedAt: Date) {
-		this._metaUpdatedAt = metaUpdatedAt;
-	}
-
-	get metaVersion(): number {
-		return this._metaVersion;
-	}
-
-	set metaVersion(metaVersion: number) {
-		this._metaVersion = metaVersion;
+	get meta(): Meta {
+		return this._meta;
 	}
 }

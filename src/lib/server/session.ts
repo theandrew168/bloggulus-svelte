@@ -1,6 +1,11 @@
 import type { UUID } from "$lib/types";
 
+import { Meta } from "./meta";
 import { randomString } from "./utils";
+
+export function generateSessionToken(): string {
+	return randomString(32);
+}
 
 export type NewSessionParams = {
 	accountID: UUID;
@@ -11,36 +16,28 @@ export type LoadSessionParams = {
 	id: UUID;
 	accountID: UUID;
 	expiresAt: Date;
-	metaCreatedAt: Date;
-	metaUpdatedAt: Date;
-	metaVersion: number;
+	meta: Meta;
 };
 
 export class Session {
 	private _id: UUID;
 	private _accountID: UUID;
 	private _expiresAt: Date;
-	private _metaCreatedAt: Date;
-	private _metaUpdatedAt: Date;
-	private _metaVersion: number;
+	private _meta: Meta;
 
 	constructor({ accountID, expiresAt }: NewSessionParams) {
 		this._id = crypto.randomUUID();
 		this._accountID = accountID;
 		this._expiresAt = expiresAt;
-		this._metaCreatedAt = new Date();
-		this._metaUpdatedAt = new Date();
-		this._metaVersion = 1;
+		this._meta = new Meta();
 	}
 
-	static load({ id, accountID, expiresAt, metaCreatedAt, metaUpdatedAt, metaVersion }: LoadSessionParams): Session {
+	static load({ id, accountID, expiresAt, meta }: LoadSessionParams): Session {
 		const session = new Session({ accountID, expiresAt });
 		session._id = id;
 		session._accountID = accountID;
 		session._expiresAt = expiresAt;
-		session._metaCreatedAt = metaCreatedAt;
-		session._metaUpdatedAt = metaUpdatedAt;
-		session._metaVersion = metaVersion;
+		session._meta = meta;
 		return session;
 	}
 
@@ -56,19 +53,7 @@ export class Session {
 		return this._expiresAt;
 	}
 
-	get metaCreatedAt(): Date {
-		return this._metaCreatedAt;
+	get meta(): Meta {
+		return this._meta;
 	}
-
-	get metaUpdatedAt(): Date {
-		return this._metaUpdatedAt;
-	}
-
-	get metaVersion(): number {
-		return this._metaVersion;
-	}
-}
-
-export function generateSessionToken(): string {
-	return randomString(32);
 }

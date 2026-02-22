@@ -1,5 +1,6 @@
 import { SQL } from "sql-template-strings";
 
+import { Meta } from "$lib/server/meta";
 import { Connection } from "$lib/server/postgres";
 import { Session } from "$lib/server/session";
 import { sha256 } from "$lib/server/utils";
@@ -13,6 +14,21 @@ type SessionRow = {
 	meta_updated_at: Date;
 	meta_version: number;
 };
+
+function rowToSession(row: SessionRow): Session {
+	const meta = Meta.load({
+		createdAt: row.meta_created_at,
+		updatedAt: row.meta_updated_at,
+		version: row.meta_version,
+	});
+
+	return Session.load({
+		id: row.id,
+		accountID: row.account_id,
+		expiresAt: row.expires_at,
+		meta,
+	});
+}
 
 export class SessionRepository {
 	private _conn: Connection;
@@ -31,9 +47,9 @@ export class SessionRepository {
 				${session.accountID},
 				${session.expiresAt},
 				${tokenHash},
-				${session.metaCreatedAt},
-				${session.metaUpdatedAt},
-				${session.metaVersion}
+				${session.meta.createdAt},
+				${session.meta.updatedAt},
+				${session.meta.version}
 			);
 		`);
 	}
@@ -56,14 +72,7 @@ export class SessionRepository {
 			return undefined;
 		}
 
-		return Session.load({
-			id: row.id,
-			accountID: row.account_id,
-			expiresAt: row.expires_at,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-		});
+		return rowToSession(row);
 	}
 
 	async readByToken(token: string): Promise<Session | undefined> {
@@ -85,14 +94,7 @@ export class SessionRepository {
 			return undefined;
 		}
 
-		return Session.load({
-			id: row.id,
-			accountID: row.account_id,
-			expiresAt: row.expires_at,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-		});
+		return rowToSession(row);
 	}
 
 	// Used for deleting expired sessions.
@@ -109,16 +111,7 @@ export class SessionRepository {
             WHERE expires_at <= ${now};
         `);
 
-		return rows.map((row) =>
-			Session.load({
-				id: row.id,
-				accountID: row.account_id,
-				expiresAt: row.expires_at,
-				metaCreatedAt: row.meta_created_at,
-				metaUpdatedAt: row.meta_updated_at,
-				metaVersion: row.meta_version,
-			}),
-		);
+		return rows.map(rowToSession);
 	}
 
 	async delete(session: Session): Promise<void> {

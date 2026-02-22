@@ -1,5 +1,6 @@
 import { SQL } from "sql-template-strings";
 
+import { Meta } from "$lib/server/meta";
 import { Connection } from "$lib/server/postgres";
 import { Tag } from "$lib/server/tag";
 import type { UUID } from "$lib/types";
@@ -11,6 +12,20 @@ type TagRow = {
 	meta_updated_at: Date;
 	meta_version: number;
 };
+
+function rowToTag(row: TagRow): Tag {
+	const meta = Meta.load({
+		createdAt: row.meta_created_at,
+		updatedAt: row.meta_updated_at,
+		version: row.meta_version,
+	});
+
+	return Tag.load({
+		id: row.id,
+		name: row.name,
+		meta,
+	});
+}
 
 export class TagRepository {
 	private _conn: Connection;
@@ -26,9 +41,9 @@ export class TagRepository {
             VALUES (
 				${tag.id},
 				${tag.name},
-				${tag.metaCreatedAt},
-				${tag.metaUpdatedAt},
-				${tag.metaVersion}
+				${tag.meta.createdAt},
+				${tag.meta.updatedAt},
+				${tag.meta.version}
 			);
 		`);
 	}
@@ -50,13 +65,7 @@ export class TagRepository {
 			return undefined;
 		}
 
-		return Tag.load({
-			id: row.id,
-			name: row.name,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-		});
+		return rowToTag(row);
 	}
 
 	async readByName(name: string): Promise<Tag | undefined> {
@@ -76,13 +85,7 @@ export class TagRepository {
 			return undefined;
 		}
 
-		return Tag.load({
-			id: row.id,
-			name: row.name,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-		});
+		return rowToTag(row);
 	}
 
 	async delete(tag: Tag): Promise<void> {

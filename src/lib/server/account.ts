@@ -1,5 +1,7 @@
 import type { UUID } from "$lib/types";
 
+import { Meta } from "./meta";
+
 export type NewAccountParams = {
 	username: string;
 };
@@ -9,9 +11,7 @@ export type LoadAccountParams = {
 	username: string;
 	isAdmin: boolean;
 	followedBlogIDs: Set<UUID>;
-	metaCreatedAt: Date;
-	metaUpdatedAt: Date;
-	metaVersion: number;
+	meta: Meta;
 };
 
 export class Account {
@@ -19,37 +19,23 @@ export class Account {
 	private _username: string;
 	private _isAdmin: boolean;
 	private _followedBlogIDs: Set<UUID>;
-	private _metaCreatedAt: Date;
-	private _metaUpdatedAt: Date;
-	private _metaVersion: number;
+	private _meta: Meta;
 
 	constructor({ username }: NewAccountParams) {
 		this._id = crypto.randomUUID();
 		this._username = username;
 		this._isAdmin = false;
 		this._followedBlogIDs = new Set();
-		this._metaCreatedAt = new Date();
-		this._metaUpdatedAt = new Date();
-		this._metaVersion = 1;
+		this._meta = new Meta();
 	}
 
-	static load({
-		id,
-		username,
-		isAdmin,
-		followedBlogIDs,
-		metaCreatedAt,
-		metaUpdatedAt,
-		metaVersion,
-	}: LoadAccountParams): Account {
+	static load({ id, username, isAdmin, followedBlogIDs, meta }: LoadAccountParams): Account {
 		const account = new Account({ username });
 		account._id = id;
 		account._username = username;
 		account._isAdmin = isAdmin;
 		account._followedBlogIDs = followedBlogIDs;
-		account._metaCreatedAt = metaCreatedAt;
-		account._metaUpdatedAt = metaUpdatedAt;
-		account._metaVersion = metaVersion;
+		account._meta = meta;
 		return account;
 	}
 
@@ -73,24 +59,8 @@ export class Account {
 		return structuredClone(this._followedBlogIDs);
 	}
 
-	get metaCreatedAt(): Date {
-		return this._metaCreatedAt;
-	}
-
-	get metaUpdatedAt(): Date {
-		return this._metaUpdatedAt;
-	}
-
-	set metaUpdatedAt(metaUpdatedAt: Date) {
-		this._metaUpdatedAt = metaUpdatedAt;
-	}
-
-	get metaVersion(): number {
-		return this._metaVersion;
-	}
-
-	set metaVersion(metaVersion: number) {
-		this._metaVersion = metaVersion;
+	get meta(): Meta {
+		return this._meta;
 	}
 
 	followBlog(blogID: UUID): void {

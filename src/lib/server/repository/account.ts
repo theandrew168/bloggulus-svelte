@@ -1,6 +1,7 @@
 import { SQL } from "sql-template-strings";
 
 import { Account } from "$lib/server/account";
+import { Meta } from "$lib/server/meta";
 import { Connection } from "$lib/server/postgres";
 import type { UUID } from "$lib/types";
 
@@ -15,6 +16,22 @@ type AccountRow = {
 	meta_version: number;
 	followed_blog_ids: UUID[];
 };
+
+function rowToAccount(row: AccountRow): Account {
+	const meta = Meta.load({
+		createdAt: row.meta_created_at,
+		updatedAt: row.meta_updated_at,
+		version: row.meta_version,
+	});
+
+	return Account.load({
+		id: row.id,
+		username: row.username,
+		isAdmin: row.is_admin,
+		followedBlogIDs: new Set(row.followed_blog_ids),
+		meta,
+	});
+}
 
 export class AccountRepository {
 	private _conn: Connection;
@@ -31,9 +48,9 @@ export class AccountRepository {
 				${account.id},
 				${account.username},
 				${account.isAdmin},
-				${account.metaCreatedAt},
-				${account.metaUpdatedAt},
-				${account.metaVersion}
+				${account.meta.createdAt},
+				${account.meta.updatedAt},
+				${account.meta.version}
 			);
 		`);
 	}
@@ -60,15 +77,7 @@ export class AccountRepository {
 			return undefined;
 		}
 
-		return Account.load({
-			id: row.id,
-			username: row.username,
-			isAdmin: row.is_admin,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-			followedBlogIDs: new Set(row.followed_blog_ids),
-		});
+		return rowToAccount(row);
 	}
 
 	async readByUsername(username: string): Promise<Account | undefined> {
@@ -93,20 +102,12 @@ export class AccountRepository {
 			return undefined;
 		}
 
-		return Account.load({
-			id: row.id,
-			username: row.username,
-			isAdmin: row.is_admin,
-			metaCreatedAt: row.meta_created_at,
-			metaUpdatedAt: row.meta_updated_at,
-			metaVersion: row.meta_version,
-			followedBlogIDs: new Set(row.followed_blog_ids),
-		});
+		return rowToAccount(row);
 	}
 
 	async update(account: Account): Promise<void> {
 		const newUpdatedAt = new Date();
-		const newVersion = account.metaVersion + 1;
+		const newVersion = account.meta.version + 1;
 
 		const { rows } = await this._conn.query(SQL`
 			UPDATE account
@@ -115,7 +116,7 @@ export class AccountRepository {
 				meta_updated_at = ${newUpdatedAt},
 				meta_version = ${newVersion}
 			WHERE id = ${account.id}
-				AND meta_version = ${account.metaVersion}
+				AND meta_version = ${account.meta.version}
 			RETURNING id;
 		`);
 
@@ -148,8 +149,8 @@ export class AccountRepository {
 			`);
 		}
 
-		account.metaUpdatedAt = newUpdatedAt;
-		account.metaVersion = newVersion;
+		account.meta.updatedAt = newUpdatedAt;
+		account.meta.version = newVersion;
 	}
 
 	async delete(account: Account): Promise<void> {

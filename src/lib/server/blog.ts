@@ -1,5 +1,7 @@
 import type { UUID } from "$lib/types";
 
+import { Meta } from "./meta";
+
 export const SYNC_COOLDOWN_HOURS = 2;
 
 export type NewBlogParams = {
@@ -20,9 +22,7 @@ export type LoadBlogParams = {
 	isPublic: boolean;
 	etag?: string;
 	lastModified?: string;
-	metaCreatedAt: Date;
-	metaUpdatedAt: Date;
-	metaVersion: number;
+	meta: Meta;
 };
 
 export class Blog {
@@ -34,9 +34,7 @@ export class Blog {
 	private _isPublic: boolean;
 	private _etag?: string;
 	private _lastModified?: string;
-	private _metaCreatedAt: Date;
-	private _metaUpdatedAt: Date;
-	private _metaVersion: number;
+	private _meta: Meta;
 
 	constructor({ feedURL, siteURL, title, syncedAt, etag, lastModified }: NewBlogParams) {
 		this._id = crypto.randomUUID();
@@ -47,24 +45,10 @@ export class Blog {
 		this._isPublic = false;
 		this._etag = etag;
 		this._lastModified = lastModified;
-		this._metaCreatedAt = new Date();
-		this._metaUpdatedAt = new Date();
-		this._metaVersion = 1;
+		this._meta = new Meta();
 	}
 
-	static load({
-		id,
-		feedURL,
-		siteURL,
-		title,
-		syncedAt,
-		isPublic,
-		etag,
-		lastModified,
-		metaCreatedAt,
-		metaUpdatedAt,
-		metaVersion,
-	}: LoadBlogParams): Blog {
+	static load({ id, feedURL, siteURL, title, syncedAt, isPublic, etag, lastModified, meta }: LoadBlogParams): Blog {
 		const blog = new Blog({ feedURL, siteURL, title, syncedAt });
 		blog._id = id;
 		blog._feedURL = feedURL;
@@ -74,9 +58,7 @@ export class Blog {
 		blog._isPublic = isPublic;
 		blog._etag = etag;
 		blog._lastModified = lastModified;
-		blog._metaCreatedAt = metaCreatedAt;
-		blog._metaUpdatedAt = metaUpdatedAt;
-		blog._metaVersion = metaVersion;
+		blog._meta = meta;
 		return blog;
 	}
 
@@ -128,24 +110,8 @@ export class Blog {
 		this._syncedAt = syncedAt;
 	}
 
-	get metaCreatedAt(): Date {
-		return this._metaCreatedAt;
-	}
-
-	get metaUpdatedAt(): Date {
-		return this._metaUpdatedAt;
-	}
-
-	set metaUpdatedAt(metaUpdatedAt: Date) {
-		this._metaUpdatedAt = metaUpdatedAt;
-	}
-
-	get metaVersion(): number {
-		return this._metaVersion;
-	}
-
-	set metaVersion(metaVersion: number) {
-		this._metaVersion = metaVersion;
+	get meta(): Meta {
+		return this._meta;
 	}
 
 	canBeSynced(now: Date): boolean {
