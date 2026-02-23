@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state";
 
-	import Article from "$lib/components/Article.svelte";
+	import Article from "$lib/components/app/Article.svelte";
 	import Button from "$lib/components/Button.svelte";
 	import Input from "$lib/components/Input.svelte";
 
