@@ -17,7 +17,7 @@
 	.input {
 		width: 100%;
 		border: none;
-		box-shadow: inset 0px 0px 0px 1px var(--color-light);
+		box-shadow: inset 0px 0px 0px 1px var(--color-gray-400);
 		border-radius: 0.375em;
 		padding: 0.75em 1em;
 	}

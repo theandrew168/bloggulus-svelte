@@ -22,9 +22,10 @@
 	}
 
 	.status {
+		font-size: 1.5rem;
 		font-weight: 500;
-		color: var(--color-medium);
-		margin-bottom: 1em;
+		color: var(--color-gray-500);
+		margin-bottom: 0.75em;
 	}
 
 	.message {

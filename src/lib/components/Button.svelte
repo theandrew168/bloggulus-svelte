@@ -35,27 +35,31 @@
 <style>
 	.button {
 		color: var(--color-white);
-		background-color: var(--color-dark);
+		background-color: var(--color-primary);
 		padding: 0.75em 1em;
 		font-weight: 600;
 		border-radius: 0.5em;
 		border-width: 0;
 		text-decoration: none;
 		cursor: pointer;
+
+		transition:
+			opacity 0.2s ease,
+			background-color 0.2s ease;
 	}
 
 	.button:hover {
-		background-color: var(--color-medium);
+		opacity: 0.8;
 	}
 
 	.outline {
-		color: var(--color-dark);
+		color: var(--color-primary);
 		background-color: var(--color-white);
-		box-shadow: var(--shadow);
+		box-shadow: var(--shadow-md);
 	}
 
 	.outline:hover {
-		background-color: var(--color-gray);
+		background-color: var(--color-gray-100);
 	}
 
 	.fullWidth {

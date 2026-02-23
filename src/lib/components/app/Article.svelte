@@ -26,7 +26,7 @@
 
 <style>
 	.article {
-		box-shadow: var(--shadow);
+		box-shadow: var(--shadow-md);
 		background-color: var(--color-white);
 		text-align: left;
 		padding: 1.5em;
@@ -44,7 +44,7 @@
 	}
 
 	.publishedAt {
-		color: var(--color-medium);
+		color: var(--color-gray-500);
 		font-size: 0.875rem;
 		font-weight: 300;
 	}

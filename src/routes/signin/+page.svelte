@@ -55,7 +55,7 @@
 	.card {
 		background-color: var(--color-white);
 		padding: 2em;
-		box-shadow: var(--shadow);
+		box-shadow: var(--shadow-md);
 		border-radius: 0.5em;
 		display: flex;
 		flex-direction: column;

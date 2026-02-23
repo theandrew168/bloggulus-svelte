@@ -1,3 +1,2 @@
 Figure out errors
 Tag admin page
-Better colors (black, white, grays, blues)

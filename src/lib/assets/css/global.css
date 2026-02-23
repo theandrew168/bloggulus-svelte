@@ -1,11 +1,57 @@
 :root {
-	--color-white: white;
-	--color-gray: #efefef;
-	--color-light: #cfcfcf;
-	--color-medium: rgb(75 85 99);
-	--color-dark: rgb(31 41 55);
-	--background-color: rgb(243, 244, 246);
-	--shadow: 0 1px 1px hsl(0deg 0% 0% / 0.3);
+	/* https://tailwindcss.com/docs/colors */
+	/* https://tailwindcss.com/docs/colors#default-color-palette-reference */
+
+	--color-gray-50: oklch(0.985 0.002 247.839);
+	--color-gray-100: oklch(0.967 0.003 264.542);
+	--color-gray-200: oklch(0.928 0.006 264.531);
+	--color-gray-300: oklch(0.872 0.01 258.338);
+	--color-gray-400: oklch(0.707 0.022 261.325);
+	--color-gray-500: oklch(0.551 0.027 264.364);
+	--color-gray-600: oklch(0.446 0.03 256.802);
+	--color-gray-700: oklch(0.373 0.034 259.733);
+	--color-gray-800: oklch(0.278 0.033 256.848);
+	--color-gray-900: oklch(0.21 0.034 264.665);
+	--color-gray-950: oklch(0.13 0.028 261.692);
+
+	/* --color-slate-50: oklch(98.4% 0.003 247.858); */
+	/* --color-slate-100: oklch(96.8% 0.007 247.896); */
+	/* --color-slate-200: oklch(92.9% 0.013 255.508); */
+	/* --color-slate-300: oklch(86.9% 0.022 252.894); */
+	/* --color-slate-400: oklch(70.4% 0.04 256.788); */
+	/* --color-slate-500: oklch(55.4% 0.046 257.417); */
+	/* --color-slate-600: oklch(44.6% 0.043 257.281); */
+	/* --color-slate-700: oklch(37.2% 0.044 257.287); */
+	/* --color-slate-800: oklch(27.9% 0.041 260.031); */
+	--color-slate-900: oklch(20.8% 0.042 265.755);
+	/* --color-slate-950: oklch(12.9% 0.042 264.695); */
+
+	/* https://tailwindcss.com/docs/box-shadow */
+
+	--shadow-2xs: 0 1px rgb(0 0 0 / 0.05);
+	--shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	--shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+	--shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+	--shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+	/* https://tailwindcss.com/docs/responsive-design */
+	/* Just here for reference, they can't be used in @media queries. */
+
+	--breakpoint-sm: 40rem; /* 640px */
+	--breakpoint-md: 48rem; /* 768px */
+	--breakpoint-lg: 64rem; /* 1024px */
+	--breakpoint-xl: 80rem; /* 1280px */
+	--breakpoint-2xl: 96rem; /* 1536px */
+
+	/* Derived Variables */
+
+	--color-white: var(--color-gray-50);
+	--color-black: var(--color-gray-950);
+
+	--color-primary: var(--color-slate-900);
+
 	--container-width: 48em;
 }
 
@@ -15,8 +61,8 @@
 }
 
 html {
-	color: var(--color-dark);
-	background-color: var(--background-color);
+	color: var(--color-black);
+	background-color: var(--color-gray-100);
 }
 
 body {
@@ -24,9 +70,4 @@ body {
 	flex-direction: column;
 	align-items: stretch;
 	min-height: 100vh;
-}
-
-svg {
-	width: 1.25em;
-	height: 1.25em;
 }

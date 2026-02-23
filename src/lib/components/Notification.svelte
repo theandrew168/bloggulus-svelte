@@ -13,7 +13,7 @@
 <style>
 	.notification {
 		color: var(--color-white);
-		background-color: var(--color-dark);
+		background-color: var(--color-primary);
 		padding: 1em 0;
 		text-align: center;
 	}

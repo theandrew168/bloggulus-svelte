@@ -30,7 +30,7 @@
 <style>
 	header {
 		background-color: var(--color-white);
-		box-shadow: var(--shadow);
+		box-shadow: var(--shadow-md);
 	}
 
 	ul {

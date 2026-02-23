@@ -11,14 +11,16 @@
 <style>
 	a {
 		color: var(--color-white);
-		background-color: var(--color-dark);
+		background-color: var(--color-primary);
 		font-weight: 600;
 		padding: 0.25em 0.75em;
 		border-radius: 0.25em;
 		text-decoration: none;
+
+		transition: opacity 0.2s ease;
 	}
 
 	a:hover {
-		background-color: var(--color-medium);
+		opacity: 0.8;
 	}
 </style>

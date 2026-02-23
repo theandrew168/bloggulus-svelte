@@ -14,7 +14,7 @@
 
 <style>
 	.footer {
-		background-color: var(--color-dark);
+		background-color: var(--color-primary);
 	}
 
 	/* On mobile devices, stack and center the footer links. */
