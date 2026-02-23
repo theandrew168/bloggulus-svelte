@@ -12,11 +12,11 @@
 	let q = $derived(page.url.searchParams.get("q") ?? "");
 </script>
 
-<header>
+<header class="header">
 	{#if q}
-		<h1>Relevant Articles</h1>
+		<h1 class="title">Relevant Articles</h1>
 	{:else}
-		<h1>Recent Articles</h1>
+		<h1 class="title">Recent Articles</h1>
 	{/if}
 	<search>
 		<form method="GET" action="/">
@@ -25,16 +25,16 @@
 	</search>
 </header>
 
-<section>
+<section class="articles">
 	{#each data.articles as article (article.url)}
 		<Article {article} />
 	{:else}
 		{#if q}
-			<article>
+			<article class="message">
 				<p>No relevant articles! Try searching for something else.</p>
 			</article>
 		{:else}
-			<article>
+			<article class="message">
 				<p>No posts found! Get started by following your favorite blogs.</p>
 				<p>
 					<Button kind="link" href="/blogs">Follow Blogs</Button>
@@ -44,14 +44,14 @@
 	{/each}
 </section>
 
-<footer>
+<footer class="footer">
 	{#if data.moreLink}
 		<Button kind="link" href={data.moreLink} isOutline>View More Articles</Button>
 	{/if}
 </footer>
 
 <style>
-	header {
+	.header {
 		max-width: var(--container-width);
 		margin: 0 auto;
 		padding: 1.5em 1em;
@@ -60,12 +60,12 @@
 		justify-content: space-between;
 	}
 
-	h1 {
+	.title {
 		font-size: 1.5rem;
 		font-weight: 600;
 	}
 
-	section {
+	.articles {
 		max-width: var(--container-width);
 		margin: 0 auto;
 		padding: 0 1em;
@@ -74,7 +74,7 @@
 		gap: 1em;
 	}
 
-	article {
+	.message {
 		margin-top: 4em;
 		text-align: center;
 		display: flex;
@@ -83,7 +83,7 @@
 		gap: 2em;
 	}
 
-	footer {
+	.footer {
 		display: flex;
 		justify-content: center;
 		align-items: center;

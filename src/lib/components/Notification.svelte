@@ -6,18 +6,15 @@
 	let { message }: Props = $props();
 </script>
 
-<section>
+<section class="notification">
 	<p>{message}</p>
 </section>
 
 <style>
-	section {
-		background-color: var(--color-dark);
+	.notification {
 		color: var(--color-white);
-		padding: 1em;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		background-color: var(--color-dark);
+		padding: 1em 0;
 		text-align: center;
 	}
 </style>

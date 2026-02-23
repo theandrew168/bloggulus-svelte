@@ -18,7 +18,7 @@
 </svelte:head>
 
 <Header account={data.account} />
-<main>
+<main class="content">
 	{#if data.notification}
 		<Notification message={data.notification} />
 	{/if}
@@ -27,7 +27,7 @@
 <Footer />
 
 <style>
-	main {
+	.content {
 		flex-grow: 1;
 		flex-basis: 0;
 	}

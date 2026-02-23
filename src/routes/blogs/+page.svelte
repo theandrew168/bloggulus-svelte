@@ -10,19 +10,19 @@
 	let { data }: PageProps = $props();
 </script>
 
-<section>
-	<header>
-		<h1>Blogs</h1>
+<section class="page">
+	<header class="header">
+		<h1 class="title">Blogs</h1>
 		<form method="POST" action="?/add" use:enhance>
-			<span>
+			<span class="follow-input">
 				<Input type="text" name="feedURL" placeholder="Follow RSS Feed" />
 			</span>
 			<Button kind="button" type="submit">Follow</Button>
 		</form>
 	</header>
-	<ul>
+	<ul class="list">
 		{#each data.blogs as blog (blog.id)}
-			<li>
+			<li class="blog">
 				{#if data.account?.isAdmin}
 					<Link kind="link" href={`/blogs/${blog.id}`}>{blog.title}</Link>
 				{:else}
@@ -42,7 +42,7 @@
 				{/if}
 			</li>
 		{:else}
-			<article>
+			<article class="message">
 				<p>Follow your favorite blogs by adding their RSS feed above!</p>
 			</article>
 		{/each}
@@ -50,41 +50,40 @@
 </section>
 
 <style>
-	section {
+	.page {
 		max-width: var(--container-width);
 		margin: 0 auto;
 		padding: 1em;
 	}
 
-	header {
+	.header {
 		margin-bottom: 1em;
 	}
 
-	h1 {
+	.title {
 		font-size: 1.25rem;
 		font-weight: 600;
 		margin-bottom: 0.5em;
 	}
 
-	/* TODO: Is there a better way to control input widths? */
-	span {
+	.follow-input {
 		display: inline-block;
 		width: 50%;
 	}
 
-	ul {
+	.list {
 		display: flex;
 		flex-direction: column;
 		gap: 0.5em;
 	}
 
-	li {
+	.blog {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 	}
 
-	article {
+	.message {
 		margin-top: 4em;
 		text-align: center;
 	}

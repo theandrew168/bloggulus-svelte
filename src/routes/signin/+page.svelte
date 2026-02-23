@@ -11,9 +11,9 @@
 	let { data }: PageProps = $props();
 </script>
 
-<section>
-	<article>
-		<h2>Welcome!</h2>
+<section class="page">
+	<article class="card">
+		<h2 class="title">Welcome!</h2>
 
 		<hr />
 
@@ -45,14 +45,14 @@
 </section>
 
 <style>
-	section {
+	.page {
 		height: 100%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
-	article {
+	.card {
 		background-color: var(--color-white);
 		padding: 2em;
 		box-shadow: var(--shadow);
@@ -62,7 +62,7 @@
 		gap: 1.5em;
 	}
 
-	h2 {
+	.title {
 		text-align: center;
 		font-weight: 500;
 	}

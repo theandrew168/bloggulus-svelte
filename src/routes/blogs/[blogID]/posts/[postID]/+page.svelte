@@ -10,20 +10,20 @@
 	let { data }: PageProps = $props();
 </script>
 
-<section>
+<section class="page">
 	<article class="links">
-		<h1>{data.post.title}</h1>
-		<ul>
+		<h1 class="links-title">{data.post.title}</h1>
+		<ul class="links-list">
 			<li><Link kind="link" href={data.post.url.href}>(URL)</Link></li>
 			<li><Link kind="link" href={`/blogs/${data.post.blogID}`}>(Blog)</Link></li>
 		</ul>
 	</article>
 	<article class="published">
-		<h2>Published at:</h2>
+		<h2 class="published-title">Published at:</h2>
 		<time datetime={data.post.publishedAt.toISOString()}>{data.post.publishedAt.toLocaleString()}</time>
 	</article>
 	<article class="actions">
-		<h2>Actions</h2>
+		<h2 class="actions-title">Actions</h2>
 		<form method="POST" use:enhance>
 			<Input type="hidden" name="postID" value={data.post.id} />
 			<Button kind="button" type="submit">Delete</Button>
@@ -32,7 +32,7 @@
 </section>
 
 <style>
-	section {
+	.page {
 		max-width: var(--container-width);
 		margin: 0 auto;
 		padding: 1em;
@@ -41,22 +41,22 @@
 		gap: 1em;
 	}
 
-	.links h1 {
+	.links-title {
 		font-size: 2rem;
 		margin-bottom: 0.5em;
 	}
 
-	.links ul {
+	.links-list {
 		display: flex;
 		gap: 0.5em;
 	}
 
-	.published h2 {
+	.published-title {
 		font-size: 1.5rem;
 		margin-bottom: 0.5em;
 	}
 
-	.actions h2 {
+	.actions-title {
 		font-size: 1.5rem;
 		margin-bottom: 0.5em;
 	}

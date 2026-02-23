@@ -11,10 +11,10 @@
 	let { type, name, value, placeholder }: Props = $props();
 </script>
 
-<input {type} {name} {value} {placeholder} />
+<input class="input" {type} {name} {value} {placeholder} />
 
 <style>
-	input {
+	.input {
 		width: 100%;
 		border: none;
 		box-shadow: inset 0px 0px 0px 1px var(--color-light);

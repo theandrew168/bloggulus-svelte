@@ -4,16 +4,16 @@
 	import Button from "$lib/components/Button.svelte";
 </script>
 
-<section>
+<section class="page">
 	<article>
-		<p>{page.status}</p>
-		<h2>{page.error?.message}</h2>
+		<p class="status">{page.status}</p>
+		<h2 class="message">{page.error?.message}</h2>
 		<Button kind="link" href="/">Go back home</Button>
 	</article>
 </section>
 
 <style>
-	section {
+	.page {
 		height: 100%;
 		display: flex;
 		align-items: center;
@@ -21,13 +21,13 @@
 		text-align: center;
 	}
 
-	p {
+	.status {
 		font-weight: 500;
 		color: var(--color-medium);
 		margin-bottom: 1em;
 	}
 
-	h2 {
+	.message {
 		margin-bottom: 2.5em;
 	}
 </style>
