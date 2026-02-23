@@ -3,8 +3,8 @@
 	import "$lib/assets/css/font.css";
 	import "$lib/assets/css/global.css";
 
-	import Footer from "$lib/components/Footer.svelte";
-	import Header from "$lib/components/Header.svelte";
+	import Footer from "$lib/components/layout/Footer.svelte";
+	import Header from "$lib/components/layout/Header.svelte";
 	import Notification from "$lib/components/Notification.svelte";
 
 	import type { LayoutProps } from "./$types";
