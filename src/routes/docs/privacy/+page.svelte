@@ -319,7 +319,6 @@
 		max-width: var(--container-width);
 		margin: 0 auto;
 		padding: 1rem;
-		color: var(--color-dark);
 	}
 
 	h1,
@@ -370,6 +369,7 @@
 
 	a,
 	a:visited {
-		color: var(--color-dark);
+		color: inherit;
+		font-size: inherit;
 	}
 </style>

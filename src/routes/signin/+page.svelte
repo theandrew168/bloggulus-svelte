@@ -4,6 +4,7 @@
 	import bloggulusLogo from "$lib/assets/img/bloggulus.png";
 	import githubLogo from "$lib/assets/img/github.png";
 	import googleLogo from "$lib/assets/img/google.png";
+	import Button from "$lib/components/Button.svelte";
 
 	import type { PageProps } from "./$types";
 
@@ -18,22 +19,28 @@
 
 		{#if data.enableDebugAuth}
 			<form method="POST" action="/signin/debug" use:enhance>
-				<button type="submit">
-					<img src={bloggulusLogo} alt="Bloggulus logo" />
-					Sign in with Debug
-				</button>
+				<Button kind="button" type="submit" isOutline isFullWidth>
+					<div class="button-content">
+						<img class="button-logo" src={bloggulusLogo} alt="Bloggulus logo" />
+						Sign in with Debug
+					</div>
+				</Button>
 			</form>
 		{/if}
 
-		<a href="/signin/github">
-			<img src={githubLogo} alt="GitHub logo" />
-			Sign in with GitHub
-		</a>
+		<Button kind="link" href="/signin/github" isOutline isFullWidth>
+			<div class="button-content">
+				<img class="button-logo" src={githubLogo} alt="GitHub logo" />
+				Sign in with GitHub
+			</div>
+		</Button>
 
-		<a href="/signin/google">
-			<img src={googleLogo} alt="Google logo" />
-			Sign in with Google
-		</a>
+		<Button kind="link" href="/signin/google" isOutline isFullWidth>
+			<div class="button-content">
+				<img class="button-logo" src={googleLogo} alt="Google logo" />
+				Sign in with Google
+			</div>
+		</Button>
 	</article>
 </section>
 
@@ -60,32 +67,17 @@
 		font-weight: 500;
 	}
 
-	a,
-	button {
-		color: var(--color-dark);
-		background-color: var(--color-white);
+	.button-content {
 		font-size: 1rem;
 		font-weight: 500;
-
-		width: 100%;
-		padding: 1em;
-		text-decoration: none;
-		border: 1px solid var(--color-dark);
-		border-radius: 0.5em;
-
+		padding: 0.25em;
 		display: flex;
 		align-items: center;
-		gap: 0.5em;
+		gap: 1em;
 	}
 
-	a:hover,
-	button:hover {
-		background-color: var(--color-gray);
-		cursor: pointer;
-	}
-
-	img {
-		max-width: 24px;
-		max-height: 24px;
+	.button-logo {
+		width: 1.5em;
+		height: 1.5em;
 	}
 </style>

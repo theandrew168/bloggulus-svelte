@@ -3,6 +3,7 @@
 
 	import Button from "$lib/components/Button.svelte";
 	import Input from "$lib/components/Input.svelte";
+	import Link from "$lib/components/Link.svelte";
 
 	import type { PageProps } from "./$types";
 
@@ -23,9 +24,9 @@
 		{#each data.blogs as blog (blog.id)}
 			<li>
 				{#if data.account?.isAdmin}
-					<a href="/blogs/{blog.id}">{blog.title}</a>
+					<Link kind="link" href={`/blogs/${blog.id}`}>{blog.title}</Link>
 				{:else}
-					<a href={blog.siteURL.href}>{blog.title}</a>
+					<Link kind="link" href={blog.siteURL.href}>{blog.title}</Link>
 				{/if}
 
 				{#if blog.isFollowed}
@@ -81,15 +82,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-	}
-
-	a {
-		color: var(--color-dark);
-		text-decoration: none;
-	}
-
-	a:hover {
-		text-decoration: underline;
 	}
 
 	article {

@@ -5,6 +5,7 @@
 		kind: "button";
 		type: "submit";
 		isOutline?: boolean;
+		isFullWidth?: boolean;
 		children: Snippet;
 	};
 
@@ -12,21 +13,22 @@
 		kind: "link";
 		href: string;
 		isOutline?: boolean;
+		isFullWidth?: boolean;
 		children: Snippet;
 	};
 
 	type Props = ButtonProps | LinkProps;
 
-	let { isOutline, children, ...props }: Props = $props();
+	let props: Props = $props();
 </script>
 
 {#if props.kind === "button"}
-	<button class={{ button: true, outline: isOutline }} type={props.type}>
-		{@render children()}
+	<button class={{ button: true, outline: props.isOutline, fullWidth: props.isFullWidth }} type={props.type}>
+		{@render props.children()}
 	</button>
 {:else if props.kind === "link"}
-	<a class={{ button: true, outline: isOutline }} href={props.href}>
-		{@render children()}
+	<a class={{ button: true, outline: props.isOutline, fullWidth: props.isFullWidth }} href={props.href}>
+		{@render props.children()}
 	</a>
 {/if}
 
@@ -39,11 +41,11 @@
 		border-radius: 0.5em;
 		border-width: 0;
 		text-decoration: none;
+		cursor: pointer;
 	}
 
 	.button:hover {
 		background-color: var(--color-medium);
-		cursor: pointer;
 	}
 
 	.outline {
@@ -54,5 +56,9 @@
 
 	.outline:hover {
 		background-color: var(--color-gray);
+	}
+
+	.fullWidth {
+		width: 100%;
 	}
 </style>

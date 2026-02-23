@@ -3,6 +3,7 @@
 
 	import Button from "$lib/components/Button.svelte";
 	import Input from "$lib/components/Input.svelte";
+	import Link from "$lib/components/Link.svelte";
 
 	import type { PageProps } from "./$types";
 
@@ -13,8 +14,8 @@
 	<article class="links">
 		<h1>{data.post.title}</h1>
 		<ul>
-			<li><a href={data.post.url.href}>(URL)</a></li>
-			<li><a href={`/blogs/${data.post.blogID}`}>(Blog)</a></li>
+			<li><Link kind="link" href={data.post.url.href}>(URL)</Link></li>
+			<li><Link kind="link" href={`/blogs/${data.post.blogID}`}>(Blog)</Link></li>
 		</ul>
 	</article>
 	<article class="published">
@@ -48,16 +49,6 @@
 	.links ul {
 		display: flex;
 		gap: 0.5em;
-	}
-
-	.links a {
-		color: var(--color-dark);
-		text-decoration: none;
-	}
-
-	.links a:hover {
-		cursor: pointer;
-		text-decoration: underline;
 	}
 
 	.published h2 {

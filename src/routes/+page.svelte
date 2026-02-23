@@ -61,8 +61,7 @@
 	}
 
 	h1 {
-		color: var(--color-dark);
-		font-size: 24px;
+		font-size: 1.5rem;
 		font-weight: 600;
 	}
 

@@ -3,6 +3,7 @@
 
 	import Button from "$lib/components/Button.svelte";
 	import Input from "$lib/components/Input.svelte";
+	import Link from "$lib/components/Link.svelte";
 
 	import type { PageProps } from "./$types";
 
@@ -13,8 +14,8 @@
 	<article class="links">
 		<h1>{data.blog.title}</h1>
 		<ul>
-			<li><a href={data.blog.siteURL.href}>(Site URL)</a></li>
-			<li><a href={data.blog.feedURL.href}>(Feed URL)</a></li>
+			<li><Link kind="link" href={data.blog.siteURL.href}>(Site URL)</Link></li>
+			<li><Link kind="link" href={data.blog.feedURL.href}>(Feed URL)</Link></li>
 		</ul>
 	</article>
 	<article class="synced">
@@ -60,7 +61,7 @@
 		<ul>
 			{#each data.posts as post (post.id)}
 				<li>
-					<a href="/blogs/{post.blogID}/posts/{post.id}">{post.title}</a>
+					<Link kind="link" href={`/blogs/${post.blogID}/posts/${post.id}`}>{post.title}</Link>
 					<time datetime={post.publishedAt.toISOString()}>{post.publishedAt.toDateString()}</time>
 				</li>
 			{/each}
@@ -86,16 +87,6 @@
 	.links ul {
 		display: flex;
 		gap: 0.5em;
-	}
-
-	.links a {
-		color: var(--color-dark);
-		text-decoration: none;
-	}
-
-	.links a:hover {
-		cursor: pointer;
-		text-decoration: underline;
 	}
 
 	.synced h2 {
@@ -133,15 +124,5 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-	}
-
-	.posts a {
-		color: var(--color-dark);
-		text-decoration: none;
-	}
-
-	.posts a:hover {
-		cursor: pointer;
-		text-decoration: underline;
 	}
 </style>

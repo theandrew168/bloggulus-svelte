@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { page } from "$app/state";
+
+	import Button from "$lib/components/Button.svelte";
 </script>
 
 <section>
 	<article>
 		<p>{page.status}</p>
 		<h2>{page.error?.message}</h2>
-		<a href="/">Go back home</a>
+		<Button kind="link" href="/">Go back home</Button>
 	</article>
 </section>
 
@@ -27,19 +29,5 @@
 
 	h2 {
 		margin-bottom: 2.5em;
-	}
-
-	a {
-		color: var(--color-white);
-		background-color: var(--color-dark);
-		text-decoration: none;
-		padding: 0.5em 1em;
-		border-radius: 0.25em;
-		box-shadow: var(--shadow);
-	}
-
-	a:hover {
-		background-color: var(--color-medium);
-		cursor: pointer;
 	}
 </style>

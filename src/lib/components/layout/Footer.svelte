@@ -1,23 +1,29 @@
-<footer>
+<script>
+	import Link from "$lib/components/Link.svelte";
+</script>
+
+<footer class="footer">
 	<nav>
-		<ul>
-			<li><a class="big" href="/">Bloggulus</a></li>
-			<li><a class="small" href="/docs/privacy">Privacy Policy</a></li>
-			<li><a href="https://shallowbrooksoftware.com">Shallow Brook Software</a></li>
+		<ul class="links">
+			<li class="link big"><Link kind="link" href="/">Bloggulus</Link></li>
+			<li class="link small"><Link kind="link" href="/docs/privacy">Privacy Policy</Link></li>
+			<li class="link"><Link kind="link" href="https://shallowbrooksoftware.com">Shallow Brook Software</Link></li>
 		</ul>
 	</nav>
 </footer>
 
 <style>
-	footer {
+	.footer {
 		background-color: var(--color-dark);
 	}
 
 	/* On mobile devices, stack and center the footer links. */
-	ul {
+	.links {
+		color: var(--color-white);
 		max-width: var(--container-width);
 		margin: 0 auto;
 		padding: 1em;
+
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -26,24 +32,15 @@
 
 	/* On larger screens, show footer links as a single row with space between. */
 	@media only screen and (min-width: 768px) {
-		ul {
+		.links {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 		}
 
-		ul li:last-child {
+		.links .link:last-child {
 			margin-left: auto;
 		}
-	}
-
-	a {
-		color: var(--color-white);
-		text-decoration: none;
-	}
-
-	a:hover {
-		color: var(--color-light);
 	}
 
 	.big {

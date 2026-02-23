@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Link from "$lib/components/Link.svelte";
 	import type { Account } from "$lib/types";
 
 	type Props = {
@@ -11,16 +12,16 @@
 <header>
 	<nav>
 		<ul>
-			<li class="first"><a class="home" href="/">Bloggulus</a></li>
+			<li class="first"><Link kind="link" href="/">Bloggulus</Link></li>
 			{#if account}
-				<li><a href="/blogs">Blogs</a></li>
+				<li><Link kind="link" href="/blogs">Blogs</Link></li>
 				<li>
 					<form method="POST" action="/signout">
-						<button type="submit">Sign out</button>
+						<Link kind="button" type="submit">Sign out</Link>
 					</form>
 				</li>
 			{:else}
-				<li><a href="/signin">Sign in</a></li>
+				<li><Link kind="link" href="/signin">Sign in</Link></li>
 			{/if}
 		</ul>
 	</nav>
@@ -43,27 +44,6 @@
 
 	.first {
 		margin-right: auto;
-	}
-
-	a,
-	button {
-		display: inline-block;
-		color: var(--color-dark);
-		text-decoration: none;
-		font-size: 1rem;
-		/* Make buttons look like links, if necessary (like for the logout form). */
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 0;
-	}
-
-	a:hover,
-	button:hover {
-		color: var(--color-medium);
-	}
-
-	.home {
 		font-size: 1.5rem;
 	}
 </style>

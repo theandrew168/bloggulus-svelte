@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Link from "$lib/components/Link.svelte";
 	import type { Article } from "$lib/types";
 
 	import Tag from "./Tag.svelte";
@@ -10,21 +11,21 @@
 	let { article }: Props = $props();
 </script>
 
-<article>
-	<header>
+<article class="article">
+	<header class="header">
 		<span class="publishedAt">{article.publishedAt.toDateString()}</span>
-		<ul>
+		<ul class="tags">
 			{#each article.tags as tag}
 				<li><Tag name={tag} /></li>
 			{/each}
 		</ul>
 	</header>
-	<p><a class="title" href={article.url.href}>{article.title}</a></p>
-	<p><a class="blogTitle" href={article.blogURL.href}>{article.blogTitle}</a></p>
+	<p class="title"><Link kind="link" href={article.url.href}>{article.title}</Link></p>
+	<p class="blogTitle"><Link kind="link" href={article.blogURL.href}>{article.blogTitle}</Link></p>
 </article>
 
 <style>
-	article {
+	.article {
 		box-shadow: var(--shadow);
 		background-color: var(--color-white);
 		text-align: left;
@@ -35,7 +36,7 @@
 		gap: 1em;
 	}
 
-	header {
+	.header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -48,31 +49,19 @@
 		font-weight: 300;
 	}
 
-	ul {
+	.tags {
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
 	}
 
 	.title {
-		color: var(--color-dark);
 		font-size: 1.5rem;
 		font-weight: 600;
 		line-height: 1.2;
-		text-decoration: none;
-	}
-
-	.title:hover {
-		text-decoration: underline;
 	}
 
 	.blogTitle {
-		color: var(--color-dark);
 		font-weight: 600;
-		text-decoration: none;
-	}
-
-	.blogTitle:hover {
-		text-decoration: underline;
 	}
 </style>
