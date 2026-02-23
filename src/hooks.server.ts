@@ -6,6 +6,7 @@ import { Command } from "$lib/server/command";
 import { Config } from "$lib/server/config";
 import { Connection } from "$lib/server/postgres";
 import { WebQuery } from "$lib/server/query/web";
+import { sha256 } from "$lib/server/utils";
 import { SESSION_COOKIE_NAME } from "$lib/server/web/cookie";
 
 const config = Config.getInstance();
@@ -58,7 +59,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const sessionToken = event.cookies.get(SESSION_COOKIE_NAME);
 	if (sessionToken) {
-		event.locals.account = await query.account.readBySessionToken(sessionToken);
+		const sessionTokenHash = sha256(sessionToken);
+		event.locals.account = await query.account.readBySessionTokenHash(sessionTokenHash);
 	}
 
 	return resolve(event);

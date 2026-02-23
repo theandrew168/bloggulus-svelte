@@ -3,7 +3,6 @@ import type { UUID } from "crypto";
 import SQL from "sql-template-strings";
 
 import { Connection } from "$lib/server/postgres";
-import { sha256 } from "$lib/server/utils";
 import type { Account } from "$lib/types";
 
 type AccountRow = {
@@ -20,8 +19,7 @@ export class AccountWebQuery {
 	}
 
 	// Powers authentication middleware.
-	async readBySessionToken(sessionToken: string): Promise<Account | undefined> {
-		const sessionTokenHash = await sha256(sessionToken);
+	async readBySessionTokenHash(sessionTokenHash: string): Promise<Account | undefined> {
 		const { rows } = await this._conn.query<AccountRow>(SQL`
             SELECT
                 account.id,

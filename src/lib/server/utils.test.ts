@@ -26,21 +26,19 @@ describe("utils", () => {
 	});
 
 	describe("sha256", () => {
-		it("should correctly hash strings using SHA256", async () => {
-			expect(await sha256("")).toEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
-			expect(await sha256("foobar")).toEqual("c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2");
-			expect(await sha256("hello world")).toEqual("b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9");
+		it("should correctly hash strings using SHA256", () => {
+			expect(sha256("")).toEqual("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855");
+			expect(sha256("foobar")).toEqual("c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2");
+			expect(sha256("hello world")).toEqual("b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9");
 		});
 	});
 
 	describe("hmac", () => {
-		it("should correctly hash strings using HMAC-SHA256", async () => {
+		it("should correctly hash strings using HMAC-SHA256", () => {
 			const key = "secret";
-			expect(await hmac(key, "")).toEqual("f9e66e179b6747ae54108f82f8ade8b3c25d76fd30afde6c395822c530196169");
-			expect(await hmac(key, "foobar")).toEqual("4fcc06915b43d8a49aff193441e9e18654e6a27c2c428b02e8fcc41ccc2299f9");
-			expect(await hmac(key, "hello world")).toEqual(
-				"734cc62f32841568f45715aeb9f4d7891324e6d948e4c6c60c0621cdac48623a",
-			);
+			expect(hmac(key, "")).toEqual("f9e66e179b6747ae54108f82f8ade8b3c25d76fd30afde6c395822c530196169");
+			expect(hmac(key, "foobar")).toEqual("4fcc06915b43d8a49aff193441e9e18654e6a27c2c428b02e8fcc41ccc2299f9");
+			expect(hmac(key, "hello world")).toEqual("734cc62f32841568f45715aeb9f4d7891324e6d948e4c6c60c0621cdac48623a");
 		});
 	});
 });

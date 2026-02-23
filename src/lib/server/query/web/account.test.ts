@@ -4,6 +4,7 @@ import { Account } from "$lib/server/account";
 import { Repository } from "$lib/server/repository";
 import { generateSessionToken, Session } from "$lib/server/session";
 import { randomAccountParams, randomSessionParams } from "$lib/server/test";
+import { sha256 } from "$lib/server/utils";
 
 import { WebQuery } from ".";
 
@@ -12,27 +13,26 @@ describe("query/web/account", () => {
 
 	const query = WebQuery.getInstance();
 
-	describe("readBySessionToken", () => {
+	describe("readBySessionTokenHash", () => {
 		it("should read an account by session token", async () => {
 			const account = new Account(randomAccountParams());
 			await repo.account.create(account);
 
 			const session = new Session(randomSessionParams(account));
-			const token = generateSessionToken();
-			await repo.session.create(session, token);
+			await repo.session.create(session);
 
-			const accountBySessionToken = await query.account.readBySessionToken(token);
-			expect(accountBySessionToken).toBeDefined();
-			expect(accountBySessionToken?.id).toEqual(account.id);
-			expect(accountBySessionToken?.username).toEqual(account.username);
-			expect(accountBySessionToken?.isAdmin).toEqual(account.isAdmin);
+			const accountBySessionTokenHash = await query.account.readBySessionTokenHash(session.tokenHash);
+			expect(accountBySessionTokenHash).toBeDefined();
+			expect(accountBySessionTokenHash?.id).toEqual(account.id);
+			expect(accountBySessionTokenHash?.username).toEqual(account.username);
+			expect(accountBySessionTokenHash?.isAdmin).toEqual(account.isAdmin);
 		});
 
 		it("should return undefined for invalid session tokens", async () => {
-			const invalidToken = generateSessionToken();
+			const invalidSessionTokenHash = sha256(generateSessionToken());
 
-			const accountBySessionToken = await query.account.readBySessionToken(invalidToken);
-			expect(accountBySessionToken).toBeUndefined();
+			const accountBySessionTokenHash = await query.account.readBySessionTokenHash(invalidSessionTokenHash);
+			expect(accountBySessionTokenHash).toBeUndefined();
 		});
 	});
 

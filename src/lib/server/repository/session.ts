@@ -3,12 +3,12 @@ import { SQL } from "sql-template-strings";
 import { Meta } from "$lib/server/meta";
 import { Connection } from "$lib/server/postgres";
 import { Session } from "$lib/server/session";
-import { sha256 } from "$lib/server/utils";
 import type { UUID } from "$lib/types";
 
 type SessionRow = {
 	id: UUID;
 	account_id: UUID;
+	token_hash: string;
 	expires_at: Date;
 	meta_created_at: Date;
 	meta_updated_at: Date;
@@ -25,6 +25,7 @@ function rowToSession(row: SessionRow): Session {
 	return Session.load({
 		id: row.id,
 		accountID: row.account_id,
+		tokenHash: row.token_hash,
 		expiresAt: row.expires_at,
 		meta,
 	});
@@ -37,16 +38,15 @@ export class SessionRepository {
 		this._conn = conn;
 	}
 
-	async create(session: Session, token: string): Promise<void> {
-		const tokenHash = await sha256(token);
+	async create(session: Session): Promise<void> {
 		await this._conn.query(SQL`
 			INSERT INTO session
-                (id, account_id, expires_at, token_hash, meta_created_at, meta_updated_at, meta_version)
+                (id, account_id, token_hash, expires_at, meta_created_at, meta_updated_at, meta_version)
             VALUES (
 				${session.id},
 				${session.accountID},
+				${session.tokenHash},
 				${session.expiresAt},
-				${tokenHash},
 				${session.meta.createdAt},
 				${session.meta.updatedAt},
 				${session.meta.version}
@@ -59,6 +59,7 @@ export class SessionRepository {
             SELECT
                 id,
                 account_id,
+				token_hash,
                 expires_at,
 				meta_created_at,
 				meta_updated_at,
@@ -75,12 +76,12 @@ export class SessionRepository {
 		return rowToSession(row);
 	}
 
-	async readByToken(token: string): Promise<Session | undefined> {
-		const tokenHash = await sha256(token);
+	async readByTokenHash(tokenHash: string): Promise<Session | undefined> {
 		const { rows } = await this._conn.query<SessionRow>(SQL`
             SELECT
                 id,
                 account_id,
+				token_hash,
                 expires_at,
 				meta_created_at,
 				meta_updated_at,
@@ -103,6 +104,7 @@ export class SessionRepository {
             SELECT
                 id,
                 account_id,
+				token_hash,
                 expires_at,
 				meta_created_at,
 				meta_updated_at,

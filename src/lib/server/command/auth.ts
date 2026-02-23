@@ -1,6 +1,7 @@
 import { Account } from "$lib/server/account";
 import { Repository } from "$lib/server/repository";
 import { generateSessionToken, Session } from "$lib/server/session";
+import { sha256 } from "$lib/server/utils";
 
 export const SESSION_EXPIRY_HOURS = 7 * 24;
 export const SESSION_EXPIRY_SECONDS = SESSION_EXPIRY_HOURS * 60 * 60;
@@ -14,6 +15,7 @@ export class AuthCommand {
 
 	async signIn(username: string): Promise<string> {
 		const token = generateSessionToken();
+
 		await this._repo.asUnitOfWork(async (uow) => {
 			let account = await uow.account.readByUsername(username);
 			if (!account) {
@@ -23,9 +25,10 @@ export class AuthCommand {
 
 			const session = new Session({
 				accountID: account.id,
+				tokenHash: sha256(token),
 				expiresAt: new Date(Date.now() + SESSION_EXPIRY_SECONDS * 1000),
 			});
-			await uow.session.create(session, token);
+			await uow.session.create(session);
 		});
 
 		return token;
@@ -33,7 +36,8 @@ export class AuthCommand {
 
 	async signOut(token: string): Promise<void> {
 		await this._repo.asUnitOfWork(async (uow) => {
-			const session = await uow.session.readByToken(token);
+			const tokenHash = sha256(token);
+			const session = await uow.session.readByTokenHash(tokenHash);
 			if (!session) {
 				return;
 			}

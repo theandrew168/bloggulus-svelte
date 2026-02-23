@@ -7,6 +7,7 @@ import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
 import type { NewPostParams } from "$lib/server/post";
 import type { NewSessionParams } from "$lib/server/session";
 import type { NewTagParams } from "$lib/server/tag";
+import { sha256 } from "$lib/server/utils";
 
 const chance = new Chance();
 
@@ -66,6 +67,7 @@ export function randomAccountParams(): NewAccountParams {
 export function randomSessionParams(account: Account): NewSessionParams {
 	const params: NewSessionParams = {
 		accountID: account.id,
+		tokenHash: sha256(chance.string({ length: 20 })),
 		expiresAt: new Date(),
 	};
 	return params;
