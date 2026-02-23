@@ -2,8 +2,8 @@
 	import { page } from "$app/state";
 
 	import Article from "$lib/components/Article.svelte";
+	import Button from "$lib/components/Button.svelte";
 	import Input from "$lib/components/Input.svelte";
-	import LinkButton from "$lib/components/LinkButton.svelte";
 
 	import type { PageProps } from "./$types";
 
@@ -37,7 +37,7 @@
 			<article>
 				<p>No posts found! Get started by following your favorite blogs.</p>
 				<p>
-					<LinkButton href="/blogs">Follow Blogs</LinkButton>
+					<Button kind="link" href="/blogs">Follow Blogs</Button>
 				</p>
 			</article>
 		{/if}
@@ -46,7 +46,7 @@
 
 <footer>
 	{#if data.moreLink}
-		<LinkButton href={data.moreLink} isOutline>View More Articles</LinkButton>
+		<Button kind="link" href={data.moreLink} isOutline>View More Articles</Button>
 	{/if}
 </footer>
 

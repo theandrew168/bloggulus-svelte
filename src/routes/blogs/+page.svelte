@@ -16,7 +16,7 @@
 			<span>
 				<Input type="text" name="feedURL" placeholder="Follow RSS Feed" />
 			</span>
-			<Button>Follow</Button>
+			<Button kind="button" type="submit">Follow</Button>
 		</form>
 	</header>
 	<ul>
@@ -31,12 +31,12 @@
 				{#if blog.isFollowed}
 					<form method="POST" action="?/unfollow" use:enhance>
 						<Input type="hidden" name="blogID" value={blog.id} />
-						<Button isOutline>Unfollow</Button>
+						<Button kind="button" type="submit" isOutline>Unfollow</Button>
 					</form>
 				{:else}
 					<form method="POST" action="?/follow" use:enhance>
 						<Input type="hidden" name="blogID" value={blog.id} />
-						<Button>Follow</Button>
+						<Button kind="button" type="submit">Follow</Button>
 					</form>
 				{/if}
 			</li>
@@ -65,7 +65,7 @@
 		margin-bottom: 0.5em;
 	}
 
-	/* TODO: Is there a better way control input widths? */
+	/* TODO: Is there a better way to control input widths? */
 	span {
 		display: inline-block;
 		width: 50%;

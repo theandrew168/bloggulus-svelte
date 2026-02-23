@@ -35,21 +35,21 @@
 			<li>
 				<form method="POST" action="?/delete" use:enhance>
 					<Input type="hidden" name="blogID" value={data.blog.id} />
-					<Button>Delete</Button>
+					<Button kind="button" type="submit">Delete</Button>
 				</form>
 			</li>
 			{#if data.blog.isPublic}
 				<li>
 					<form method="POST" action="?/hide" use:enhance>
 						<Input type="hidden" name="blogID" value={data.blog.id} />
-						<Button>Hide</Button>
+						<Button kind="button" type="submit">Hide</Button>
 					</form>
 				</li>
 			{:else}
 				<li>
 					<form method="POST" action="?/show" use:enhance>
 						<Input type="hidden" name="blogID" value={data.blog.id} />
-						<Button>Show</Button>
+						<Button kind="button" type="submit">Show</Button>
 					</form>
 				</li>
 			{/if}

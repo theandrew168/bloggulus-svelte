@@ -25,7 +25,7 @@
 		<h2>Actions</h2>
 		<form method="POST" use:enhance>
 			<Input type="hidden" name="postID" value={data.post.id} />
-			<Button>Delete</Button>
+			<Button kind="button" type="submit">Delete</Button>
 		</form>
 	</article>
 </section>

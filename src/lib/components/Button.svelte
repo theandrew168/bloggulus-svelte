@@ -1,20 +1,37 @@
 <script lang="ts">
 	import type { Snippet } from "svelte";
 
-	type Props = {
+	type ButtonProps = {
+		kind: "button";
+		type: "submit";
 		isOutline?: boolean;
 		children: Snippet;
 	};
 
-	let { isOutline, children }: Props = $props();
+	type LinkProps = {
+		kind: "link";
+		href: string;
+		isOutline?: boolean;
+		children: Snippet;
+	};
+
+	type Props = ButtonProps | LinkProps;
+
+	let { isOutline, children, ...props }: Props = $props();
 </script>
 
-<button class={{ outline: isOutline }} type="submit">
-	{@render children()}
-</button>
+{#if props.kind === "button"}
+	<button class={{ button: true, outline: isOutline }} type={props.type}>
+		{@render children()}
+	</button>
+{:else if props.kind === "link"}
+	<a class={{ button: true, outline: isOutline }} href={props.href}>
+		{@render children()}
+	</a>
+{/if}
 
 <style>
-	button {
+	.button {
 		color: var(--color-white);
 		background-color: var(--color-dark);
 		padding: 0.75em 1em;
@@ -24,7 +41,7 @@
 		text-decoration: none;
 	}
 
-	button:hover {
+	.button:hover {
 		background-color: var(--color-medium);
 		cursor: pointer;
 	}

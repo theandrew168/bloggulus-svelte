@@ -20,7 +20,7 @@
 
 				<form method="POST" use:enhance>
 					<Input type="hidden" name="accountID" value={account.id} />
-					<Button isOutline>Delete</Button>
+					<Button kind="button" type="submit" isOutline>Delete</Button>
 				</form>
 			</li>
 		{/each}
