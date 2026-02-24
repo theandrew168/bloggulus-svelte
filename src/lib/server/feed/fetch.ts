@@ -30,18 +30,18 @@ export class FeedFetcher {
 	async fetchFeed(req: FetchFeedRequest): Promise<FetchFeedResponse> {
 		try {
 			const headers: Record<string, string> = {
-				"User-Agent": USER_AGENT,
+				"user-agent": USER_AGENT,
 			};
 			if (req.etag) {
-				headers["If-None-Match"] = req.etag;
+				headers["if-none-match"] = req.etag;
 			}
 			if (req.lastModified) {
-				headers["If-Modified-Since"] = req.lastModified;
+				headers["if-modified-since"] = req.lastModified;
 			}
 
 			const { statusCode, statusText, headers: responseHeaders, body } = await request(req.url.href, { headers });
-			const etag = extractHeader(responseHeaders, "ETag");
-			const lastModified = extractHeader(responseHeaders, "Last-Modified");
+			const etag = extractHeader(responseHeaders, "etag");
+			const lastModified = extractHeader(responseHeaders, "last-modified");
 
 			// If the feed has no new content (304 Not Modified), return headers w/ no feed content.
 			if (statusCode === 304) {

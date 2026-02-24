@@ -33,8 +33,8 @@ describe("feed/fetch", () => {
 				const mockPool = mockAgent.get(origin);
 				mockPool.intercept({ method: "GET", path }).reply(200, feed, {
 					headers: {
-						"Content-Type": "application/xml",
-						ETag: etag,
+						"content-type": "application/xml",
+						etag,
 						"last-modified": lastModified,
 					},
 				});
@@ -82,8 +82,8 @@ describe("feed/fetch", () => {
 				const mockPool = mockAgent.get(origin);
 				mockPool.intercept({ method: "GET", path }).reply(304, "", {
 					headers: {
-						ETag: etag,
-						"Last-Modified": lastModified,
+						etag,
+						"last-modified": lastModified,
 					},
 				});
 
