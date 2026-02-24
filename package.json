@@ -23,7 +23,8 @@
 		"prom-client": "^15.1.3",
 		"rss-parser": "^3.13.0",
 		"sql-template-strings": "^2.2.2",
-		"tsx": "^4.21.0"
+		"tsx": "^4.21.0",
+		"undici": "^7.22.0"
 	},
 	"devDependencies": {
 		"@ianvs/prettier-plugin-sort-imports": "^4.7.1",
@@ -36,7 +37,6 @@
 		"@types/pg": "^8.16.0",
 		"@types/xml2js": "^0.4.14",
 		"chance": "^1.1.13",
-		"fetch-mock": "^12.6.0",
 		"npm-check-updates": "^19.4.1",
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.5.0",

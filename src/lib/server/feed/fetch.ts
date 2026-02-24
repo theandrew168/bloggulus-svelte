@@ -1,8 +1,9 @@
+import { request } from "undici";
+import type { IncomingHttpHeaders } from "undici/types/header";
+
 import { UnreachableFeedError } from "$lib/server/feed/errors";
 
 const USER_AGENT = "Bloggulus/0.6.0 (+https://bloggulus.com)";
-
-type FetchFunc = typeof fetch;
 
 export type FetchFeedRequest = {
 	url: URL;
@@ -16,13 +17,16 @@ export type FetchFeedResponse = {
 	lastModified?: string;
 };
 
-export class FeedFetcher {
-	private _fetch: FetchFunc;
-
-	constructor(fetchFunc: FetchFunc = fetch) {
-		this._fetch = fetchFunc;
+function extractHeader(headers: IncomingHttpHeaders, name: string): string | undefined {
+	const value = headers[name] ?? headers[name.toLowerCase()];
+	if (Array.isArray(value)) {
+		return value[0];
 	}
 
+	return value;
+}
+
+export class FeedFetcher {
 	async fetchFeed(req: FetchFeedRequest): Promise<FetchFeedResponse> {
 		try {
 			const headers: Record<string, string> = {
@@ -35,21 +39,21 @@ export class FeedFetcher {
 				headers["If-Modified-Since"] = req.lastModified;
 			}
 
-			const response = await this._fetch(req.url, { headers });
-			const etag = response.headers.get("ETag") ?? undefined;
-			const lastModified = response.headers.get("Last-Modified") ?? undefined;
+			const { statusCode, statusText, headers: responseHeaders, body } = await request(req.url.href, { headers });
+			const etag = extractHeader(responseHeaders, "ETag");
+			const lastModified = extractHeader(responseHeaders, "Last-Modified");
 
 			// If the feed has no new content (304 Not Modified), return headers w/ no feed content.
-			if (response.status === 304) {
+			if (statusCode === 304) {
 				return { etag, lastModified };
 			}
 
 			// Otherwise, throw a custom error for non-2xx HTTP responses.
-			if (!response.ok) {
-				throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+			if (statusCode < 200 || statusCode >= 300) {
+				throw new Error(`HTTP error: ${statusCode} ${statusText}`);
 			}
 
-			const feed = await response.text();
+			const feed = await body.text();
 			return { feed, etag, lastModified };
 		} catch (error) {
 			throw new UnreachableFeedError(req.url, { cause: error });
