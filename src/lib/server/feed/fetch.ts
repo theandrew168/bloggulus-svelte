@@ -1,8 +1,6 @@
 import { UnreachableFeedError } from "$lib/server/feed/errors";
 
 const USER_AGENT = "Bloggulus/0.6.0 (+https://bloggulus.com)";
-const ETAG_HEADER = "ETag";
-const LAST_MODIFIED_HEADER = "Last-Modified";
 
 type FetchFunc = typeof fetch;
 
@@ -38,8 +36,8 @@ export class FeedFetcher {
 			}
 
 			const response = await this._fetch(req.url, { headers });
-			const etag = response.headers.get(ETAG_HEADER) ?? undefined;
-			const lastModified = response.headers.get(LAST_MODIFIED_HEADER) ?? undefined;
+			const etag = response.headers.get("ETag") ?? undefined;
+			const lastModified = response.headers.get("Last-Modified") ?? undefined;
 
 			// If the feed has no new content (304 Not Modified), return headers w/ no feed content.
 			if (response.status === 304) {
@@ -51,11 +49,8 @@ export class FeedFetcher {
 				throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
 			}
 
-			return {
-				feed: await response.text(),
-				etag: response.headers.get(ETAG_HEADER) ?? undefined,
-				lastModified: response.headers.get(LAST_MODIFIED_HEADER) ?? undefined,
-			};
+			const feed = await response.text();
+			return { feed, etag, lastModified };
 		} catch (error) {
 			throw new UnreachableFeedError(req.url, { cause: error });
 		}
