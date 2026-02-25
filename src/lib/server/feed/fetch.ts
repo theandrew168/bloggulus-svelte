@@ -3,7 +3,7 @@ import type { IncomingHttpHeaders } from "undici/types/header";
 
 import { UnreachableFeedError } from "$lib/server/feed/errors";
 
-const USER_AGENT = "Bloggulus/0.6.0 (+https://bloggulus.com)";
+const USER_AGENT = "Bloggulus/0.7.0 (+https://bloggulus.com)";
 
 export type FetchFeedRequest = {
 	url: URL;
