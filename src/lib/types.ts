@@ -8,6 +8,16 @@ export function Err<E = Error>(error: E): Result<never, E> {
 	return { ok: false, error };
 }
 
+export type Option<T> = { exists: true; data: T } | { exists: false };
+
+export function Some<T>(data: T): Option<T> {
+	return { exists: true, data };
+}
+
+export function None(): Option<never> {
+	return { exists: false };
+}
+
 export type UUID = `${string}-${string}-${string}-${string}-${string}`;
 
 export type Account = {

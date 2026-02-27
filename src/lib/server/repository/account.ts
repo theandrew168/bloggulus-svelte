@@ -3,7 +3,7 @@ import { SQL } from "sql-template-strings";
 import { Account } from "$lib/server/account";
 import { Meta } from "$lib/server/meta";
 import { Connection } from "$lib/server/postgres";
-import type { UUID } from "$lib/types";
+import { type UUID } from "$lib/types";
 
 import { ConcurrentUpdateError } from "./errors";
 
@@ -121,7 +121,7 @@ export class AccountRepository {
 		`);
 
 		if (rows.length !== 1) {
-			throw new ConcurrentUpdateError("Account", account.id);
+			throw new ConcurrentUpdateError("Concurrent update detected", "Account", "id", account.id);
 		}
 
 		const { rows: followedBlogIDRows } = await this._conn.query<{ blog_id: UUID }>(SQL`

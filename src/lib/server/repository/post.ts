@@ -125,7 +125,7 @@ export class PostRepository {
 		`);
 
 		if (rows.length !== 1) {
-			throw new ConcurrentUpdateError("Post", post.id);
+			throw new ConcurrentUpdateError("Concurrent update detected", "Post", "id", post.id);
 		}
 
 		post.meta.updatedAt = newUpdatedAt;

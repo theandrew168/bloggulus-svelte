@@ -172,7 +172,7 @@ export class BlogRepository {
 		`);
 
 		if (rows.length !== 1) {
-			throw new ConcurrentUpdateError("Blog", blog.id);
+			throw new ConcurrentUpdateError("Concurrent update detected", "Blog", "id", blog.id);
 		}
 
 		blog.meta.updatedAt = newUpdatedAt;
