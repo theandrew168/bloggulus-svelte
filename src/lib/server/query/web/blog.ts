@@ -14,8 +14,8 @@ type BlogRow = {
 
 type BlogDetailsRow = {
 	id: UUID;
-	feed_url: URL;
-	site_url: URL;
+	feed_url: string;
+	site_url: string;
 	title: string;
 	synced_at: Date;
 	is_public: boolean;
@@ -49,8 +49,8 @@ export class BlogWebQuery {
 
 		return {
 			id: row.id,
-			feedURL: row.feed_url,
-			siteURL: row.site_url,
+			feedURL: new URL(row.feed_url),
+			siteURL: new URL(row.site_url),
 			title: row.title,
 			syncedAt: row.synced_at,
 			isPublic: row.is_public,
@@ -78,8 +78,8 @@ export class BlogWebQuery {
 
 		return {
 			id: row.id,
-			feedURL: row.feed_url,
-			siteURL: row.site_url,
+			feedURL: new URL(row.feed_url),
+			siteURL: new URL(row.site_url),
 			title: row.title,
 			syncedAt: row.synced_at,
 			isPublic: row.is_public,

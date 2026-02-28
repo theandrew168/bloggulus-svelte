@@ -23,8 +23,8 @@ describe("query/web/blog", () => {
 			expect(blogDetails).toBeDefined();
 
 			expect(blogDetails?.id).toEqual(blog.id);
-			expect(blogDetails?.feedURL).toEqual(blog.feedURL.toString());
-			expect(blogDetails?.siteURL).toEqual(blog.siteURL.toString());
+			expect(blogDetails?.feedURL).toEqual(blog.feedURL);
+			expect(blogDetails?.siteURL).toEqual(blog.siteURL);
 			expect(blogDetails?.title).toEqual(blog.title);
 			expect(blogDetails?.syncedAt).toEqual(blog.syncedAt);
 		});
@@ -46,8 +46,8 @@ describe("query/web/blog", () => {
 			expect(blogDetails).toBeDefined();
 
 			expect(blogDetails?.id).toEqual(blog.id);
-			expect(blogDetails?.feedURL).toEqual(blog.feedURL.toString());
-			expect(blogDetails?.siteURL).toEqual(blog.siteURL.toString());
+			expect(blogDetails?.feedURL).toEqual(blog.feedURL);
+			expect(blogDetails?.siteURL).toEqual(blog.siteURL);
 			expect(blogDetails?.title).toEqual(blog.title);
 			expect(blogDetails?.syncedAt).toEqual(blog.syncedAt);
 		});
