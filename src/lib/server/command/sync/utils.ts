@@ -130,9 +130,17 @@ export async function syncExistingBlog(
 	blog: Blog,
 	redirectCount: number = 0,
 ): Promise<void> {
-	const now = new Date();
-	if (!blog.canBeSynced(now)) {
-		return;
+	// When redirecting, allow multiple sync attempts to be made in quick succession.
+	const isRedirecting = redirectCount > 0;
+	if (!isRedirecting) {
+		const now = new Date();
+		if (!blog.canBeSynced(now)) {
+			return;
+		}
+
+		// Update the blog's syncedAt time.
+		blog.syncedAt = now;
+		await repo.blog.update(blog);
 	}
 
 	// Make a conditional fetch for the blog's feed.
@@ -158,16 +166,17 @@ export async function syncExistingBlog(
 		blog.feedURL = new URL(resp.location);
 		await syncExistingBlog(repo, feedFetcher, blog, redirectCount + 1);
 
-		// Log a successful sync with the resolved URL.
+		// After successfully syncing with the resolved URL, store the update.
 		console.log(`updated feed URL for blog ${blog.id} (${blog.title}): ${oldURL} -> ${blog.feedURL}`);
+		await repo.blog.update(blog);
 
 		return;
 	}
 
-	// Update the blog's syncedAt time and cache headers.
-	blog.syncedAt = now;
-	updateCacheHeaders(blog, resp);
-	await repo.blog.update(blog);
+	const haveHeadersChanged = updateCacheHeaders(blog, resp);
+	if (haveHeadersChanged) {
+		await repo.blog.update(blog);
+	}
 
 	// No feed data from an existing blog can occur if the feed has not changed.
 	if (!resp.feed) {
