@@ -154,11 +154,12 @@ export async function syncExistingBlog(
 			throw new Error(`Too many redirects while fetching feed for existing blog: ${blog.feedURL}`);
 		}
 
+		const oldURL = blog.feedURL;
 		blog.feedURL = new URL(resp.location);
 		await syncExistingBlog(repo, feedFetcher, blog, redirectCount + 1);
 
 		// After successfully syncing with the resolved URL, store the update.
-		console.log(`updating feed URL for blog ${blog.id} (${blog.title}): ${blog.feedURL} -> ${resp.location}`);
+		console.log(`updating feed URL for blog ${blog.id} (${blog.title}): ${oldURL} -> ${blog.feedURL}`);
 		await repo.blog.update(blog);
 
 		return;
