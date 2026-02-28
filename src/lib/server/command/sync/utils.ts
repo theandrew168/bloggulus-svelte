@@ -158,21 +158,16 @@ export async function syncExistingBlog(
 		blog.feedURL = new URL(resp.location);
 		await syncExistingBlog(repo, feedFetcher, blog, redirectCount + 1);
 
-		// After successfully syncing with the resolved URL, store the update.
-		console.log(`updating feed URL for blog ${blog.id} (${blog.title}): ${oldURL} -> ${blog.feedURL}`);
-		await repo.blog.update(blog);
+		// Log a successful sync with the resolved URL.
+		console.log(`updated feed URL for blog ${blog.id} (${blog.title}): ${oldURL} -> ${blog.feedURL}`);
 
 		return;
 	}
 
-	// Update the blog's syncedAt time.
+	// Update the blog's syncedAt time and cache headers.
 	blog.syncedAt = now;
+	updateCacheHeaders(blog, resp);
 	await repo.blog.update(blog);
-
-	const haveHeadersChanged = updateCacheHeaders(blog, resp);
-	if (haveHeadersChanged) {
-		await repo.blog.update(blog);
-	}
 
 	// No feed data from an existing blog can occur if the feed has not changed.
 	if (!resp.feed) {
