@@ -3,7 +3,7 @@ import { MockAgent, setGlobalDispatcher } from "undici";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { UnreachableFeedError } from "./errors";
-import { FeedFetcher } from "./fetch";
+import { FeedFetcher, type RedirectFetchFeedResponse, type ResolvedFetchFeedResponse } from "./fetch";
 
 describe("feed/fetch", () => {
 	const chance = new Chance();
@@ -41,10 +41,12 @@ describe("feed/fetch", () => {
 
 				const fetcher = new FeedFetcher();
 				const response = await fetcher.fetchFeed({ url });
+				expect(response.kind).to.equal("resolved");
 
-				expect(response.feed).to.equal(feed);
-				expect(response.etag).to.equal(etag);
-				expect(response.lastModified).to.equal(lastModified);
+				const resolvedResponse = response as ResolvedFetchFeedResponse;
+				expect(resolvedResponse.feed).to.equal(feed);
+				expect(resolvedResponse.etag).to.equal(etag);
+				expect(resolvedResponse.lastModified).to.equal(lastModified);
 			});
 
 			it("should include etag and last modified headers if present", async () => {
@@ -89,10 +91,47 @@ describe("feed/fetch", () => {
 
 				const fetcher = new FeedFetcher();
 				const response = await fetcher.fetchFeed({ url });
+				expect(response.kind).to.equal("resolved");
 
-				expect(response.feed).to.be.undefined;
-				expect(response.etag).to.equal(etag);
-				expect(response.lastModified).to.equal(lastModified);
+				const resolvedResponse = response as ResolvedFetchFeedResponse;
+				expect(resolvedResponse.feed).to.be.undefined;
+				expect(resolvedResponse.etag).to.equal(etag);
+				expect(resolvedResponse.lastModified).to.equal(lastModified);
+			});
+
+			it("should return a redirect response for 3xx responses with a Location header", async () => {
+				const url = new URL(chance.url());
+				const origin = `${url.protocol}//${url.host}`;
+				const path = `${url.pathname}${url.search}`;
+				const location = chance.url();
+
+				const mockPool = mockAgent.get(origin);
+				mockPool.intercept({ method: "GET", path }).reply(301, "", {
+					headers: {
+						location,
+					},
+				});
+
+				const fetcher = new FeedFetcher();
+				const response = await fetcher.fetchFeed({ url });
+				expect(response.kind).to.equal("redirect");
+
+				const redirectResponse = response as RedirectFetchFeedResponse;
+				expect(redirectResponse.location).to.equal(location);
+			});
+
+			it("should throw an UnreachableFeedError for 3xx responses without a Location header", async () => {
+				const url = new URL(chance.url());
+				const origin = `${url.protocol}//${url.host}`;
+				const path = `${url.pathname}${url.search}`;
+
+				const mockPool = mockAgent.get(origin);
+				mockPool.intercept({ method: "GET", path }).reply(301, "", {
+					headers: {},
+				});
+
+				const fetcher = new FeedFetcher();
+				await expect(fetcher.fetchFeed({ url })).rejects.toThrow(UnreachableFeedError);
 			});
 
 			it("should throw an UnreachableFeedError for network errors", async () => {

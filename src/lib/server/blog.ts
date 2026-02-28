@@ -70,6 +70,10 @@ export class Blog {
 		return this._feedURL;
 	}
 
+	set feedURL(feedURL: URL) {
+		this._feedURL = feedURL;
+	}
+
 	get siteURL(): URL {
 		return this._siteURL;
 	}

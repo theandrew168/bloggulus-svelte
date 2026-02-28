@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { Blog } from "$lib/server/blog";
 import { EmptyFeedError } from "$lib/server/command/errors";
-import { FeedFetcher, type FetchFeedResponse } from "$lib/server/feed/fetch";
+import { FeedFetcher, type ResolvedFetchFeedResponse } from "$lib/server/feed/fetch";
 import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
@@ -22,7 +22,8 @@ describe("command/sync/utils", () => {
 
 			const blog = new Blog(randomBlogParams());
 
-			const response: FetchFeedResponse = {
+			const response: ResolvedFetchFeedResponse = {
+				kind: "resolved",
 				feed: "<feed>Test Feed</feed>",
 				etag,
 				lastModified,
@@ -45,7 +46,8 @@ describe("command/sync/utils", () => {
 				lastModified,
 			});
 
-			const response: FetchFeedResponse = {
+			const response: ResolvedFetchFeedResponse = {
+				kind: "resolved",
 				feed: "<feed>Test Feed</feed>",
 				etag,
 				lastModified,
@@ -70,7 +72,8 @@ describe("command/sync/utils", () => {
 
 			const newEtag = chance.string({ length: 10 });
 			const newLastModified = chance.date().toISOString();
-			const response: FetchFeedResponse = {
+			const response: ResolvedFetchFeedResponse = {
+				kind: "resolved",
 				feed: "<feed>Test Feed</feed>",
 				etag: newEtag,
 				lastModified: newLastModified,
@@ -93,7 +96,8 @@ describe("command/sync/utils", () => {
 				lastModified,
 			});
 
-			const response: FetchFeedResponse = {
+			const response: ResolvedFetchFeedResponse = {
+				kind: "resolved",
 				feed: "<feed>Test Feed</feed>",
 			};
 
@@ -276,6 +280,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
+					kind: "resolved",
 					feed,
 				};
 			});
@@ -303,6 +308,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
+					kind: "resolved",
 					feed: "",
 				};
 			});
@@ -312,6 +318,45 @@ describe("command/sync/utils", () => {
 
 			const createdBlog = await repo.blog.readByFeedURL(feedURL);
 			expect(createdBlog).toBeUndefined();
+		});
+
+		it("should follow redirects and update the blog's feedURL", async () => {
+			const redirectFeedURL = new URL(chance.url());
+			const resolvedFeedURL = new URL(chance.url());
+
+			const feedBlog: FeedBlog = {
+				feedURL: resolvedFeedURL,
+				siteURL: new URL(chance.url()),
+				title: chance.sentence(),
+				posts: [],
+			};
+
+			const feed = generateAtomFeed(feedBlog);
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async (req) => {
+				if (req.url.toString() === redirectFeedURL.toString()) {
+					return {
+						kind: "redirect",
+						location: resolvedFeedURL.toString(),
+					};
+				} else if (req.url.toString() === resolvedFeedURL.toString()) {
+					return {
+						kind: "resolved",
+						feed,
+					};
+				} else {
+					throw new Error(`Unexpected URL in fetchFeed mock: ${req.url}`);
+				}
+			});
+
+			await syncNewBlog(repo, feedFetcher, redirectFeedURL);
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: redirectFeedURL });
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: resolvedFeedURL });
+
+			const createdBlog = await repo.blog.readByFeedURL(resolvedFeedURL);
+			expect(createdBlog).toBeDefined();
+			expect(createdBlog?.feedURL.toString()).toEqual(resolvedFeedURL.toString());
 		});
 	});
 
@@ -366,6 +411,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
+					kind: "resolved",
 					feed,
 				};
 			});
@@ -404,6 +450,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
+					kind: "resolved",
 					feed,
 				};
 			});
@@ -435,6 +482,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
+					kind: "resolved",
 					feed,
 					etag,
 					lastModified,
@@ -448,6 +496,51 @@ describe("command/sync/utils", () => {
 			expect(updatedBlog).toBeDefined();
 			expect(updatedBlog?.etag).toEqual(etag);
 			expect(updatedBlog?.lastModified).toEqual(lastModified);
+		});
+
+		it("should follow redirects and update the blog's feedURL", async () => {
+			const redirectFeedURL = new URL(chance.url());
+			const blog = new Blog({
+				...randomBlogParams(),
+				feedURL: redirectFeedURL,
+			});
+			await repo.blog.create(blog);
+
+			const resolvedFeedURL = new URL(chance.url());
+
+			const feedBlog: FeedBlog = {
+				feedURL: resolvedFeedURL,
+				siteURL: new URL(chance.url()),
+				title: chance.sentence(),
+				posts: [],
+			};
+
+			const feed = generateAtomFeed(feedBlog);
+
+			const feedFetcher = new FeedFetcher();
+			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async (req) => {
+				if (req.url.toString() === redirectFeedURL.toString()) {
+					return {
+						kind: "redirect",
+						location: resolvedFeedURL.toString(),
+					};
+				} else if (req.url.toString() === resolvedFeedURL.toString()) {
+					return {
+						kind: "resolved",
+						feed,
+					};
+				} else {
+					throw new Error(`Unexpected URL in fetchFeed mock: ${req.url}`);
+				}
+			});
+
+			await syncExistingBlog(repo, feedFetcher, blog);
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: redirectFeedURL });
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: resolvedFeedURL });
+
+			const updatedBlog = await repo.blog.readByID(blog.id);
+			expect(updatedBlog).toBeDefined();
+			expect(updatedBlog?.feedURL.toString()).toEqual(resolvedFeedURL.toString());
 		});
 	});
 });

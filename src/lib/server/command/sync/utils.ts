@@ -1,11 +1,13 @@
 import { Blog } from "$lib/server/blog";
 import { EmptyFeedError } from "$lib/server/command/errors";
-import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "$lib/server/feed/fetch";
+import type { FeedFetcher, FetchFeedRequest, ResolvedFetchFeedResponse } from "$lib/server/feed/fetch";
 import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
 
-export function updateCacheHeaders(blog: Blog, response: FetchFeedResponse): boolean {
+const MAX_REDIRECT_COUNT = 5;
+
+export function updateCacheHeaders(blog: Blog, response: ResolvedFetchFeedResponse): boolean {
 	let haveHeadersChanged = false;
 
 	if (response.etag && response.etag !== blog.etag) {
@@ -80,12 +82,26 @@ export function comparePosts(blog: Blog, knownPosts: Post[], feedPosts: FeedPost
 	};
 }
 
-export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, feedURL: URL): Promise<void> {
+export async function syncNewBlog(
+	repo: Repository,
+	feedFetcher: FeedFetcher,
+	feedURL: URL,
+	redirectCount: number = 0,
+): Promise<void> {
 	// Make an unconditional fetch for the blog's feed.
 	const req: FetchFeedRequest = {
 		url: feedURL,
 	};
 	const resp = await feedFetcher.fetchFeed(req);
+
+	// If the feed URL redirects, attempt to sync using the new feed URL.
+	if (resp.kind === "redirect") {
+		if (redirectCount >= 5) {
+			throw new Error(`Too many redirects while fetching feed for new blog: ${feedURL}`);
+		}
+
+		return syncNewBlog(repo, feedFetcher, new URL(resp.location), redirectCount + 1);
+	}
 
 	// No feed data from a new blog is an error.
 	if (!resp.feed) {
@@ -108,23 +124,49 @@ export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, fe
 	await syncPosts(repo, blog, feedBlog.posts);
 }
 
-export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetcher, blog: Blog): Promise<void> {
+export async function syncExistingBlog(
+	repo: Repository,
+	feedFetcher: FeedFetcher,
+	blog: Blog,
+	redirectCount: number = 0,
+): Promise<void> {
 	const now = new Date();
 	if (!blog.canBeSynced(now)) {
+		return;
+	}
+
+	// Make a conditional fetch for the blog's feed.
+	const req: FetchFeedRequest = {
+		url: blog.feedURL,
+	};
+	if (blog.etag) {
+		req.etag = blog.etag;
+	}
+	if (blog.lastModified) {
+		req.lastModified = blog.lastModified;
+	}
+
+	const resp = await feedFetcher.fetchFeed(req);
+
+	// If the feed URL redirects, attempt to sync using the new feed URL.
+	if (resp.kind === "redirect") {
+		if (redirectCount >= MAX_REDIRECT_COUNT) {
+			throw new Error(`Too many redirects while fetching feed for existing blog: ${blog.feedURL}`);
+		}
+
+		blog.feedURL = new URL(resp.location);
+		await syncExistingBlog(repo, feedFetcher, blog, redirectCount + 1);
+
+		// After successfully syncing with the resolved URL, store the update.
+		console.log(`updating feed URL for blog ${blog.id} (${blog.title}): ${blog.feedURL} -> ${resp.location}`);
+		await repo.blog.update(blog);
+
 		return;
 	}
 
 	// Update the blog's syncedAt time.
 	blog.syncedAt = now;
 	await repo.blog.update(blog);
-
-	// Make a conditional fetch for the blog's feed.
-	const req: FetchFeedRequest = {
-		url: blog.feedURL,
-		etag: blog.etag,
-		lastModified: blog.lastModified,
-	};
-	const resp = await feedFetcher.fetchFeed(req);
 
 	const haveHeadersChanged = updateCacheHeaders(blog, resp);
 	if (haveHeadersChanged) {
