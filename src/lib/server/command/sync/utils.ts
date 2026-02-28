@@ -130,10 +130,13 @@ export async function syncExistingBlog(
 	blog: Blog,
 	redirectCount: number = 0,
 ): Promise<void> {
+	// On first attempt, check and update when the blog was most recently synced.
 	// When redirecting, allow multiple sync attempts to be made in quick succession.
-	const isRedirecting = redirectCount > 0;
-	if (!isRedirecting) {
+	const isFirstAttempt = redirectCount === 0;
+	if (isFirstAttempt) {
 		const now = new Date();
+
+		// If the blog was synced recently, skip syncing to avoid unnecessary fetches.
 		if (!blog.canBeSynced(now)) {
 			return;
 		}
