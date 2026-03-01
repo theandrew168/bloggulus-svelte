@@ -5,6 +5,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { UnreachableFeedError } from "./errors";
 import { isOK, Requester } from "./request";
 
+// NOTE: If undici didn't support mocking, we'd have to DI the
+// "request" function itself into the Requester class.
+
 describe("feed/request", () => {
 	const chance = new Chance();
 

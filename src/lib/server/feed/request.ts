@@ -35,6 +35,13 @@ export function isOK(statusCode: number): boolean {
 
 type UndiciResponse = Awaited<ReturnType<typeof undiciRequest>>;
 
+/**
+ * A simple HTTP client that:
+ * - performs requests
+ * - follows redirects (up to a certain limit)
+ * - normalizes response headers into a simple object
+ * - wraps network errors and other unexpected issues in a custom error type
+ */
 export class Requester {
 	/**
 	 * Performs an HTTP request and follows redirects.
