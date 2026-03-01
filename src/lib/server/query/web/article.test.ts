@@ -118,15 +118,15 @@ describe("query/web/article", () => {
 			expect(articles.length).toEqual(2);
 
 			expect(articles[0]?.title).toEqual(post2.title);
-			expect(articles[0]?.url).toEqual(post2.url);
+			expect(articles[0]?.url.toString()).toEqual(post2.url.toString());
 			expect(articles[0]?.blogTitle).toEqual(blog.title);
-			expect(articles[0]?.blogURL).toEqual(blog.siteURL);
+			expect(articles[0]?.blogURL.toString()).toEqual(blog.siteURL.toString());
 			expect(articles[0]?.publishedAt).toEqual(post2.publishedAt);
 
 			expect(articles[1]?.title).toEqual(post1.title);
-			expect(articles[1]?.url).toEqual(post1.url);
+			expect(articles[1]?.url.toString()).toEqual(post1.url.toString());
 			expect(articles[1]?.blogTitle).toEqual(blog.title);
-			expect(articles[1]?.blogURL).toEqual(blog.siteURL);
+			expect(articles[1]?.blogURL.toString()).toEqual(blog.siteURL.toString());
 			expect(articles[1]?.publishedAt).toEqual(post1.publishedAt);
 		});
 

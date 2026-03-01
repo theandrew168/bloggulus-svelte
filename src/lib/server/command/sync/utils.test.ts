@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { Blog } from "$lib/server/blog";
 import { EmptyFeedError } from "$lib/server/command/errors";
-import { FeedFetcher, type ResolvedFetchFeedResponse } from "$lib/server/feed/fetch";
+import { FeedFetcher, type FetchFeedResponse } from "$lib/server/feed/fetch";
 import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
@@ -22,8 +22,8 @@ describe("command/sync/utils", () => {
 
 			const blog = new Blog(randomBlogParams());
 
-			const response: ResolvedFetchFeedResponse = {
-				kind: "resolved",
+			const response: FetchFeedResponse = {
+				url: blog.feedURL,
 				feed: "<feed>Test Feed</feed>",
 				etag,
 				lastModified,
@@ -46,8 +46,8 @@ describe("command/sync/utils", () => {
 				lastModified,
 			});
 
-			const response: ResolvedFetchFeedResponse = {
-				kind: "resolved",
+			const response: FetchFeedResponse = {
+				url: blog.feedURL,
 				feed: "<feed>Test Feed</feed>",
 				etag,
 				lastModified,
@@ -72,8 +72,8 @@ describe("command/sync/utils", () => {
 
 			const newEtag = chance.string({ length: 10 });
 			const newLastModified = chance.date().toISOString();
-			const response: ResolvedFetchFeedResponse = {
-				kind: "resolved",
+			const response: FetchFeedResponse = {
+				url: blog.feedURL,
 				feed: "<feed>Test Feed</feed>",
 				etag: newEtag,
 				lastModified: newLastModified,
@@ -96,8 +96,8 @@ describe("command/sync/utils", () => {
 				lastModified,
 			});
 
-			const response: ResolvedFetchFeedResponse = {
-				kind: "resolved",
+			const response: FetchFeedResponse = {
+				url: blog.feedURL,
 				feed: "<feed>Test Feed</feed>",
 			};
 
@@ -280,7 +280,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
-					kind: "resolved",
+					url: feedURL,
 					feed,
 				};
 			});
@@ -308,7 +308,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
-					kind: "resolved",
+					url: feedURL,
 					feed: "",
 				};
 			});
@@ -321,11 +321,11 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should follow redirects and update the blog's feedURL", async () => {
-			const redirectFeedURL = new URL(chance.url());
-			const resolvedFeedURL = new URL(chance.url());
+			const oldFeedURL = new URL(chance.url());
+			const newFeedURL = new URL(chance.url());
 
 			const feedBlog: FeedBlog = {
-				feedURL: resolvedFeedURL,
+				feedURL: newFeedURL,
 				siteURL: new URL(chance.url()),
 				title: chance.sentence(),
 				posts: [],
@@ -335,14 +335,9 @@ describe("command/sync/utils", () => {
 
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async (req) => {
-				if (req.url.toString() === redirectFeedURL.toString()) {
+				if (req.url.toString() === oldFeedURL.toString()) {
 					return {
-						kind: "redirect",
-						location: resolvedFeedURL.toString(),
-					};
-				} else if (req.url.toString() === resolvedFeedURL.toString()) {
-					return {
-						kind: "resolved",
+						url: newFeedURL,
 						feed,
 					};
 				} else {
@@ -350,13 +345,11 @@ describe("command/sync/utils", () => {
 				}
 			});
 
-			await syncNewBlog(repo, feedFetcher, redirectFeedURL);
-			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: redirectFeedURL });
-			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: resolvedFeedURL });
+			await syncNewBlog(repo, feedFetcher, oldFeedURL);
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: oldFeedURL });
 
-			const createdBlog = await repo.blog.readByFeedURL(resolvedFeedURL);
+			const createdBlog = await repo.blog.readByFeedURL(newFeedURL);
 			expect(createdBlog).toBeDefined();
-			expect(createdBlog?.feedURL.toString()).toEqual(resolvedFeedURL.toString());
 		});
 	});
 
@@ -411,7 +404,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
-					kind: "resolved",
+					url: blog.feedURL,
 					feed,
 				};
 			});
@@ -450,7 +443,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
-					kind: "resolved",
+					url: blog.feedURL,
 					feed,
 				};
 			});
@@ -482,7 +475,7 @@ describe("command/sync/utils", () => {
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
-					kind: "resolved",
+					url: blog.feedURL,
 					feed,
 					etag,
 					lastModified,
@@ -499,17 +492,17 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should follow redirects and update the blog's feedURL", async () => {
-			const redirectFeedURL = new URL(chance.url());
+			const oldFeedURL = new URL(chance.url());
 			const blog = new Blog({
 				...randomBlogParams(),
-				feedURL: redirectFeedURL,
+				feedURL: oldFeedURL,
 			});
 			await repo.blog.create(blog);
 
-			const resolvedFeedURL = new URL(chance.url());
+			const newFeedURL = new URL(chance.url());
 
 			const feedBlog: FeedBlog = {
-				feedURL: resolvedFeedURL,
+				feedURL: newFeedURL,
 				siteURL: new URL(chance.url()),
 				title: chance.sentence(),
 				posts: [],
@@ -519,14 +512,9 @@ describe("command/sync/utils", () => {
 
 			const feedFetcher = new FeedFetcher();
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async (req) => {
-				if (req.url.toString() === redirectFeedURL.toString()) {
+				if (req.url.toString() === oldFeedURL.toString()) {
 					return {
-						kind: "redirect",
-						location: resolvedFeedURL.toString(),
-					};
-				} else if (req.url.toString() === resolvedFeedURL.toString()) {
-					return {
-						kind: "resolved",
+						url: newFeedURL,
 						feed,
 					};
 				} else {
@@ -535,12 +523,10 @@ describe("command/sync/utils", () => {
 			});
 
 			await syncExistingBlog(repo, feedFetcher, blog);
-			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: redirectFeedURL });
-			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: resolvedFeedURL });
+			expect(fetchFeedSpy).toHaveBeenCalledWith({ url: oldFeedURL });
 
-			const updatedBlog = await repo.blog.readByID(blog.id);
+			const updatedBlog = await repo.blog.readByFeedURL(newFeedURL);
 			expect(updatedBlog).toBeDefined();
-			expect(updatedBlog?.feedURL.toString()).toEqual(resolvedFeedURL.toString());
 		});
 	});
 });
