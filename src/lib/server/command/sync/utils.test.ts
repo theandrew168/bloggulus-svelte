@@ -5,6 +5,7 @@ import { Blog } from "$lib/server/blog";
 import { EmptyFeedError } from "$lib/server/command/errors";
 import { FeedFetcher, type FetchFeedResponse } from "$lib/server/feed/fetch";
 import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
+import { Requester } from "$lib/server/feed/request";
 import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
 import { generateAtomFeed, randomBlogParams, randomPostParams } from "$lib/server/test";
@@ -277,7 +278,8 @@ describe("command/sync/utils", () => {
 
 			const feed = generateAtomFeed(feedBlog);
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
 					url: feedURL,
@@ -305,7 +307,8 @@ describe("command/sync/utils", () => {
 		it("should throw an error if the feed is empty", async () => {
 			const feedURL = new URL(chance.url());
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
 					url: feedURL,
@@ -333,7 +336,8 @@ describe("command/sync/utils", () => {
 
 			const feed = generateAtomFeed(feedBlog);
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async (req) => {
 				if (req.url.toString() === oldFeedURL.toString()) {
 					return {
@@ -364,7 +368,8 @@ describe("command/sync/utils", () => {
 				syncedAt: new Date(),
 			});
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed");
 
 			await syncExistingBlog(repo, feedFetcher, blog);
@@ -401,7 +406,8 @@ describe("command/sync/utils", () => {
 
 			const feed = generateAtomFeed(feedBlog);
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
 					url: blog.feedURL,
@@ -440,7 +446,8 @@ describe("command/sync/utils", () => {
 
 			const feed = generateAtomFeed(feedBlog);
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
 					url: blog.feedURL,
@@ -472,7 +479,8 @@ describe("command/sync/utils", () => {
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async () => {
 				return {
 					url: blog.feedURL,
@@ -510,7 +518,8 @@ describe("command/sync/utils", () => {
 
 			const feed = generateAtomFeed(feedBlog);
 
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			const fetchFeedSpy = vi.spyOn(feedFetcher, "fetchFeed").mockImplementation(async (req) => {
 				if (req.url.toString() === oldFeedURL.toString()) {
 					return {

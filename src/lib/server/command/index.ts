@@ -1,4 +1,5 @@
 import { FeedFetcher } from "$lib/server/feed/fetch";
+import { Requester } from "$lib/server/feed/request";
 import { Repository } from "$lib/server/repository";
 
 import { AccountCommand } from "./account";
@@ -27,7 +28,8 @@ export class Command {
 	static getInstance(): Command {
 		if (!this._instance) {
 			const repo = Repository.getInstance();
-			const feedFetcher = new FeedFetcher();
+			const requester = new Requester();
+			const feedFetcher = new FeedFetcher(requester);
 			this._instance = new Command(repo, feedFetcher);
 		}
 
