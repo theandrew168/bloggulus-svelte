@@ -1,7 +1,7 @@
 import type { Command } from "$lib/server/command";
 import type { Config } from "$lib/server/config";
 import type { WebQuery } from "$lib/server/query/web";
-import type { Account } from "$lib/types";
+import type { Account, Option as OptionType, Result as ResultType } from "$lib/types";
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
@@ -15,6 +15,14 @@ declare global {
 			account?: Account;
 		}
 	}
+
+	type Option<T> = OptionType<T>;
+	function Some<T>(data: T): Option<T>;
+	function None(): Option<never>;
+
+	type Result<T, E = Error> = ResultType<T, E>;
+	function Ok<T>(data: T): Result<T>;
+	function Err<E = Error>(error: E): Result<never, E>;
 }
 
 export {};
