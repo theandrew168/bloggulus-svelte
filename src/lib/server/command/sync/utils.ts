@@ -5,6 +5,13 @@ import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
 
+/**
+ * When calculating cachedUntil based on the feed's Cache-Control max-age,
+ * add a small buffer to account for the small amount of time between capturing
+ * "now" and when the feed is actually fetched. 30 seconds should be enough.
+ */
+const CACHED_UNTIL_BUFFER_MS = 30 * 1000;
+
 export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedResponse): boolean {
 	let haveHeadersChanged = false;
 
@@ -22,7 +29,7 @@ export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedRes
 		const maxAgeSeconds = parseCacheControlMaxAge(response.cacheControl);
 		if (maxAgeSeconds.exists) {
 			const maxAgeMS = maxAgeSeconds.data * 1000;
-			const cachedUntil = new Date(now.getTime() + maxAgeMS);
+			const cachedUntil = new Date(now.getTime() + maxAgeMS + CACHED_UNTIL_BUFFER_MS);
 			blog.cachedUntil = cachedUntil;
 			haveHeadersChanged = true;
 		}
