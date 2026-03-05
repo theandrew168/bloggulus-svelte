@@ -18,6 +18,7 @@ export type FetchFeedResponse = {
 	feed?: string;
 	etag?: string;
 	lastModified?: string;
+	cacheControl?: string;
 };
 
 export class FeedFetcher {
@@ -48,10 +49,11 @@ export class FeedFetcher {
 
 		const etag = responseHeaders["etag"];
 		const lastModified = responseHeaders["last-modified"];
+		const cacheControl = responseHeaders["cache-control"];
 
 		// If the feed has no new content (304 Not Modified), return headers w/ no feed content.
 		if (statusCode === 304) {
-			return { url, etag, lastModified };
+			return { url, etag, lastModified, cacheControl };
 		}
 
 		// Otherwise, throw a custom error for non-2xx HTTP responses.
@@ -61,6 +63,6 @@ export class FeedFetcher {
 			});
 		}
 
-		return { url, feed: body, etag, lastModified };
+		return { url, feed: body, etag, lastModified, cacheControl };
 	}
 }

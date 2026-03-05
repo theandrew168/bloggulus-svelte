@@ -35,17 +35,19 @@ describe("repository/blog", () => {
 		const blog = new Blog(randomBlogParams());
 		await repo.blog.create(blog);
 
-		blog.etag = chance.word();
-		blog.lastModified = chance.word();
 		blog.syncedAt = new Date();
 		blog.isPublic = true;
+		blog.etag = chance.word();
+		blog.lastModified = chance.word();
+		blog.cachedUntil = chance.date();
 		await repo.blog.update(blog);
 
 		const blogByID = await repo.blog.readByID(blog.id);
-		expect(blogByID?.etag).toEqual(blog.etag);
-		expect(blogByID?.lastModified).toEqual(blog.lastModified);
 		expect(blogByID?.syncedAt).toEqual(blog.syncedAt);
 		expect(blogByID?.isPublic).toEqual(blog.isPublic);
+		expect(blogByID?.etag).toEqual(blog.etag);
+		expect(blogByID?.lastModified).toEqual(blog.lastModified);
+		expect(blogByID?.cachedUntil).toEqual(blog.cachedUntil);
 	});
 
 	test("delete", async () => {

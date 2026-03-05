@@ -27,5 +27,20 @@ describe("blog", () => {
 			blog.syncedAt = longAfterSyncedAt;
 			expect(blog.canBeSynced(now)).toEqual(false);
 		});
+
+		it("should prevent syncing if the feed is cached until a future date", () => {
+			const now = new Date();
+
+			const blog = new Blog(randomBlogParams());
+			expect(blog.canBeSynced(now)).toEqual(true);
+
+			// Make the blog cached until 1 hour in the future, which should prevent syncing.
+			blog.cachedUntil = new Date(Date.now() + 1000 * 60 * 60);
+			expect(blog.canBeSynced(now)).toEqual(false);
+
+			// Make the blog cached until 1 hour in the past, which should allow syncing.
+			blog.cachedUntil = new Date(Date.now() - 1000 * 60 * 60);
+			expect(blog.canBeSynced(now)).toEqual(true);
+		});
 	});
 });

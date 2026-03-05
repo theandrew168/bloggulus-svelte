@@ -11,6 +11,7 @@ export type NewBlogParams = {
 	syncedAt: Date;
 	etag?: string;
 	lastModified?: string;
+	cachedUntil?: Date;
 };
 
 export type LoadBlogParams = {
@@ -22,6 +23,7 @@ export type LoadBlogParams = {
 	isPublic: boolean;
 	etag?: string;
 	lastModified?: string;
+	cachedUntil?: Date;
 	meta: Meta;
 };
 
@@ -34,9 +36,10 @@ export class Blog {
 	private _isPublic: boolean;
 	private _etag?: string;
 	private _lastModified?: string;
+	private _cachedUntil?: Date;
 	private _meta: Meta;
 
-	constructor({ feedURL, siteURL, title, syncedAt, etag, lastModified }: NewBlogParams) {
+	constructor({ feedURL, siteURL, title, syncedAt, etag, lastModified, cachedUntil }: NewBlogParams) {
 		this._id = crypto.randomUUID();
 		this._feedURL = feedURL;
 		this._siteURL = siteURL;
@@ -45,10 +48,22 @@ export class Blog {
 		this._isPublic = false;
 		this._etag = etag;
 		this._lastModified = lastModified;
+		this._cachedUntil = cachedUntil;
 		this._meta = new Meta();
 	}
 
-	static load({ id, feedURL, siteURL, title, syncedAt, isPublic, etag, lastModified, meta }: LoadBlogParams): Blog {
+	static load({
+		id,
+		feedURL,
+		siteURL,
+		title,
+		syncedAt,
+		isPublic,
+		etag,
+		lastModified,
+		cachedUntil,
+		meta,
+	}: LoadBlogParams): Blog {
 		const blog = new Blog({ feedURL, siteURL, title, syncedAt });
 		blog._id = id;
 		blog._feedURL = feedURL;
@@ -58,6 +73,7 @@ export class Blog {
 		blog._isPublic = isPublic;
 		blog._etag = etag;
 		blog._lastModified = lastModified;
+		blog._cachedUntil = cachedUntil;
 		blog._meta = meta;
 		return blog;
 	}
@@ -80,6 +96,14 @@ export class Blog {
 
 	get title(): string {
 		return this._title;
+	}
+
+	get syncedAt(): Date {
+		return this._syncedAt;
+	}
+
+	set syncedAt(syncedAt: Date) {
+		this._syncedAt = syncedAt;
 	}
 
 	get isPublic(): boolean {
@@ -106,12 +130,12 @@ export class Blog {
 		this._lastModified = lastModified;
 	}
 
-	get syncedAt(): Date {
-		return this._syncedAt;
+	get cachedUntil(): Date | undefined {
+		return this._cachedUntil;
 	}
 
-	set syncedAt(syncedAt: Date) {
-		this._syncedAt = syncedAt;
+	set cachedUntil(cachedUntil: Date) {
+		this._cachedUntil = cachedUntil;
 	}
 
 	get meta(): Meta {
@@ -119,7 +143,12 @@ export class Blog {
 	}
 
 	canBeSynced(now: Date): boolean {
+		if (this._cachedUntil && now < this._cachedUntil) {
+			return false;
+		}
+
 		const syncCooldownMS = SYNC_COOLDOWN_HOURS * 60 * 60 * 1000;
-		return now.getTime() - this._syncedAt.getTime() >= syncCooldownMS;
+		const timeSinceLastSyncMS = now.getTime() - this._syncedAt.getTime();
+		return timeSinceLastSyncMS >= syncCooldownMS;
 	}
 }

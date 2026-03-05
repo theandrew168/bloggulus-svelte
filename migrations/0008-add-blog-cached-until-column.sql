@@ -1,0 +1,1 @@
+ALTER TABLE blog ADD COLUMN cached_until TIMESTAMPTZ;

@@ -5,7 +5,7 @@ import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
 
-export function updateCacheHeaders(blog: Blog, response: FetchFeedResponse): boolean {
+export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedResponse): boolean {
 	let haveHeadersChanged = false;
 
 	if (response.etag && response.etag !== blog.etag) {
@@ -18,7 +18,44 @@ export function updateCacheHeaders(blog: Blog, response: FetchFeedResponse): boo
 		haveHeadersChanged = true;
 	}
 
+	if (response.cacheControl) {
+		const maxAgeSeconds = parseCacheControlMaxAge(response.cacheControl);
+		if (maxAgeSeconds.exists) {
+			const maxAgeMS = maxAgeSeconds.data * 1000;
+			const cachedUntil = new Date(now.getTime() + maxAgeMS);
+			blog.cachedUntil = cachedUntil;
+			haveHeadersChanged = true;
+		}
+	}
+
 	return haveHeadersChanged;
+}
+
+export function parseCacheControlMaxAge(cacheControl: string): Option<number> {
+	const directives = cacheControl.split(",").map((dir) => dir.trim());
+	for (const directive of directives) {
+		if (!directive.startsWith("max-age=")) {
+			continue;
+		}
+
+		const maxAgeValue = directive.substring("max-age=".length);
+		if (!/^\d+$/.test(maxAgeValue)) {
+			return Some(0);
+		}
+
+		const maxAgeSeconds = parseInt(maxAgeValue, 10);
+		if (isNaN(maxAgeSeconds)) {
+			return Some(0);
+		}
+
+		if (maxAgeSeconds < 0) {
+			return Some(0);
+		}
+
+		return Some(maxAgeSeconds);
+	}
+
+	return None();
 }
 
 export type ComparePostsResult = {
@@ -100,10 +137,10 @@ export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, fe
 		feedURL: resp.url,
 		siteURL: feedBlog.siteURL,
 		title: feedBlog.title,
-		etag: resp.etag,
-		lastModified: resp.lastModified,
 		syncedAt: now,
 	});
+
+	updateCacheHeaders(now, blog, resp);
 	await repo.blog.create(blog);
 
 	await syncPosts(repo, blog, feedBlog.posts);
@@ -142,7 +179,7 @@ export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetche
 		hasURLChanged = true;
 	}
 
-	const haveHeadersChanged = updateCacheHeaders(blog, resp);
+	const haveHeadersChanged = updateCacheHeaders(now, blog, resp);
 	if (hasURLChanged || haveHeadersChanged) {
 		await repo.blog.update(blog);
 	}

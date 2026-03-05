@@ -16,6 +16,7 @@ type BlogRow = {
 	is_public: boolean;
 	etag: string | null;
 	last_modified: string | null;
+	cached_until: Date | null;
 	meta_created_at: Date;
 	meta_updated_at: Date;
 	meta_version: number;
@@ -37,6 +38,7 @@ function rowToBlog(row: BlogRow): Blog {
 		isPublic: row.is_public,
 		etag: row.etag ?? undefined,
 		lastModified: row.last_modified ?? undefined,
+		cachedUntil: row.cached_until ?? undefined,
 		meta,
 	});
 }
@@ -59,6 +61,7 @@ export class BlogRepository {
 				is_public,
 				etag,
 				last_modified,
+				cached_until,
 				meta_created_at,
 				meta_updated_at,
 				meta_version
@@ -71,6 +74,7 @@ export class BlogRepository {
 				${blog.isPublic},
                 ${blog.etag ?? null},
                 ${blog.lastModified ?? null},
+				${blog.cachedUntil ?? null},
 				${blog.meta.createdAt},
 				${blog.meta.updatedAt},
 				${blog.meta.version}
@@ -89,6 +93,7 @@ export class BlogRepository {
 				is_public,
                 etag,
                 last_modified,
+				cached_until,
 				meta_created_at,
 				meta_updated_at,
 				meta_version
@@ -115,6 +120,7 @@ export class BlogRepository {
 				is_public,
                 etag,
                 last_modified,
+				cached_until,
 				meta_created_at,
 				meta_updated_at,
 				meta_version
@@ -142,6 +148,7 @@ export class BlogRepository {
 				is_public,
                 etag,
                 last_modified,
+				cached_until,
 				meta_created_at,
 				meta_updated_at,
 				meta_version
@@ -164,6 +171,7 @@ export class BlogRepository {
 				is_public = ${blog.isPublic},
 				etag = ${blog.etag ?? null},
 				last_modified = ${blog.lastModified ?? null},
+				cached_until = ${blog.cachedUntil ?? null},
 				meta_updated_at = ${newUpdatedAt},
 				meta_version = ${newVersion}
 			WHERE id = ${blog.id}

@@ -10,7 +10,7 @@ import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
 import { generateAtomFeed, randomBlogParams, randomPostParams } from "$lib/server/test";
 
-import { comparePosts, syncExistingBlog, syncNewBlog, updateCacheHeaders } from "./utils";
+import { comparePosts, parseCacheControlMaxAge, syncExistingBlog, syncNewBlog, updateCacheHeaders } from "./utils";
 
 describe("command/sync/utils", () => {
 	const chance = new Chance();
@@ -18,6 +18,7 @@ describe("command/sync/utils", () => {
 
 	describe("updateCacheHeaders", () => {
 		it("should set etag and lastModified if the blog does not have them", () => {
+			const now = new Date();
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
@@ -30,7 +31,7 @@ describe("command/sync/utils", () => {
 				lastModified,
 			};
 
-			const haveHeadersChanged = updateCacheHeaders(blog, response);
+			const haveHeadersChanged = updateCacheHeaders(now, blog, response);
 			expect(haveHeadersChanged).toEqual(true);
 
 			expect(blog.etag).toEqual(etag);
@@ -38,6 +39,7 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should not change etag and lastModified if they are the same", () => {
+			const now = new Date();
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
@@ -54,7 +56,7 @@ describe("command/sync/utils", () => {
 				lastModified,
 			};
 
-			const haveHeadersChanged = updateCacheHeaders(blog, response);
+			const haveHeadersChanged = updateCacheHeaders(now, blog, response);
 			expect(haveHeadersChanged).toEqual(false);
 
 			expect(blog.etag).toEqual(etag);
@@ -62,6 +64,7 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should update etag and lastModified if they are different", () => {
+			const now = new Date();
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
@@ -80,7 +83,7 @@ describe("command/sync/utils", () => {
 				lastModified: newLastModified,
 			};
 
-			const haveHeadersChanged = updateCacheHeaders(blog, response);
+			const haveHeadersChanged = updateCacheHeaders(now, blog, response);
 			expect(haveHeadersChanged).toEqual(true);
 
 			expect(blog.etag).toEqual(newEtag);
@@ -88,6 +91,7 @@ describe("command/sync/utils", () => {
 		});
 
 		it("should not change etag and lastModified if response does not have them", () => {
+			const now = new Date();
 			const etag = chance.string({ length: 10 });
 			const lastModified = chance.date().toISOString();
 
@@ -102,11 +106,95 @@ describe("command/sync/utils", () => {
 				feed: "<feed>Test Feed</feed>",
 			};
 
-			const haveHeadersChanged = updateCacheHeaders(blog, response);
+			const haveHeadersChanged = updateCacheHeaders(now, blog, response);
 			expect(haveHeadersChanged).toEqual(false);
 
 			expect(blog.etag).toEqual(etag);
 			expect(blog.lastModified).toEqual(lastModified);
+		});
+
+		it("should set cachedUntil if cache-control header has max-age directive", () => {
+			const now = new Date();
+			const maxAgeSeconds = 3600;
+			const cacheControl = `public, max-age=${maxAgeSeconds}, immutable`;
+
+			const blog = new Blog(randomBlogParams());
+
+			const response: FetchFeedResponse = {
+				url: blog.feedURL,
+				feed: "<feed>Test Feed</feed>",
+				cacheControl,
+			};
+
+			const haveHeadersChanged = updateCacheHeaders(now, blog, response);
+			expect(haveHeadersChanged).toEqual(true);
+
+			const maxAgeMS = maxAgeSeconds * 1000;
+			const cachedUntil = new Date(now.getTime() + maxAgeMS);
+			expect(blog.cachedUntil).toBeDefined();
+			expect(blog.cachedUntil).toEqual(cachedUntil);
+		});
+
+		it("should not change cachedUntil if cache-control header does not have max-age directive", () => {
+			const now = new Date();
+
+			const cachedUntil = chance.date();
+			const blog = new Blog({
+				...randomBlogParams(),
+				cachedUntil,
+			});
+
+			const response: FetchFeedResponse = {
+				url: blog.feedURL,
+				feed: "<feed>Test Feed</feed>",
+			};
+
+			const haveHeadersChanged = updateCacheHeaders(now, blog, response);
+			expect(haveHeadersChanged).toEqual(false);
+
+			expect(blog.cachedUntil).toEqual(cachedUntil);
+		});
+
+		it("should change cachedUntil if cache-control header has max-age directive", () => {
+			const now = new Date();
+			const maxAgeSeconds = 3600;
+			const cacheControl = `public, max-age=${maxAgeSeconds}, immutable`;
+
+			const blog = new Blog({
+				...randomBlogParams(),
+				cachedUntil: chance.date(),
+			});
+
+			const response: FetchFeedResponse = {
+				url: blog.feedURL,
+				feed: "<feed>Test Feed</feed>",
+				cacheControl,
+			};
+
+			const haveHeadersChanged = updateCacheHeaders(now, blog, response);
+			expect(haveHeadersChanged).toEqual(true);
+
+			const maxAgeMS = maxAgeSeconds * 1000;
+			const cachedUntil = new Date(now.getTime() + maxAgeMS);
+			expect(blog.cachedUntil).toBeDefined();
+			expect(blog.cachedUntil).toEqual(cachedUntil);
+		});
+	});
+
+	describe("parseCacheControlMaxAge", () => {
+		it("should return the max-age in seconds if cache-control header is valid", () => {
+			expect(parseCacheControlMaxAge("max-age=3600")).toEqual(Some(3600));
+			expect(parseCacheControlMaxAge("public, max-age=60, immutable")).toEqual(Some(60));
+		});
+
+		it("should return undefined if cache-control header does not have max-age", () => {
+			expect(parseCacheControlMaxAge("public, immutable")).toEqual(None());
+		});
+
+		it("should return 0 if cache-control header is invalid", () => {
+			expect(parseCacheControlMaxAge("max-age=abc")).toEqual(Some(0));
+			expect(parseCacheControlMaxAge("max-age=-10")).toEqual(Some(0));
+			expect(parseCacheControlMaxAge("max-age=60s")).toEqual(Some(0));
 		});
 	});
 

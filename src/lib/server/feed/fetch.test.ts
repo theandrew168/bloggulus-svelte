@@ -15,6 +15,7 @@ describe("feed/fetch", () => {
 				const feed = "<feed>Example Feed</feed>";
 				const etag = chance.word();
 				const lastModified = chance.date().toISOString();
+				const cacheControl = "max-age=3600";
 
 				const requester = new Requester();
 				vi.spyOn(requester, "request").mockImplementation(async (reqURL) => {
@@ -26,6 +27,7 @@ describe("feed/fetch", () => {
 						headers: {
 							etag,
 							"last-modified": lastModified,
+							"cache-control": cacheControl,
 						},
 						body: feed,
 					};
@@ -36,6 +38,7 @@ describe("feed/fetch", () => {
 				expect(response.feed).to.equal(feed);
 				expect(response.etag).to.equal(etag);
 				expect(response.lastModified).to.equal(lastModified);
+				expect(response.cacheControl).to.equal(cacheControl);
 			});
 
 			it("should include etag and last modified headers if present", async () => {
@@ -68,6 +71,7 @@ describe("feed/fetch", () => {
 				const url = new URL(chance.url());
 				const etag = chance.word();
 				const lastModified = chance.date().toISOString();
+				const cacheControl = "max-age=3600";
 
 				const requester = new Requester();
 				vi.spyOn(requester, "request").mockImplementation(async (reqURL) => {
@@ -80,6 +84,7 @@ describe("feed/fetch", () => {
 						headers: {
 							etag,
 							"last-modified": lastModified,
+							"cache-control": cacheControl,
 						},
 						body: "",
 					};
@@ -90,6 +95,7 @@ describe("feed/fetch", () => {
 				expect(response.feed).to.be.undefined;
 				expect(response.etag).to.equal(etag);
 				expect(response.lastModified).to.equal(lastModified);
+				expect(response.cacheControl).to.equal(cacheControl);
 			});
 
 			it("should throw an UnreachableFeedError for non-2xx, non-304 responses", async () => {
