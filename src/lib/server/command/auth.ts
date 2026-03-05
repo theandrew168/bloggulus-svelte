@@ -23,10 +23,11 @@ export class AuthCommand {
 				await uow.account.create(account);
 			}
 
+			const now = new Date();
 			const session = new Session({
 				accountID: account.id,
 				tokenHash: sha256(token),
-				expiresAt: new Date(Date.now() + SESSION_EXPIRY_SECONDS * 1000),
+				expiresAt: new Date(now.getTime() + SESSION_EXPIRY_SECONDS * 1000),
 			});
 			await uow.session.create(session);
 		});
