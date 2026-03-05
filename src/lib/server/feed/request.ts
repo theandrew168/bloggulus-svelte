@@ -81,7 +81,7 @@ export class Requester {
 		for (const key of Object.keys(resp.headers)) {
 			const value = extractHeader(resp.headers, key);
 			if (value.exists) {
-				headers[key] = value.data;
+				headers[key.toLowerCase()] = value.data;
 			}
 		}
 
