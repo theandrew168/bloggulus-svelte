@@ -38,8 +38,8 @@ export const init: ServerInit = async () => {
 	});
 	deleteExpiredSessionsJob.trigger();
 
-	// Sync all blogs every 30 minutes.
-	syncAllBlogsJob = new Cron("*/30 * * * *", { catch: jobErrorHandler }, async () => {
+	// Sync all blogs every 5 minutes.
+	syncAllBlogsJob = new Cron("*/5 * * * *", { catch: jobErrorHandler }, async () => {
 		await command.sync.syncAllBlogs();
 	});
 	syncAllBlogsJob.trigger();
