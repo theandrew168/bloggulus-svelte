@@ -69,8 +69,8 @@ export class Requester {
 				});
 			}
 
-			currentURL = new URL(location.data);
 			try {
+				currentURL = new URL(location.data, currentURL);
 				resp = await undiciRequest(currentURL, { headers: opts.headers });
 			} catch (error) {
 				throw new UnreachableFeedError(currentURL, { cause: error });
