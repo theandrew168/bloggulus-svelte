@@ -10,7 +10,14 @@ import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
 import { generateAtomFeed, randomBlogParams, randomPostParams } from "$lib/server/test";
 
-import { comparePosts, parseCacheControlMaxAge, syncExistingBlog, syncNewBlog, updateCacheHeaders } from "./utils";
+import {
+	comparePosts,
+	parseCacheControlMaxAge,
+	syncExistingBlog,
+	syncNewBlog,
+	updateCacheHeaders,
+	updateFeedURL,
+} from "./utils";
 
 describe("command/sync/utils", () => {
 	const chance = new Chance();
@@ -195,6 +202,24 @@ describe("command/sync/utils", () => {
 			expect(parseCacheControlMaxAge("max-age=abc")).toEqual(Some(0));
 			expect(parseCacheControlMaxAge("max-age=-10")).toEqual(Some(0));
 			expect(parseCacheControlMaxAge("max-age=60s")).toEqual(Some(0));
+		});
+	});
+
+	describe("updateFeedURL", () => {
+		it("should update the blog's feed URL if it has changed", () => {
+			const blog = new Blog(randomBlogParams());
+			const newURL = new URL(chance.url());
+			const hasURLChanged = updateFeedURL(blog, newURL);
+			expect(hasURLChanged).toEqual(true);
+			expect(blog.feedURL.toString()).toEqual(newURL.toString());
+		});
+
+		it("should not update the blog's feed URL if it is the same", () => {
+			const blog = new Blog(randomBlogParams());
+			const sameURL = new URL(blog.feedURL.toString());
+			const hasURLChanged = updateFeedURL(blog, sameURL);
+			expect(hasURLChanged).toEqual(false);
+			expect(blog.feedURL.toString()).toEqual(sameURL.toString());
 		});
 	});
 

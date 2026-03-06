@@ -40,6 +40,13 @@ export class SyncCommand {
 				try {
 					await syncExistingBlog(this._repo, this._feedFetcher, blog);
 				} catch (error) {
+					// If an error occurs while syncing a blog, log the error and update
+					// the blog's syncedAt time to avoid retrying too soon.
+					const syncFailedAt = new Date();
+					blog.syncedAt = syncFailedAt;
+					await this._repo.blog.update(blog);
+
+					console.log(`Error syncing blog ${blog.id} (${blog.title}):`);
 					console.log(error);
 				}
 			}),

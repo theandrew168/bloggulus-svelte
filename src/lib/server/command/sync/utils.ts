@@ -5,13 +5,6 @@ import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
 import { Post } from "$lib/server/post";
 import { Repository } from "$lib/server/repository";
 
-/**
- * When calculating cachedUntil based on the feed's Cache-Control max-age,
- * add a small buffer to account for the small amount of time between capturing
- * "now" and when the feed is actually fetched. 30 seconds should be enough.
- */
-const CACHED_UNTIL_BUFFER_MS = 30 * 1000;
-
 export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedResponse): boolean {
 	let haveHeadersChanged = false;
 
@@ -29,7 +22,7 @@ export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedRes
 		const maxAgeSeconds = parseCacheControlMaxAge(response.cacheControl);
 		if (maxAgeSeconds.exists) {
 			const maxAgeMS = maxAgeSeconds.data * 1000;
-			const cachedUntil = new Date(now.getTime() + maxAgeMS + CACHED_UNTIL_BUFFER_MS);
+			const cachedUntil = new Date(now.getTime() + maxAgeMS);
 			blog.cachedUntil = cachedUntil;
 			haveHeadersChanged = true;
 		}
@@ -63,6 +56,17 @@ export function parseCacheControlMaxAge(cacheControl: string): Option<number> {
 	}
 
 	return None();
+}
+
+export function updateFeedURL(blog: Blog, url: URL): boolean {
+	// If the feed URL has changed due to a redirect, update the blog's feed URL.
+	if (url.toString() !== blog.feedURL.toString()) {
+		console.log(`updated feed URL for blog ${blog.id} (${blog.title}): ${blog.feedURL} -> ${url}`);
+		blog.feedURL = url;
+		return true;
+	}
+
+	return false;
 }
 
 export type ComparePostsResult = {
@@ -129,7 +133,9 @@ export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, fe
 	const req: FetchFeedRequest = {
 		url: feedURL,
 	};
+
 	const resp = await feedFetcher.fetchFeed(req);
+	const fetchedAt = new Date();
 
 	// No feed data from a new blog is an error.
 	if (!resp.feed) {
@@ -138,32 +144,26 @@ export async function syncNewBlog(repo: Repository, feedFetcher: FeedFetcher, fe
 
 	const feedBlog = await parseFeed(resp.url, resp.feed);
 
-	const now = new Date();
 	const blog = new Blog({
 		// Use resp.url for the new blog because the feed URL may have changed due to redirects.
 		feedURL: resp.url,
 		siteURL: feedBlog.siteURL,
 		title: feedBlog.title,
-		syncedAt: now,
+		syncedAt: fetchedAt,
 	});
 
-	updateCacheHeaders(now, blog, resp);
+	updateCacheHeaders(fetchedAt, blog, resp);
 	await repo.blog.create(blog);
 
 	await syncPosts(repo, blog, feedBlog.posts);
 }
 
 export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetcher, blog: Blog): Promise<void> {
-	const now = new Date();
-
 	// If the blog was synced recently, skip syncing to avoid unnecessary fetches.
+	const now = new Date();
 	if (!blog.canBeSynced(now)) {
 		return;
 	}
-
-	// Update the blog's syncedAt time.
-	blog.syncedAt = now;
-	await repo.blog.update(blog);
 
 	// Make a conditional fetch for the blog's feed.
 	const req: FetchFeedRequest = {
@@ -177,19 +177,12 @@ export async function syncExistingBlog(repo: Repository, feedFetcher: FeedFetche
 	}
 
 	const resp = await feedFetcher.fetchFeed(req);
+	const fetchedAt = new Date();
 
-	// If the feed URL has changed due to a redirect, update the blog's feed URL.
-	let hasURLChanged = false;
-	if (resp.url.toString() !== blog.feedURL.toString()) {
-		console.log(`updated feed URL for blog ${blog.id} (${blog.title}): ${blog.feedURL} -> ${resp.url}`);
-		blog.feedURL = resp.url;
-		hasURLChanged = true;
-	}
-
-	const haveHeadersChanged = updateCacheHeaders(now, blog, resp);
-	if (hasURLChanged || haveHeadersChanged) {
-		await repo.blog.update(blog);
-	}
+	blog.syncedAt = fetchedAt;
+	updateFeedURL(blog, resp.url);
+	updateCacheHeaders(fetchedAt, blog, resp);
+	await repo.blog.update(blog);
 
 	// No feed data from an existing blog can occur if the feed has not changed.
 	if (!resp.feed) {
