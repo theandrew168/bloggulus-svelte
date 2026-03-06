@@ -190,18 +190,18 @@ describe("command/sync/utils", () => {
 
 	describe("parseCacheControlMaxAge", () => {
 		it("should return the max-age in seconds if cache-control header is valid", () => {
-			expect(parseCacheControlMaxAge("max-age=3600")).toEqual(Some(3600));
-			expect(parseCacheControlMaxAge("public, max-age=60, immutable")).toEqual(Some(60));
+			expect(parseCacheControlMaxAge("max-age=3600")).toEqual(3600);
+			expect(parseCacheControlMaxAge("public, max-age=60, immutable")).toEqual(60);
 		});
 
 		it("should return undefined if cache-control header does not have max-age", () => {
-			expect(parseCacheControlMaxAge("public, immutable")).toEqual(None());
+			expect(parseCacheControlMaxAge("public, immutable")).toEqual(undefined);
 		});
 
 		it("should return 0 if cache-control header is invalid", () => {
-			expect(parseCacheControlMaxAge("max-age=abc")).toEqual(Some(0));
-			expect(parseCacheControlMaxAge("max-age=-10")).toEqual(Some(0));
-			expect(parseCacheControlMaxAge("max-age=60s")).toEqual(Some(0));
+			expect(parseCacheControlMaxAge("max-age=abc")).toEqual(0);
+			expect(parseCacheControlMaxAge("max-age=-10")).toEqual(0);
+			expect(parseCacheControlMaxAge("max-age=60s")).toEqual(0);
 		});
 	});
 

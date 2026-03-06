@@ -20,8 +20,8 @@ export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedRes
 
 	if (response.cacheControl) {
 		const maxAgeSeconds = parseCacheControlMaxAge(response.cacheControl);
-		if (maxAgeSeconds.exists) {
-			const maxAgeMS = maxAgeSeconds.data * 1000;
+		if (maxAgeSeconds !== undefined) {
+			const maxAgeMS = maxAgeSeconds * 1000;
 			const cachedUntil = new Date(now.getTime() + maxAgeMS);
 			blog.cachedUntil = cachedUntil;
 			haveHeadersChanged = true;
@@ -31,7 +31,7 @@ export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedRes
 	return haveHeadersChanged;
 }
 
-export function parseCacheControlMaxAge(cacheControl: string): Option<number> {
+export function parseCacheControlMaxAge(cacheControl: string): number | undefined {
 	const directives = cacheControl.split(",").map((dir) => dir.trim());
 	for (const directive of directives) {
 		if (!directive.startsWith("max-age=")) {
@@ -40,22 +40,22 @@ export function parseCacheControlMaxAge(cacheControl: string): Option<number> {
 
 		const maxAgeValue = directive.substring("max-age=".length);
 		if (!/^\d+$/.test(maxAgeValue)) {
-			return Some(0);
+			return 0;
 		}
 
 		const maxAgeSeconds = parseInt(maxAgeValue, 10);
 		if (isNaN(maxAgeSeconds)) {
-			return Some(0);
+			return 0;
 		}
 
 		if (maxAgeSeconds < 0) {
-			return Some(0);
+			return 0;
 		}
 
-		return Some(maxAgeSeconds);
+		return maxAgeSeconds;
 	}
 
-	return None();
+	return undefined;
 }
 
 export function updateFeedURL(blog: Blog, url: URL): boolean {

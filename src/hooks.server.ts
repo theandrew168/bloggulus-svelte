@@ -2,15 +2,12 @@ import type { Handle, ServerInit } from "@sveltejs/kit";
 import { building } from "$app/environment";
 import { Cron } from "croner";
 
-import { setupGlobals } from "$lib/globals";
 import { Command } from "$lib/server/command";
 import { Config } from "$lib/server/config";
 import { Connection } from "$lib/server/postgres";
 import { WebQuery } from "$lib/server/query/web";
 import { sha256 } from "$lib/server/utils";
 import { SESSION_COOKIE_NAME } from "$lib/server/web/cookie";
-
-setupGlobals();
 
 const config = Config.getInstance();
 const command = Command.getInstance();

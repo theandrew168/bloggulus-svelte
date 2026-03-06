@@ -16,14 +16,6 @@ declare global {
 			account?: Account;
 		}
 	}
-
-	type Option<T> = OptionType<T>;
-	function Some<T>(data: T): Option<T>;
-	function None(): Option<never>;
-
-	type Result<T, E = Error> = ResultType<T, E>;
-	function Ok<T>(data: T): Result<T>;
-	function Err<E = Error>(error: E): Result<never, E>;
 }
 
 export {};

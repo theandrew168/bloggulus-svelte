@@ -63,14 +63,14 @@ export class Requester {
 			redirectCount++;
 
 			const location = extractHeader(resp.headers, "location");
-			if (!location.exists) {
+			if (!location) {
 				throw new UnreachableFeedError(currentURL, {
 					cause: new Error(`Redirect status code ${resp.statusCode} received without Location header`),
 				});
 			}
 
 			try {
-				currentURL = new URL(location.data, currentURL);
+				currentURL = new URL(location, currentURL);
 				resp = await undiciRequest(currentURL, { headers: opts.headers });
 			} catch (error) {
 				throw new UnreachableFeedError(currentURL, { cause: error });
@@ -80,8 +80,8 @@ export class Requester {
 		const headers: Headers = {};
 		for (const key of Object.keys(resp.headers)) {
 			const value = extractHeader(resp.headers, key);
-			if (value.exists) {
-				headers[key.toLowerCase()] = value.data;
+			if (value) {
+				headers[key.toLowerCase()] = value;
 			}
 		}
 
@@ -96,11 +96,11 @@ export class Requester {
 	}
 }
 
-function extractHeader(headers: IncomingHttpHeaders, name: string): Option<string> {
+function extractHeader(headers: IncomingHttpHeaders, name: string): string | undefined {
 	let value = headers[name] ?? headers[name.toLowerCase()];
 	if (Array.isArray(value)) {
 		value = value[0];
 	}
 
-	return value ? Some(value) : None();
+	return value;
 }
