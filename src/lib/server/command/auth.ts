@@ -50,7 +50,9 @@ export class AuthCommand {
 	async deleteExpiredSessions(now: Date): Promise<void> {
 		await this._repo.asUnitOfWork(async (uow) => {
 			const expiredSessions = await uow.session.listExpired(now);
-			await Promise.all(expiredSessions.map((session) => uow.session.delete(session)));
+			for (const session of expiredSessions) {
+				await uow.session.delete(session);
+			}
 		});
 	}
 }
