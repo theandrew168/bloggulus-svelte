@@ -1,8 +1,9 @@
 import { redirect } from "@sveltejs/kit";
 import * as arctic from "arctic";
+import { request } from "undici";
 
 import { SESSION_EXPIRY_SECONDS } from "$lib/server/command/auth";
-import { hmac } from "$lib/server/utils";
+import { hmac, USER_AGENT } from "$lib/server/utils";
 import {
 	OAUTH_STATE_COOKIE_NAME,
 	permanentCookieOptions,
@@ -18,13 +19,20 @@ type GithubUser = {
 };
 
 async function fetchGithubUserID(accessToken: string): Promise<string> {
-	const resp = await fetch("https://api.github.com/user", {
+	const { body, statusCode, statusText } = await request("https://api.github.com/user", {
 		headers: {
-			Authorization: `Bearer ${accessToken}`,
+			"user-agent": USER_AGENT,
+			authorization: `Bearer ${accessToken}`,
 		},
 	});
 
-	const user: GithubUser = await resp.json();
+	if (statusCode < 200 || statusCode >= 300) {
+		console.log(`Failed to fetch GitHub user info: ${statusCode} ${statusText}`);
+		console.log(await body.text());
+		errorBadRequest();
+	}
+
+	const user = (await body.json()) as GithubUser;
 	return `github_${user.id}`;
 }
 
@@ -69,7 +77,7 @@ export const load: PageServerLoad = async ({ cookies, locals, url }) => {
 	const userID = await fetchGithubUserID(accessToken);
 
 	// Generate a username based on the userID and sign the user in.
-	const username = await hmac(locals.config.secretKey, userID);
+	const username = hmac(locals.config.secretKey, userID);
 	const sessionToken = await locals.command.auth.signIn(username);
 
 	// Set a permanent cookie after sign in.

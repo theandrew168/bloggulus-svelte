@@ -3,6 +3,11 @@ import { createHash, createHmac, randomBytes } from "node:crypto";
 import type { UUID } from "$lib/types";
 
 /**
+ * The user agent string to use when fetching feeds / making API requests.
+ */
+export const USER_AGENT = "Bloggulus/0.7.0 (+https://bloggulus.com)";
+
+/**
  * Type guard to check if a string is a valid UUID.
  */
 export function isValidUUID(s: string): s is UUID {

@@ -16,7 +16,7 @@ export const actions = {
 
 		// Generate a random userID for the debug sign in.
 		const userID = "debug_" + randomString(16);
-		const username = await hmac(locals.config.secretKey, userID);
+		const username = hmac(locals.config.secretKey, userID);
 
 		// Sign the user in and generate a session token.
 		const sessionToken = await locals.command.auth.signIn(username);

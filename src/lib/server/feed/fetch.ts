@@ -1,11 +1,7 @@
 import { UnreachableFeedError } from "$lib/server/feed/errors";
+import { USER_AGENT } from "$lib/server/utils";
 
 import { isOK, type Headers, type Requester } from "./request";
-
-/**
- * The user agent string to use when fetching feeds.
- */
-const USER_AGENT = "Bloggulus/0.7.0 (+https://bloggulus.com)";
 
 export type FetchFeedRequest = {
 	url: URL;

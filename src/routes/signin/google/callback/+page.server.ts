@@ -1,8 +1,9 @@
 import { redirect } from "@sveltejs/kit";
 import * as arctic from "arctic";
+import { request } from "undici";
 
 import { SESSION_EXPIRY_SECONDS } from "$lib/server/command/auth";
-import { hmac } from "$lib/server/utils";
+import { hmac, USER_AGENT } from "$lib/server/utils";
 import {
 	OAUTH_CODE_VERIFIER_COOKIE_NAME,
 	OAUTH_STATE_COOKIE_NAME,
@@ -19,13 +20,20 @@ type GoogleUser = {
 };
 
 async function fetchGoogleUserID(accessToken: string): Promise<string> {
-	const resp = await fetch("https://www.googleapis.com/oauth2/v1/userinfo", {
+	const { body, statusCode, statusText } = await request("https://www.googleapis.com/oauth2/v1/userinfo", {
 		headers: {
-			Authorization: `Bearer ${accessToken}`,
+			"user-agent": USER_AGENT,
+			authorization: `Bearer ${accessToken}`,
 		},
 	});
 
-	const user: GoogleUser = await resp.json();
+	if (statusCode < 200 || statusCode >= 300) {
+		console.log(`Failed to fetch Google user info: ${statusCode} ${statusText}`);
+		console.log(await body.text());
+		errorBadRequest();
+	}
+
+	const user = (await body.json()) as GoogleUser;
 	return `google_${user.id}`;
 }
 
@@ -78,7 +86,7 @@ export const load: PageServerLoad = async ({ cookies, locals, url }) => {
 	const userID = await fetchGoogleUserID(accessToken);
 
 	// Generate a username based on the userID and sign the user in.
-	const username = await hmac(locals.config.secretKey, userID);
+	const username = hmac(locals.config.secretKey, userID);
 	const sessionToken = await locals.command.auth.signIn(username);
 
 	// Set a permanent cookie after sign in.
