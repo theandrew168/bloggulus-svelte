@@ -15,16 +15,14 @@ export class SyncCommand {
 	}
 
 	async syncBlog(feedURL: URL): Promise<void> {
-		await this._repo.asUnitOfWork(async (uow) => {
-			const blog = await uow.blog.readByFeedURL(feedURL);
-			if (blog) {
-				console.log(`Syncing blog: ${blog.id} (${blog.title})`);
-				await syncExistingBlog(uow, this._feedFetcher, blog);
-			} else {
-				console.log(`Syncing new blog: ${feedURL}`);
-				await syncNewBlog(uow, this._feedFetcher, feedURL);
-			}
-		});
+		const blog = await this._repo.blog.readByFeedURL(feedURL);
+		if (blog) {
+			console.log(`Syncing blog: ${blog.id} (${blog.title})`);
+			await syncExistingBlog(this._repo, this._feedFetcher, blog);
+		} else {
+			console.log(`Syncing new blog: ${feedURL}`);
+			await syncNewBlog(this._repo, this._feedFetcher, feedURL);
+		}
 	}
 
 	async syncAllBlogs(): Promise<void> {
