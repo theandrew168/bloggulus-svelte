@@ -50,7 +50,8 @@ export class AccountWebQuery {
                 account.id,
                 account.username,
                 account.is_admin
-            FROM account;
+            FROM account
+            ORDER BY account.meta_created_at DESC;
         `);
 
 		return rows.map((row) => ({
