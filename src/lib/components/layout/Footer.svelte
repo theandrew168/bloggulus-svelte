@@ -1,5 +1,5 @@
 <script>
-	import Link from "$lib/components/Link.svelte";
+	import Link from "#lib/components/Link.svelte";
 </script>
 
 <footer class="footer">

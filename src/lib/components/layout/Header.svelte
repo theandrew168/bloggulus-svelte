@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Link from "$lib/components/Link.svelte";
-	import type { Account } from "$lib/types";
+	import Link from "#lib/components/Link.svelte";
+	import type { Account } from "#lib/types.js";
 
 	type Props = {
 		account?: Account;

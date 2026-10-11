@@ -1,13 +1,13 @@
 import Chance from "chance";
 import xml2js from "xml2js";
 
-import { Account, type NewAccountParams } from "$lib/server/account";
-import { Blog, type NewBlogParams } from "$lib/server/blog";
-import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
-import type { NewPostParams } from "$lib/server/post";
-import type { NewSessionParams } from "$lib/server/session";
-import type { NewTagParams } from "$lib/server/tag";
-import { sha256 } from "$lib/server/utils";
+import { Account, type NewAccountParams } from "#lib/server/account.js";
+import { Blog, type NewBlogParams } from "#lib/server/blog.js";
+import type { FeedBlog, FeedPost } from "#lib/server/feed/parse.js";
+import type { NewPostParams } from "#lib/server/post.js";
+import type { NewSessionParams } from "#lib/server/session.js";
+import type { NewTagParams } from "#lib/server/tag.js";
+import { sha256 } from "#lib/server/utils.js";
 
 const chance = new Chance();
 

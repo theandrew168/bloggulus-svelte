@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { Tag } from "$lib/server/tag";
-import { randomTagParams } from "$lib/server/test";
+import { Tag } from "#lib/server/tag.js";
+import { randomTagParams } from "#lib/server/test/index.js";
 
 import { Repository } from ".";
 

@@ -1,9 +1,9 @@
 import { SQL } from "sql-template-strings";
 
-import { Meta } from "$lib/server/meta";
-import { Connection } from "$lib/server/postgres";
-import { Tag } from "$lib/server/tag";
-import type { UUID } from "$lib/types";
+import { Meta } from "#lib/server/meta.js";
+import { Connection } from "#lib/server/postgres/index.js";
+import { Tag } from "#lib/server/tag.js";
+import type { UUID } from "#lib/types.js";
 
 type TagRow = {
 	id: UUID;

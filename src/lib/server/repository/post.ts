@@ -1,9 +1,9 @@
 import { SQL } from "sql-template-strings";
 
-import { Meta } from "$lib/server/meta";
-import { Post } from "$lib/server/post";
-import { Connection } from "$lib/server/postgres";
-import type { UUID } from "$lib/types";
+import { Meta } from "#lib/server/meta.js";
+import { Post } from "#lib/server/post.js";
+import { Connection } from "#lib/server/postgres/index.js";
+import type { UUID } from "#lib/types.js";
 
 import { ConcurrentUpdateError } from "./errors";
 

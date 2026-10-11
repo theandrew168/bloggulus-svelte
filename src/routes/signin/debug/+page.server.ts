@@ -1,9 +1,9 @@
 import { redirect } from "@sveltejs/kit";
 
-import { SESSION_EXPIRY_SECONDS } from "$lib/server/command/auth";
-import { hmac, randomString } from "$lib/server/utils";
-import { permanentCookieOptions, SESSION_COOKIE_NAME } from "$lib/server/web/cookie";
-import { errorNotFound } from "$lib/server/web/errors";
+import { SESSION_EXPIRY_SECONDS } from "#lib/server/command/auth.js";
+import { hmac, randomString } from "#lib/server/utils.js";
+import { permanentCookieOptions, SESSION_COOKIE_NAME } from "#lib/server/web/cookie.js";
+import { errorNotFound } from "#lib/server/web/errors.js";
 
 import type { Actions } from "./$types";
 

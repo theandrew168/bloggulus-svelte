@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { Account } from "$lib/server/account";
-import { Repository } from "$lib/server/repository";
-import { generateSessionToken, Session } from "$lib/server/session";
-import { randomAccountParams, randomSessionParams } from "$lib/server/test";
-import { sha256 } from "$lib/server/utils";
+import { Account } from "#lib/server/account.js";
+import { Repository } from "#lib/server/repository/index.js";
+import { generateSessionToken, Session } from "#lib/server/session.js";
+import { randomAccountParams, randomSessionParams } from "#lib/server/test/index.js";
+import { sha256 } from "#lib/server/utils.js";
 
 import { WebQuery } from ".";
 

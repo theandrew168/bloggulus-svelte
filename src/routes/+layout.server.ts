@@ -1,4 +1,4 @@
-import { NOTIFICATION_COOKIE_NAME } from "$lib/server/web/cookie";
+import { NOTIFICATION_COOKIE_NAME } from "#lib/server/web/cookie.js";
 
 import type { LayoutServerLoad } from "./$types";
 

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
 
-	import bloggulusLogo from "$lib/assets/img/bloggulus.png";
-	import githubLogo from "$lib/assets/img/github.png";
-	import googleLogo from "$lib/assets/img/google.png";
-	import Button from "$lib/components/Button.svelte";
+	import bloggulusLogo from "#lib/assets/img/bloggulus.png";
+	import githubLogo from "#lib/assets/img/github.png";
+	import googleLogo from "#lib/assets/img/google.png";
+	import Button from "#lib/components/Button.svelte";
 
 	import type { PageProps } from "./$types";
 

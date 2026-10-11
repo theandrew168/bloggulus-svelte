@@ -1,9 +1,9 @@
 import { SQL } from "sql-template-strings";
 
-import { Meta } from "$lib/server/meta";
-import { Connection } from "$lib/server/postgres";
-import { Session } from "$lib/server/session";
-import type { UUID } from "$lib/types";
+import { Meta } from "#lib/server/meta.js";
+import { Connection } from "#lib/server/postgres/index.js";
+import { Session } from "#lib/server/session.js";
+import type { UUID } from "#lib/types.js";
 
 type SessionRow = {
 	id: UUID;

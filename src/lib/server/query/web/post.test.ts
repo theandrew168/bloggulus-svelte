@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { Blog } from "$lib/server/blog";
-import { Post } from "$lib/server/post";
-import { Repository } from "$lib/server/repository";
-import { randomBlogParams, randomPostParams } from "$lib/server/test";
+import { Blog } from "#lib/server/blog.js";
+import { Post } from "#lib/server/post.js";
+import { Repository } from "#lib/server/repository/index.js";
+import { randomBlogParams, randomPostParams } from "#lib/server/test/index.js";
 
 import { WebQuery } from ".";
 

@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 
-import { isValidUUID } from "$lib/server/utils";
-import { errorBadRequest, errorUnauthorized } from "$lib/server/web/errors";
+import { isValidUUID } from "#lib/server/utils.js";
+import { errorBadRequest, errorUnauthorized } from "#lib/server/web/errors.js";
 
 import type { Actions, PageServerLoad } from "./$types";
 

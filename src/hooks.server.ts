@@ -1,13 +1,13 @@
-import type { Handle, ServerInit } from "@sveltejs/kit";
-import { building } from "$app/environment";
+import type { Handle, ServerInit } from "@sveltejs/kit/hooks";
+import { building } from "$app/env";
 import { Cron } from "croner";
 
-import { Command } from "$lib/server/command";
-import { Config } from "$lib/server/config";
-import { Connection } from "$lib/server/postgres";
-import { WebQuery } from "$lib/server/query/web";
-import { sha256 } from "$lib/server/utils";
-import { SESSION_COOKIE_NAME } from "$lib/server/web/cookie";
+import { Command } from "#lib/server/command/index.js";
+import { Config } from "#lib/server/config/index.js";
+import { Connection } from "#lib/server/postgres/index.js";
+import { WebQuery } from "#lib/server/query/web/index.js";
+import { sha256 } from "#lib/server/utils.js";
+import { SESSION_COOKIE_NAME } from "#lib/server/web/cookie.js";
 
 const config = Config.getInstance();
 const command = Command.getInstance();

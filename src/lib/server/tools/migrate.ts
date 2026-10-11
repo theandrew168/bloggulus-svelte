@@ -2,7 +2,7 @@ import { readdir, readFile } from "node:fs/promises";
 
 import { SQL } from "sql-template-strings";
 
-import { Connection } from "$lib/server/postgres";
+import { Connection } from "#lib/server/postgres/index.js";
 
 const MIGRATIONS_DIR = "./migrations/";
 

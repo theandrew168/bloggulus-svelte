@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Link from "$lib/components/Link.svelte";
-	import type { Article } from "$lib/types";
+	import Link from "#lib/components/Link.svelte";
+	import type { Article } from "#lib/types.js";
 
 	import Tag from "./Tag.svelte";
 

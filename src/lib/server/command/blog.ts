@@ -1,5 +1,5 @@
-import { Repository } from "$lib/server/repository";
-import type { UUID } from "$lib/types";
+import { Repository } from "#lib/server/repository/index.js";
+import type { UUID } from "#lib/types.js";
 
 import { BlogNotFoundError } from "./errors";
 

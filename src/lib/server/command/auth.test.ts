@@ -1,10 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import { Account } from "$lib/server/account";
-import { Repository } from "$lib/server/repository";
-import { Session } from "$lib/server/session";
-import { randomAccountParams, randomSessionParams } from "$lib/server/test";
-import { sha256 } from "$lib/server/utils";
+import { Account } from "#lib/server/account.js";
+import { Repository } from "#lib/server/repository/index.js";
+import { Session } from "#lib/server/session.js";
+import { randomAccountParams, randomSessionParams } from "#lib/server/test/index.js";
+import { sha256 } from "#lib/server/utils.js";
 
 import { AuthCommand } from "./auth";
 

@@ -1,4 +1,4 @@
-import type { UUID } from "$lib/types";
+import type { UUID } from "#lib/types.js";
 
 export class AccountNotFoundError extends Error {
 	constructor(accountID: UUID) {

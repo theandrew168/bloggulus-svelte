@@ -1,4 +1,4 @@
-import { Connection } from "$lib/server/postgres";
+import { Connection } from "#lib/server/postgres/index.js";
 
 import { AccountWebQuery } from "./account";
 import { ArticleWebQuery } from "./article";

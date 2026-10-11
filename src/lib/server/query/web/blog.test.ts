@@ -1,10 +1,10 @@
 import Chance from "chance";
 import { describe, expect, it } from "vitest";
 
-import { Account } from "$lib/server/account";
-import { Blog } from "$lib/server/blog";
-import { Repository } from "$lib/server/repository";
-import { randomAccountParams, randomBlogParams } from "$lib/server/test";
+import { Account } from "#lib/server/account.js";
+import { Blog } from "#lib/server/blog.js";
+import { Repository } from "#lib/server/repository/index.js";
+import { randomAccountParams, randomBlogParams } from "#lib/server/test/index.js";
 
 import { WebQuery } from ".";
 

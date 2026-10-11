@@ -1,5 +1,5 @@
-import { UnreachableFeedError } from "$lib/server/feed/errors";
-import { USER_AGENT } from "$lib/server/utils";
+import { UnreachableFeedError } from "#lib/server/feed/errors.js";
+import { USER_AGENT } from "#lib/server/utils.js";
 
 import { isOK, type Headers, type Requester } from "./request";
 

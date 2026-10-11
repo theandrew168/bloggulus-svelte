@@ -1,6 +1,6 @@
 import { Pool, type PoolClient, type QueryConfig, type QueryResult, type QueryResultRow } from "pg";
 
-import { Config } from "$lib/server/config";
+import { Config } from "#lib/server/config/index.js";
 
 function connectPool(connectionString: string): Pool {
 	return new Pool({ connectionString });

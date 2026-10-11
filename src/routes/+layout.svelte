@@ -1,11 +1,11 @@
 <script lang="ts">
-	import "$lib/assets/css/reset.css";
-	import "$lib/assets/css/font.css";
-	import "$lib/assets/css/global.css";
+	import "#lib/assets/css/reset.css";
+	import "#lib/assets/css/font.css";
+	import "#lib/assets/css/global.css";
 
-	import Footer from "$lib/components/layout/Footer.svelte";
-	import Header from "$lib/components/layout/Header.svelte";
-	import Notification from "$lib/components/Notification.svelte";
+	import Footer from "#lib/components/layout/Footer.svelte";
+	import Header from "#lib/components/layout/Header.svelte";
+	import Notification from "#lib/components/Notification.svelte";
 
 	import type { LayoutProps } from "./$types";
 

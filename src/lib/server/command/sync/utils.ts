@@ -1,9 +1,9 @@
-import { Blog } from "$lib/server/blog";
-import { EmptyFeedError } from "$lib/server/command/errors";
-import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "$lib/server/feed/fetch";
-import { parseFeed, type FeedPost } from "$lib/server/feed/parse";
-import { Post } from "$lib/server/post";
-import { Repository } from "$lib/server/repository";
+import { Blog } from "#lib/server/blog.js";
+import { EmptyFeedError } from "#lib/server/command/errors.js";
+import type { FeedFetcher, FetchFeedRequest, FetchFeedResponse } from "#lib/server/feed/fetch.js";
+import { parseFeed, type FeedPost } from "#lib/server/feed/parse.js";
+import { Post } from "#lib/server/post.js";
+import { Repository } from "#lib/server/repository/index.js";
 
 export function updateCacheHeaders(now: Date, blog: Blog, response: FetchFeedResponse): boolean {
 	let haveHeadersChanged = false;

@@ -2,7 +2,7 @@ import Chance from "chance";
 import type { Item } from "rss-parser";
 import { describe, expect, it } from "vitest";
 
-import { generateAtomFeed, generateRSSFeed, type PartialFeedBlog } from "$lib/server/test";
+import { generateAtomFeed, generateRSSFeed, type PartialFeedBlog } from "#lib/server/test/index.js";
 
 import { determinePostURL, determinePublishedAt, determineSiteURL, parseFeed, type FeedBlog } from "./parse";
 

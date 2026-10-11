@@ -1,4 +1,4 @@
-import type { UUID } from "$lib/types";
+import type { UUID } from "#lib/types.js";
 
 import { Meta } from "./meta";
 import { randomString } from "./utils";

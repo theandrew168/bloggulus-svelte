@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomBytes } from "node:crypto";
 
-import type { UUID } from "$lib/types";
+import type { UUID } from "#lib/types.js";
 
 /**
  * The user agent string to use when fetching feeds / making API requests.

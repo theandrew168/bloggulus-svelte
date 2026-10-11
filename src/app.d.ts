@@ -1,8 +1,7 @@
-import type { Option as OptionType, Result as ResultType } from "$lib/globals";
-import type { Command } from "$lib/server/command";
-import type { Config } from "$lib/server/config";
-import type { WebQuery } from "$lib/server/query/web";
-import type { Account } from "$lib/types";
+import type { Command } from "#lib/server/command/index.js";
+import type { Config } from "#lib/server/config/index.js";
+import type { WebQuery } from "#lib/server/query/web/index.js";
+import type { Account } from "#lib/types.js";
 
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces

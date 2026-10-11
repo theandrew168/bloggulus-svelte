@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { Blog } from "$lib/server/blog";
-import { Repository } from "$lib/server/repository";
-import { randomBlogParams } from "$lib/server/test";
+import { Blog } from "#lib/server/blog.js";
+import { Repository } from "#lib/server/repository/index.js";
+import { randomBlogParams } from "#lib/server/test/index.js";
 
 import { BlogCommand } from "./blog";
 

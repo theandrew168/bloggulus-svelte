@@ -2,15 +2,15 @@ import { redirect } from "@sveltejs/kit";
 import * as arctic from "arctic";
 import { request } from "undici";
 
-import { SESSION_EXPIRY_SECONDS } from "$lib/server/command/auth";
-import { hmac, USER_AGENT } from "$lib/server/utils";
+import { SESSION_EXPIRY_SECONDS } from "#lib/server/command/auth.js";
+import { hmac, USER_AGENT } from "#lib/server/utils.js";
 import {
 	OAUTH_STATE_COOKIE_NAME,
 	permanentCookieOptions,
 	SESSION_COOKIE_NAME,
 	sessionCookieOptions,
-} from "$lib/server/web/cookie";
-import { errorBadRequest } from "$lib/server/web/errors";
+} from "#lib/server/web/cookie.js";
+import { errorBadRequest } from "#lib/server/web/errors.js";
 
 import type { PageServerLoad } from "./$types";
 

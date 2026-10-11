@@ -2,8 +2,8 @@ import type { UUID } from "crypto";
 
 import { SQL } from "sql-template-strings";
 
-import { Connection } from "$lib/server/postgres";
-import type { PostDetails } from "$lib/types";
+import { Connection } from "#lib/server/postgres/index.js";
+import type { PostDetails } from "#lib/types.js";
 
 type PostDetailsRow = {
 	id: UUID;

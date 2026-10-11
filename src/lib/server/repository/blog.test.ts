@@ -1,8 +1,8 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Blog } from "$lib/server/blog";
-import { randomBlogParams } from "$lib/server/test";
+import { Blog } from "#lib/server/blog.js";
+import { randomBlogParams } from "#lib/server/test/index.js";
 
 import { Repository } from ".";
 

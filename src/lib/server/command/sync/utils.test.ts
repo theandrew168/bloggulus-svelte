@@ -1,14 +1,14 @@
 import Chance from "chance";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { Blog } from "$lib/server/blog";
-import { EmptyFeedError } from "$lib/server/command/errors";
-import { FeedFetcher, type FetchFeedResponse } from "$lib/server/feed/fetch";
-import type { FeedBlog, FeedPost } from "$lib/server/feed/parse";
-import { Requester } from "$lib/server/feed/request";
-import { Post } from "$lib/server/post";
-import { Repository } from "$lib/server/repository";
-import { generateAtomFeed, randomBlogParams, randomPostParams } from "$lib/server/test";
+import { Blog } from "#lib/server/blog.js";
+import { EmptyFeedError } from "#lib/server/command/errors.js";
+import { FeedFetcher, type FetchFeedResponse } from "#lib/server/feed/fetch.js";
+import type { FeedBlog, FeedPost } from "#lib/server/feed/parse.js";
+import { Requester } from "#lib/server/feed/request.js";
+import { Post } from "#lib/server/post.js";
+import { Repository } from "#lib/server/repository/index.js";
+import { generateAtomFeed, randomBlogParams, randomPostParams } from "#lib/server/test/index.js";
 
 import {
 	comparePosts,

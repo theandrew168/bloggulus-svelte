@@ -1,7 +1,7 @@
 import pLimit from "p-limit";
 
-import type { FeedFetcher } from "$lib/server/feed/fetch";
-import { Repository } from "$lib/server/repository";
+import type { FeedFetcher } from "#lib/server/feed/fetch.js";
+import { Repository } from "#lib/server/repository/index.js";
 
 import { syncExistingBlog, syncNewBlog } from "./sync/utils";
 

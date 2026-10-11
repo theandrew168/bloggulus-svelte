@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { page } from "$app/state";
 
-	import Article from "$lib/components/app/Article.svelte";
-	import Button from "$lib/components/Button.svelte";
-	import Input from "$lib/components/Input.svelte";
+	import Article from "#lib/components/app/Article.svelte";
+	import Button from "#lib/components/Button.svelte";
+	import Input from "#lib/components/Input.svelte";
 
 	import type { PageProps } from "./$types";
 

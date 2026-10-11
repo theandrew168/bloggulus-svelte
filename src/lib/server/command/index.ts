@@ -1,6 +1,6 @@
-import { FeedFetcher } from "$lib/server/feed/fetch";
-import { Requester } from "$lib/server/feed/request";
-import { Repository } from "$lib/server/repository";
+import { FeedFetcher } from "#lib/server/feed/fetch.js";
+import { Requester } from "#lib/server/feed/request.js";
+import { Repository } from "#lib/server/repository/index.js";
 
 import { AccountCommand } from "./account";
 import { AuthCommand } from "./auth";

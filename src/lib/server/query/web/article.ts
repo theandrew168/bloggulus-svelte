@@ -1,7 +1,7 @@
 import { SQL } from "sql-template-strings";
 
-import { Connection } from "$lib/server/postgres";
-import type { Account, Article } from "$lib/types";
+import { Connection } from "#lib/server/postgres/index.js";
+import type { Account, Article } from "#lib/types.js";
 
 import type { CountRow } from "./types";
 

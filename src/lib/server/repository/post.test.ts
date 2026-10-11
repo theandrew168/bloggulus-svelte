@@ -1,9 +1,9 @@
 import Chance from "chance";
 import { describe, expect, test } from "vitest";
 
-import { Blog } from "$lib/server/blog";
-import { Post } from "$lib/server/post";
-import { randomBlogParams, randomPostParams } from "$lib/server/test";
+import { Blog } from "#lib/server/blog.js";
+import { Post } from "#lib/server/post.js";
+import { randomBlogParams, randomPostParams } from "#lib/server/test/index.js";
 
 import { Repository } from ".";
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state";
 
-	import Button from "$lib/components/Button.svelte";
+	import Button from "#lib/components/Button.svelte";
 </script>
 
 <section class="page">

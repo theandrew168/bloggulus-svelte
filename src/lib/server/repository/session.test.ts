@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vitest";
 
-import { Account } from "$lib/server/account";
-import { Session } from "$lib/server/session";
-import { randomAccountParams, randomSessionParams } from "$lib/server/test";
+import { Account } from "#lib/server/account.js";
+import { Session } from "#lib/server/session.js";
+import { randomAccountParams, randomSessionParams } from "#lib/server/test/index.js";
 
 import { Repository } from ".";
 
