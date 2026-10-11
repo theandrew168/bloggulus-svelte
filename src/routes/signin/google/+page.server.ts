@@ -26,5 +26,5 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 	cookies.set(OAUTH_CODE_VERIFIER_COOKIE_NAME, codeVerifier, sessionCookieOptions());
 
 	const url = google.createAuthorizationURL(state, codeVerifier, ["https://www.googleapis.com/auth/userinfo.profile"]);
-	redirect(303, url);
+	redirect(303, url, { external: true });
 };

@@ -19,5 +19,5 @@ export const load: PageServerLoad = async ({ cookies, locals }) => {
 	cookies.set(OAUTH_STATE_COOKIE_NAME, state, sessionCookieOptions());
 
 	const url = github.createAuthorizationURL(state, []);
-	redirect(303, url);
+	redirect(303, url, { external: true });
 };
