@@ -6,6 +6,14 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter(),
+		experimental: {
+			tracing: {
+				server: true,
+			},
+			instrumentation: {
+				server: true,
+			},
+		},
 	},
 };
 
